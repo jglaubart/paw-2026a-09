@@ -15,7 +15,7 @@
 
     <header class="header">
         <h1>Platea</h1>
-        <paw:search name="search" placeholder="Buscar obras..." />
+        <paw:search name="search" placeholder="Buscar obras..." minlength="3" maxlength="60" />
     </header>
 
     <main>
@@ -42,7 +42,12 @@
         <paw:button text="Botón deshabilitado" disabled="${true}" />
 
         <h2>Buscador con error</h2>
-        <paw:search name="email" placeholder="Email" error="El email no es válido" />
+        <paw:search name="email"
+            type="email"
+            placeholder="Email"
+            required="${true}"
+            maxlength="80"
+            error="El email no es válido" />
     </main>
 
 </body>
