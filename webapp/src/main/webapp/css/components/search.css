@@ -1,0 +1,32 @@
+.search-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-input {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    border: 1px solid #555;
+    background-color: #222;
+    color: #fff;
+    font-size: 1rem;
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: #fff;
+}
+
+.search-input-error {
+    border-color: #e50914;
+}
+
+.search-input-error:focus {
+    border-color: #e50914;
+}
+
+.search-error-msg {
+    color: #e50914;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+}
