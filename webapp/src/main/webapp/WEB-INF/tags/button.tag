@@ -3,6 +3,7 @@
 <%@ attribute name="size" required="false" %>
 <%@ attribute name="cssClass" required="false" %>
 <%@ attribute name="disabled" required="false" type="java.lang.Boolean" %>
+<%@ attribute name="ariaLabel" required="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <c:set var="btnSize" value="${not empty size ? size : 'md'}" />
@@ -12,6 +13,7 @@
 
 <button type="button"
         class="${classes}"
+        <c:if test="${not empty ariaLabel}">aria-label="<c:out value="${ariaLabel}" />"</c:if>
         <c:if test="${btnDisabled}">disabled</c:if>>
     <c:out value="${text}" />
 </button>
