@@ -22,15 +22,12 @@
         <h2>Cartelera</h2>
         <div class="obras-grid">
             <paw:card title="El Principito"
-                detailUrl="/obras/1"
                 imageUrl="${pageContext.request.contextPath}/images/Portadas/principito.jpg"
             />
             <paw:card title="Hamlet"
-                detailUrl="/obras/2"
                 imageUrl="${pageContext.request.contextPath}/images/Portadas/hamlet.jpg"
             />
             <paw:card title="Hamilton"
-                detailUrl="/obras/3"
                 imageUrl="${pageContext.request.contextPath}/images/Portadas/hamilton.jpg"
             />
         </div>

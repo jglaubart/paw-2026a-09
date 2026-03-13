@@ -1,20 +1,21 @@
 .obra-card {
     position: relative;
-    cursor: pointer;
     transition: transform 0.2s;
 }
 
-.obra-card:hover {
+.obra-card-clickable {
+    cursor: pointer;
+}
+
+.obra-card-clickable:hover {
     transform: scale(1.05);
 }
 
-.obra-card-link {
+.obra-card-link,
+.obra-card-content {
+    display: block;
     text-decoration: none;
     color: #fff;
-}
-
-.obra-card-img-wrapper {
-    position: relative;
 }
 
 .obra-card-img {
