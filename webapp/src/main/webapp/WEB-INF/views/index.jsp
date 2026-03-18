@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/card.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/search.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/alert.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/play-detail.css" />
 </head>
 <body>
 
@@ -32,6 +33,22 @@
             imageUrl="${pageContext.request.contextPath}/images/Portadas/hamilton.jpg"
          />
      </div>
+
+     <h2>Vista detallada</h2>
+     <paw:playDetail
+        title="Hamlet"
+        imageUrl="${pageContext.request.contextPath}/images/Portadas/hamlet.jpg"
+        productionName="Compania Nacional de Teatro Clasico"
+        year="2026"
+        location="Buenos Aires"
+        averageRating="9.1"
+        summary="Una reinterpretacion contemporanea de Hamlet con una puesta intensa, elenco coral y una produccion que combina clasico y moderno sin perder fuerza dramatica."
+        otherEditions="2024;Teatro San Martin;Buenos Aires~2021;Complejo Atlas;Mar del Plata~2018;Teatro Municipal;Cordoba~2012;Productora Sur;Rosario"
+        seen="${true}"
+        inWishlist="${true}"
+        currentlyRunning="${true}"
+        expiringSoon="${true}"
+     />
 
      <h2>Botones</h2>
      <paw:button text="Botón pequeño" size="sm" />
