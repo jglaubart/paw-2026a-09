@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -39,7 +40,8 @@ public class ObraController {
     }
 
     @RequestMapping(value = "/obras/{id:\\d+}", method = RequestMethod.GET)
-    public ModelAndView detail(@PathVariable("id") final long id) {
+    public ModelAndView detail(@PathVariable("id") final long id,
+                               @RequestParam(value = "produccionId", required = false) final Long produccionId) {
         final Optional<Obra> obraOpt = obraService.findById(id);
         if (!obraOpt.isPresent()) {
             return new ModelAndView("redirect:/");
@@ -50,6 +52,17 @@ public class ObraController {
 
         final List<Production> productions = productionService.findByObraId(id);
         mav.addObject("productions", productions);
+
+        Production selectedProduction = productions.isEmpty() ? null : productions.get(0);
+        if (produccionId != null) {
+            for (final Production p : productions) {
+                if (p.getId() == produccionId) {
+                    selectedProduction = p;
+                    break;
+                }
+            }
+        }
+        mav.addObject("selectedProduction", selectedProduction);
 
         final List<Review> reviews = reviewService.findByObra(id);
         mav.addObject("reviews", reviews);

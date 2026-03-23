@@ -24,7 +24,9 @@
     <main>
         <paw:sectionRow title="${available ? 'Cartelera' : (genre != null ? genre : 'Catálogo')}" subtitle="${available ? 'Producciones con funciones disponibles' : 'Todas las producciones'}">
             <c:forEach var="p" items="${productions}">
-                <c:url var="detailUrl" value="/productions/${p.id}" />
+                <c:url var="detailUrl" value="/obras/${p.obraId}">
+                    <c:param name="produccionId" value="${p.id}" />
+                </c:url>
                 <paw:productionCard
                     title="${fn:escapeXml(p.name)}"
                     imageUrl="${p.imageId != null ? pageContext.request.contextPath.concat('/images/').concat(p.imageId) : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"

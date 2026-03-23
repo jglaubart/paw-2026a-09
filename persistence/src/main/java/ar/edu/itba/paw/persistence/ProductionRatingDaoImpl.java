@@ -29,6 +29,7 @@ public class ProductionRatingDaoImpl implements ProductionRatingDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName("production_ratings")
+                .usingColumns("user_id", "production_id", "score")
                 .usingGeneratedKeyColumns("id");
     }
 

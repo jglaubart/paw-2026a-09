@@ -29,6 +29,7 @@ public class ReviewDaoImpl implements ReviewDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName("reviews")
+                .usingColumns("user_id", "obra_id", "body", "rating_id")
                 .usingGeneratedKeyColumns("id");
     }
 

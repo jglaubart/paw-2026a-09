@@ -516,6 +516,48 @@
     border-radius: 8px;
 }
 
+/* ── VERSIONES ── */
+
+.obra-versions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.75rem;
+}
+
+.obra-version-item {
+    display: block;
+    padding: 1rem 1.1rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.obra-version-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.16);
+}
+
+.obra-version-item-active {
+    border-color: #7c3aed;
+    background: rgba(124, 58, 237, 0.08);
+}
+
+.obra-version-theater {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 0.3rem;
+}
+
+.obra-version-dates {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.45);
+    margin: 0;
+    line-height: 1.5;
+}
+
 /* ── RESPONSIVE ── */
 
 @media (max-width: 960px) {

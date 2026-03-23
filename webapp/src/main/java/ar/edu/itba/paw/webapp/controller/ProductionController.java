@@ -51,21 +51,14 @@ public class ProductionController {
             return new ModelAndView("redirect:/");
         }
         final Production production = productionOpt.get();
-        final ModelAndView mav = new ModelAndView("productions/detail");
-        mav.addObject("production", production);
+        return new ModelAndView("redirect:/obras/" + production.getObraId() + "?produccionId=" + id);
+    }
 
-        final Optional<Obra> obra = obraService.findById(production.getObraId());
-        mav.addObject("obra", obra.orElse(null));
-
-        if (production.getProductoraId() != null) {
-            mav.addObject("productora", productoraService.findById(production.getProductoraId()).orElse(null));
-        }
-
-        mav.addObject("inWatchlist", watchlistService.isInWatchlist(HARDCODED_USER_ID, id));
-        mav.addObject("userScore", ratingService.getProductionRating(HARDCODED_USER_ID, id)
-                .map(r -> r.getScore()).orElse(null));
-        mav.addObject("avgRating", ratingService.getProductionAverageRating(id).orElse(null));
-        return mav;
+    @RequestMapping(value = "/cartelera", method = RequestMethod.GET)
+    public ModelAndView cartelera(
+            @RequestParam(value = "page", defaultValue = "0") final int page,
+            @RequestParam(value = "genre", required = false) final String genre) {
+        return list(page, true, genre);
     }
 
     @RequestMapping(value = "/productions", method = RequestMethod.GET)

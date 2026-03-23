@@ -43,24 +43,13 @@
                 <p class="hero-description"><c:out value="${description}" /></p>
             </c:if>
 
-            <div class="hero-actions">
-                <c:choose>
-                    <c:when test="${not empty resolvedTicketUrl}">
-                        <a href="${resolvedTicketUrl}" class="btn btn-lg btn-primary">
-                            Reservar Entradas
-                        </a>
-                    </c:when>
-                    <c:otherwise>
-                        <paw:button text="Reservar Entradas" size="lg" cssClass="btn-primary" />
-                    </c:otherwise>
-                </c:choose>
-                <paw:button text="Watch List" size="lg" cssClass="btn-outline" />
-            </div>
-        </div>
-
-        <div class="hero-nav" aria-label="Navegar entre destacados">
-            <paw:button text="←" cssClass="hero-nav-btn" ariaLabel="Producción anterior" />
-            <paw:button text="→" cssClass="hero-nav-btn" ariaLabel="Producción siguiente" />
+            <c:if test="${not empty resolvedTicketUrl}">
+                <div class="hero-actions">
+                    <a href="${resolvedTicketUrl}" class="btn btn-lg btn-primary">
+                        Reservar Entradas
+                    </a>
+                </div>
+            </c:if>
         </div>
     </div>
 </section>

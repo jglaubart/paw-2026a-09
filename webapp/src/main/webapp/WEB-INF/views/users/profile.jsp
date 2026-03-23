@@ -32,7 +32,9 @@
             <c:when test="${not empty watchlist}">
                 <paw:sectionRow title="Mi Watchlist" subtitle="Producciones que quiero ver">
                     <c:forEach var="p" items="${watchlist}">
-                        <c:url var="detailUrl" value="/productions/${p.id}" />
+                        <c:url var="detailUrl" value="/obras/${p.obraId}">
+                            <c:param name="produccionId" value="${p.id}" />
+                        </c:url>
                         <paw:productionCard
                             title="${fn:escapeXml(p.name)}"
                             imageUrl="${p.imageId != null ? pageContext.request.contextPath.concat('/images/').concat(p.imageId) : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"

@@ -46,7 +46,9 @@
         <c:if test="${not empty availableProductions}">
             <paw:sectionRow title="En Cartelera" subtitle="Producciones con funciones disponibles">
                 <c:forEach var="p" items="${availableProductions}">
-                    <c:url var="detailUrl" value="/productions/${p.id}" />
+                    <c:url var="detailUrl" value="/obras/${p.obraId}">
+                        <c:param name="produccionId" value="${p.id}" />
+                    </c:url>
                     <paw:productionCard
                         title="${fn:escapeXml(p.name)}"
                         imageUrl="${p.imageId != null ? pageContext.request.contextPath.concat('/images/').concat(p.imageId) : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
@@ -60,7 +62,9 @@
         <c:if test="${not empty allProductions}">
             <paw:sectionRow title="Catálogo" subtitle="Todas las producciones">
                 <c:forEach var="p" items="${allProductions}">
-                    <c:url var="detailUrl" value="/productions/${p.id}" />
+                    <c:url var="detailUrl" value="/obras/${p.obraId}">
+                        <c:param name="produccionId" value="${p.id}" />
+                    </c:url>
                     <paw:productionCard
                         title="${fn:escapeXml(p.name)}"
                         imageUrl="${p.imageId != null ? pageContext.request.contextPath.concat('/images/').concat(p.imageId) : pageContext.request.contextPath.concat('/images/Portadas/principito.jpg')}"

@@ -29,6 +29,7 @@ public class PlayRatingDaoImpl implements PlayRatingDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName("play_ratings")
+                .usingColumns("user_id", "obra_id", "score")
                 .usingGeneratedKeyColumns("id");
     }
 

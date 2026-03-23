@@ -12,10 +12,6 @@
                 <p class="section-row-subtitle"><c:out value="${subtitle}" /></p>
             </c:if>
         </div>
-        <div class="section-row-nav" aria-label="Navegar sección">
-            <paw:button text="←" cssClass="section-row-nav-btn" ariaLabel="Ver anteriores" />
-            <paw:button text="→" cssClass="section-row-nav-btn" ariaLabel="Ver siguientes" />
-        </div>
     </div>
     <div class="section-row-cards">
         <jsp:doBody />

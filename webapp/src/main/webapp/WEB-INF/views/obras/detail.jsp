@@ -26,8 +26,8 @@
 
     <%-- ═══════════════ HERO ═══════════════ --%>
     <c:set var="heroStyle" value="" />
-    <c:if test="${not empty productions && productions[0].imageId != null}">
-        <c:url var="heroImgUrl" value="/images/${productions[0].imageId}" />
+    <c:if test="${selectedProduction != null && selectedProduction.imageId != null}">
+        <c:url var="heroImgUrl" value="/images/${selectedProduction.imageId}" />
         <c:set var="heroStyle" value="background-image: url('${heroImgUrl}');" />
     </c:if>
 
@@ -52,9 +52,9 @@
     </section>
 
     <%-- ═══════════════ META BAR ═══════════════ --%>
-    <c:if test="${not empty productions}">
+    <c:if test="${selectedProduction != null}">
         <div class="obra-meta-bar">
-            <c:if test="${not empty productions[0].theater}">
+            <c:if test="${not empty selectedProduction.theater}">
                 <span class="obra-hero-meta-item">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2"
@@ -62,10 +62,10 @@
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                         <polyline points="9 22 9 12 15 12 15 22"/>
                     </svg>
-                    <c:out value="${productions[0].theater}" />
+                    <c:out value="${selectedProduction.theater}" />
                 </span>
             </c:if>
-            <c:if test="${productions[0].startDate != null}">
+            <c:if test="${selectedProduction.startDate != null}">
                 <span class="obra-hero-meta-item">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2"
@@ -75,13 +75,13 @@
                         <line x1="8"  y1="2" x2="8"  y2="6"/>
                         <line x1="3"  y1="10" x2="21" y2="10"/>
                     </svg>
-                    <c:out value="${productions[0].startDate}" />
-                    <c:if test="${productions[0].endDate != null}">
-                        — <c:out value="${productions[0].endDate}" />
+                    <c:out value="${selectedProduction.startDate}" />
+                    <c:if test="${selectedProduction.endDate != null}">
+                        — <c:out value="${selectedProduction.endDate}" />
                     </c:if>
                 </span>
             </c:if>
-            <c:if test="${not empty productions[0].direction}">
+            <c:if test="${not empty selectedProduction.direction}">
                 <span class="obra-hero-meta-item">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2"
@@ -89,7 +89,7 @@
                         <circle cx="12" cy="12" r="10"/>
                         <polygon points="10 8 16 12 10 16 10 8"/>
                     </svg>
-                    <c:out value="${productions[0].direction}" />
+                    <c:out value="${selectedProduction.direction}" />
                 </span>
             </c:if>
         </div>
@@ -101,26 +101,47 @@
         <%-- ── MAIN COLUMN ── --%>
         <div class="obra-main-col">
 
+            <%-- VERSIONES (solo si hay más de una producción) --%>
+            <c:if test="${fn:length(productions) > 1}">
+                <section class="obra-section">
+                    <div class="obra-section-head">
+                        <h2 class="obra-heading">Versiones</h2>
+                    </div>
+                    <div class="obra-versions-grid">
+                        <c:forEach var="p" items="${productions}">
+                            <c:url var="versionUrl" value="/obras/${obra.id}">
+                                <c:param name="produccionId" value="${p.id}" />
+                            </c:url>
+                            <a href="${versionUrl}" class="obra-version-item ${p.id eq selectedProduction.id ? 'obra-version-item-active' : ''}">
+                                <p class="obra-version-theater">
+                                    <c:out value="${not empty p.theater ? p.theater : p.name}" />
+                                </p>
+                                <c:if test="${p.startDate != null}">
+                                    <p class="obra-version-dates">
+                                        <c:out value="${p.startDate}" />
+                                        <c:if test="${p.endDate != null}"> — <c:out value="${p.endDate}" /></c:if>
+                                    </p>
+                                </c:if>
+                                <c:if test="${not empty p.direction}">
+                                    <p class="obra-version-dates">Dir. <c:out value="${p.direction}" /></p>
+                                </c:if>
+                            </a>
+                        </c:forEach>
+                    </div>
+                </section>
+            </c:if>
+
             <%-- SINOPSIS --%>
             <section class="obra-section">
                 <div class="obra-section-head">
                     <h2 class="obra-heading">Sinopsis</h2>
-                    <div class="obra-head-actions">
-                        <c:if test="${not empty productions && not empty productions[0].website}">
-                            <a href="${fn:escapeXml(productions[0].website)}"
-                               class="btn btn-primary btn-md"
-                               target="_blank" rel="noopener noreferrer">
-                                Comprar Entradas (Sitio Externo) ↗
-                            </a>
-                        </c:if>
-                        <button type="button" class="obra-bookmark-btn" aria-label="Guardar en watchlist">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" stroke-width="2"
-                                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
-                            </svg>
-                        </button>
-                    </div>
+                    <c:if test="${selectedProduction != null && not empty selectedProduction.website}">
+                        <a href="${fn:escapeXml(selectedProduction.website)}"
+                           class="btn btn-primary btn-md"
+                           target="_blank" rel="noopener noreferrer">
+                            Comprar Entradas (Sitio Externo) ↗
+                        </a>
+                    </c:if>
                 </div>
 
                 <c:choose>
@@ -133,12 +154,12 @@
                 </c:choose>
 
                 <%-- INFORMACIÓN ÚTIL --%>
-                <c:if test="${not empty productions}">
+                <c:if test="${selectedProduction != null}">
                     <div class="obra-info-box">
                         <h3 class="obra-info-box-title">INFORMACIÓN ÚTIL</h3>
                         <div class="obra-info-grid">
 
-                            <c:if test="${not empty productions[0].theater}">
+                            <c:if test="${not empty selectedProduction.theater}">
                                 <div class="obra-info-item">
                                     <span class="obra-info-icon" aria-hidden="true">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
@@ -150,12 +171,12 @@
                                     </span>
                                     <div>
                                         <strong class="obra-info-label">Teatro</strong>
-                                        <p class="obra-info-value"><c:out value="${productions[0].theater}" /></p>
+                                        <p class="obra-info-value"><c:out value="${selectedProduction.theater}" /></p>
                                     </div>
                                 </div>
                             </c:if>
 
-                            <c:if test="${productions[0].startDate != null}">
+                            <c:if test="${selectedProduction.startDate != null}">
                                 <div class="obra-info-item">
                                     <span class="obra-info-icon" aria-hidden="true">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
@@ -170,16 +191,16 @@
                                     <div>
                                         <strong class="obra-info-label">Funciones</strong>
                                         <p class="obra-info-value">
-                                            <c:out value="${productions[0].startDate}" />
-                                            <c:if test="${productions[0].endDate != null}">
-                                                — <c:out value="${productions[0].endDate}" />
+                                            <c:out value="${selectedProduction.startDate}" />
+                                            <c:if test="${selectedProduction.endDate != null}">
+                                                — <c:out value="${selectedProduction.endDate}" />
                                             </c:if>
                                         </p>
                                     </div>
                                 </div>
                             </c:if>
 
-                            <c:if test="${not empty productions[0].direction}">
+                            <c:if test="${not empty selectedProduction.direction}">
                                 <div class="obra-info-item">
                                     <span class="obra-info-icon" aria-hidden="true">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
@@ -191,12 +212,12 @@
                                     </span>
                                     <div>
                                         <strong class="obra-info-label">Dirección</strong>
-                                        <p class="obra-info-value"><c:out value="${productions[0].direction}" /></p>
+                                        <p class="obra-info-value"><c:out value="${selectedProduction.direction}" /></p>
                                     </div>
                                 </div>
                             </c:if>
 
-                            <c:if test="${not empty productions[0].website}">
+                            <c:if test="${not empty selectedProduction.website}">
                                 <div class="obra-info-item">
                                     <span class="obra-info-icon" aria-hidden="true">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
@@ -212,7 +233,7 @@
                                     <div>
                                         <strong class="obra-info-label">Retiro de entradas</strong>
                                         <p class="obra-info-value">
-                                            <a href="${fn:escapeXml(productions[0].website)}"
+                                            <a href="${fn:escapeXml(selectedProduction.website)}"
                                                target="_blank" rel="noopener noreferrer"
                                                class="obra-info-link">
                                                 Sitio oficial ↗
@@ -304,35 +325,7 @@
         <%-- ── SIDEBAR ── --%>
         <aside class="obra-sidebar-col">
             <div class="obra-sidebar-card">
-                <h3 class="obra-sidebar-title">SI TE GUSTÓ ESTA...</h3>
-
-                <c:if test="${not empty productions}">
-                    <div class="obra-sidebar-list">
-                        <c:forEach var="p" items="${productions}">
-                            <c:url var="prodUrl" value="/productions/${p.id}" />
-                            <a href="${prodUrl}" class="obra-sidebar-item">
-                                <div class="obra-sidebar-item-img">
-                                    <c:choose>
-                                        <c:when test="${p.imageId != null}">
-                                            <img src="${pageContext.request.contextPath}/images/${p.imageId}"
-                                                 alt="${fn:escapeXml(p.name)}" />
-                                        </c:when>
-                                        <c:otherwise>
-                                            <div class="obra-sidebar-item-placeholder"></div>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </div>
-                                <div class="obra-sidebar-item-info">
-                                    <strong class="obra-sidebar-item-title"><c:out value="${p.name}" /></strong>
-                                    <c:if test="${not empty p.theater}">
-                                        <span class="obra-sidebar-item-theater"><c:out value="${p.theater}" /></span>
-                                    </c:if>
-                                </div>
-                            </a>
-                        </c:forEach>
-                    </div>
-                </c:if>
-
+                <h3 class="obra-sidebar-title">EXPLORÁ MÁS</h3>
                 <a href="${pageContext.request.contextPath}/cartelera" class="btn btn-outline btn-md obra-sidebar-cta">
                     VER TODA LA CARTELERA
                 </a>
