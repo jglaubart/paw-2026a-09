@@ -50,3 +50,28 @@
 .btn-wishlist:hover {
     color: #e50914;
 }
+
+/* ── Colour variants ─────────────────────────────────────── */
+
+.btn-primary {
+    background: #7c3aed;
+    color: #fff;
+    border-color: #7c3aed;
+}
+
+.btn-primary:hover {
+    background: #6d28d9;
+    border-color: #6d28d9;
+    opacity: 1;
+}
+
+.btn-outline {
+    background: transparent;
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.55);
+}
+
+.btn-outline:hover {
+    background: rgba(255, 255, 255, 0.08);
+    opacity: 1;
+}
