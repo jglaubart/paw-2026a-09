@@ -38,7 +38,7 @@
                         </c:url>
                         <paw:productionCard
                             title="${fn:escapeXml(p.name)}"
-                            imageUrl="${p.imageId != null ? pageContext.request.contextPath.concat('/images/').concat(p.imageId) : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
+                            imageUrl="${not empty p.imageUrl ? p.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
                             venue="${fn:escapeXml(p.theater)}"
                             detailUrl="${detailUrl}"
                         />

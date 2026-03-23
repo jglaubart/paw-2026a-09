@@ -27,9 +27,8 @@
 
     <%-- ═══════════════ HERO ═══════════════ --%>
     <c:set var="heroStyle" value="" />
-    <c:if test="${selectedProduction != null && selectedProduction.imageId != null}">
-        <c:url var="heroImgUrl" value="/images/${selectedProduction.imageId}" />
-        <c:set var="heroStyle" value="background-image: url('${heroImgUrl}');" />
+    <c:if test="${selectedProduction != null && not empty selectedProduction.imageUrl}">
+        <c:set var="heroStyle" value="background-image: url('${fn:escapeXml(selectedProduction.imageUrl)}');" />
     </c:if>
 
     <section class="obra-hero" style="${heroStyle}">
@@ -313,8 +312,9 @@
                         <c:if test="${userScore != null}">
                             <p class="obra-user-score">Tu puntaje: <strong><c:out value="${userScore}" />/10</strong></p>
                         </c:if>
-                        <form action="${pageContext.request.contextPath}/obras/${obra.id}/rate"
+                        <form action="${pageContext.request.contextPath}/productions/${selectedProduction.id}/rate"
                               method="post" class="obra-rate-form-inner">
+                            <input type="hidden" name="obraId" value="${obra.id}" />
                             <select name="score" class="obra-score-select">
                                 <c:forEach var="i" begin="1" end="10">
                                     <option value="${i}" ${userScore != null && userScore == i ? 'selected' : ''}>
@@ -338,8 +338,9 @@
                                 </blockquote>
                             </c:when>
                             <c:otherwise>
-                                <form action="${pageContext.request.contextPath}/obras/${obra.id}/review"
+                                <form action="${pageContext.request.contextPath}/productions/${selectedProduction.id}/review"
                                       method="post">
+                                    <input type="hidden" name="obraId" value="${obra.id}" />
                                     <textarea name="body" rows="3" class="obra-review-textarea"
                                               placeholder="Escribí tu reseña..."></textarea>
                                     <button type="submit" class="btn btn-primary btn-md">Enviar reseña</button>

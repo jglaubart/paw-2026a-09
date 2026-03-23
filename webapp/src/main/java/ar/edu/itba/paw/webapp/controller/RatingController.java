@@ -21,20 +21,15 @@ public class RatingController {
         this.ratingService = ratingService;
     }
 
-    @RequestMapping(value = "/obras/{id:\\d+}/rate", method = RequestMethod.POST)
-    public ModelAndView rateObra(@PathVariable("id") final long obraId,
-                                 @RequestParam("score") final int score) {
-        if (score >= 1 && score <= 10) {
-            ratingService.rateObra(HARDCODED_USER_ID, obraId, score);
-        }
-        return new ModelAndView("redirect:/obras/" + obraId);
-    }
-
     @RequestMapping(value = "/productions/{id:\\d+}/rate", method = RequestMethod.POST)
     public ModelAndView rateProduction(@PathVariable("id") final long productionId,
-                                       @RequestParam("score") final int score) {
+                                       @RequestParam("score") final int score,
+                                       @RequestParam(value = "obraId", required = false) final Long obraId) {
         if (score >= 1 && score <= 10) {
             ratingService.rateProduction(HARDCODED_USER_ID, productionId, score);
+        }
+        if (obraId != null) {
+            return new ModelAndView("redirect:/obras/" + obraId + "?produccionId=" + productionId);
         }
         return new ModelAndView("redirect:/productions/" + productionId);
     }

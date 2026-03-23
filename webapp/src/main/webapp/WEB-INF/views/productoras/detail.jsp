@@ -24,8 +24,8 @@
     <main>
         <section style="padding: 2rem; max-width: 900px; margin: 0 auto;">
             <div style="display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;">
-                <c:if test="${productora.imageId != null}">
-                    <img src="${pageContext.request.contextPath}/images/${productora.imageId}" alt="${fn:escapeXml(productora.name)}" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;" />
+                <c:if test="${not empty productora.imageUrl}">
+                    <img src="${fn:escapeXml(productora.imageUrl)}" alt="${fn:escapeXml(productora.name)}" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;" />
                 </c:if>
                 <div>
                     <h1><c:out value="${productora.name}" /></h1>
@@ -50,7 +50,7 @@
                     <c:url var="detailUrl" value="/productions/${p.id}" />
                     <paw:productionCard
                         title="${fn:escapeXml(p.name)}"
-                        imageUrl="${p.imageId != null ? pageContext.request.contextPath.concat('/images/').concat(p.imageId) : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
+                        imageUrl="${not empty p.imageUrl ? p.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
                         venue="${fn:escapeXml(p.theater)}"
                         detailUrl="${detailUrl}"
                     />

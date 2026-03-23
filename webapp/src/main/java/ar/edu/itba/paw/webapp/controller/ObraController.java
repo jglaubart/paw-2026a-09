@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,13 +73,19 @@ public class ObraController {
         }
         mav.addObject("selectedProduction", selectedProduction);
 
-        final List<Review> reviews = reviewService.findByObra(id);
-        mav.addObject("reviews", reviews);
-
-        mav.addObject("userScore", ratingService.getObraRating(HARDCODED_USER_ID, id)
-                .map(r -> r.getScore()).orElse(null));
-        mav.addObject("avgRating", ratingService.getObraAverageRating(id).orElse(null));
-        mav.addObject("userReview", reviewService.findByUserAndObra(HARDCODED_USER_ID, id).orElse(null));
+        if (selectedProduction != null) {
+            final long pid = selectedProduction.getId();
+            mav.addObject("reviews", reviewService.findByProduction(pid));
+            mav.addObject("userScore", ratingService.getProductionRating(HARDCODED_USER_ID, pid)
+                    .map(r -> r.getScore()).orElse(null));
+            mav.addObject("avgRating", ratingService.getProductionAverageRating(pid).orElse(null));
+            mav.addObject("userReview", reviewService.findByUserAndProduction(HARDCODED_USER_ID, pid).orElse(null));
+        } else {
+            mav.addObject("reviews", Collections.emptyList());
+            mav.addObject("userScore", null);
+            mav.addObject("avgRating", null);
+            mav.addObject("userReview", null);
+        }
 
         if (selectedProduction != null) {
             mav.addObject("isInWishlist",

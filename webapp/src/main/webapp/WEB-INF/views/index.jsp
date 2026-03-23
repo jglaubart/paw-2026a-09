@@ -24,7 +24,7 @@
 
     <c:choose>
         <c:when test="${featuredProduction != null}">
-            <c:set var="heroImageUrl" value="${featuredProduction.imageId != null ? pageContext.request.contextPath.concat('/images/').concat(featuredProduction.imageId) : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}" />
+            <c:set var="heroImageUrl" value="${not empty featuredProduction.imageUrl ? featuredProduction.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}" />
             <paw:hero
                 title="${fn:escapeXml(featuredProduction.name)}"
                 description="${fn:escapeXml(featuredProduction.synopsis)}"
@@ -51,7 +51,7 @@
                     </c:url>
                     <paw:productionCard
                         title="${fn:escapeXml(p.name)}"
-                        imageUrl="${p.imageId != null ? pageContext.request.contextPath.concat('/images/').concat(p.imageId) : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
+                        imageUrl="${not empty p.imageUrl ? p.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
                         venue="${fn:escapeXml(p.theater)}"
                         detailUrl="${detailUrl}"
                     />
@@ -67,7 +67,7 @@
                     </c:url>
                     <paw:productionCard
                         title="${fn:escapeXml(p.name)}"
-                        imageUrl="${p.imageId != null ? pageContext.request.contextPath.concat('/images/').concat(p.imageId) : pageContext.request.contextPath.concat('/images/Portadas/principito.jpg')}"
+                        imageUrl="${not empty p.imageUrl ? p.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/principito.jpg')}"
                         venue="${fn:escapeXml(p.theater)}"
                         detailUrl="${detailUrl}"
                     />

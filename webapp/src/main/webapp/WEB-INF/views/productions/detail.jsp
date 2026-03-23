@@ -21,7 +21,7 @@
 
     <paw:navbar />
 
-    <c:set var="imgUrl" value="${production.imageId != null ? pageContext.request.contextPath.concat('/images/').concat(production.imageId) : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}" />
+    <c:set var="imgUrl" value="${not empty production.imageUrl ? production.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}" />
 
     <paw:hero
         title="${fn:escapeXml(production.name)}"

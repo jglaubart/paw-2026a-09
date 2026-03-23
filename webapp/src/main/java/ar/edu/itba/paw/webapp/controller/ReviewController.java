@@ -21,16 +21,24 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
-    @RequestMapping(value = "/obras/{id:\\d+}/review", method = RequestMethod.POST)
-    public ModelAndView createReview(@PathVariable("id") final long obraId,
-                                     @RequestParam("body") final String body) {
+    @RequestMapping(value = "/productions/{id:\\d+}/review", method = RequestMethod.POST)
+    public ModelAndView createReview(@PathVariable("id") final long productionId,
+                                     @RequestParam("body") final String body,
+                                     @RequestParam(value = "obraId", required = false) final Long obraId) {
         if (body != null && !body.trim().isEmpty()) {
             try {
-                reviewService.create(HARDCODED_USER_ID, obraId, body.trim());
+                reviewService.create(HARDCODED_USER_ID, productionId, body.trim());
             } catch (IllegalStateException e) {
-                return new ModelAndView("redirect:/obras/" + obraId + "?error=rate_first");
+                if (obraId != null) {
+                    return new ModelAndView("redirect:/obras/" + obraId
+                            + "?produccionId=" + productionId + "&error=rate_first");
+                }
+                return new ModelAndView("redirect:/productions/" + productionId + "?error=rate_first");
             }
         }
-        return new ModelAndView("redirect:/obras/" + obraId);
+        if (obraId != null) {
+            return new ModelAndView("redirect:/obras/" + obraId + "?produccionId=" + productionId);
+        }
+        return new ModelAndView("redirect:/productions/" + productionId);
     }
 }
