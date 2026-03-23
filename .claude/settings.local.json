@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git merge:*)",
+      "Bash(git fetch:*)",
+      "Bash(git reset:*)",
+      "Bash(grep -r -i \"experiencia\\\\|experience\" C:UsersromanIdeaProjectspaw-2026a-09 --include=*.java --include=*.jsp --include=*.tag --include=*.sql)",
+      "Read(//c//**)",
+      "Bash(cmd.exe /c \"where mvn 2>&1\")",
+      "Bash(cmd.exe /c \"where mvn\")",
+      "Bash(powershell.exe -NoProfile -Command \"cd 'C:\\\\Users\\\\roman\\\\IdeaProjects\\\\paw-2026a-09\\\\webapp'; mvn jetty:run\" 2>&1)",
+      "Bash(JAVA_HOME=\"/c/Users/roman/.jdks/corretto-18.0.2\" \"/c/Users/roman/AppData/Local/Programs/IntelliJ IDEA Ultimate/plugins/maven/lib/maven3/bin/mvn\" jetty:run -Djetty.http.port=8081 -f \"/c/Users/roman/IdeaProjects/paw-2026a-09/webapp/pom.xml\")",
+      "Bash(tasklist.exe)",
+      "Bash(taskkill.exe /F /PID 27440 /PID 16252 2>&1)",
+      "Bash(cmd.exe /c \"taskkill /F /PID 27440 & taskkill /F /PID 16252\" 2>&1)"
+    ]
+  }
+}

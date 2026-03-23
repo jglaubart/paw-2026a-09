@@ -1,2 +1,11 @@
-ar/edu/itba/paw/webapp/controller/HelloWorldController.class
-ar/edu/itba/paw/webapp/config/WebConfig.class
+ar\edu\itba\paw\webapp\controller\HomeController.class
+ar\edu\itba\paw\webapp\controller\RatingController.class
+ar\edu\itba\paw\webapp\controller\WatchlistController.class
+ar\edu\itba\paw\webapp\config\WebConfig.class
+ar\edu\itba\paw\webapp\controller\ObraController.class
+ar\edu\itba\paw\webapp\controller\SearchController.class
+ar\edu\itba\paw\webapp\controller\ImageController.class
+ar\edu\itba\paw\webapp\controller\ReviewController.class
+ar\edu\itba\paw\webapp\controller\UserController.class
+ar\edu\itba\paw\webapp\controller\ProductionController.class
+ar\edu\itba\paw\webapp\controller\ProductoraController.class
