@@ -87,3 +87,10 @@ CREATE TABLE IF NOT EXISTS watchlist (
     added_at      TIMESTAMP NOT NULL DEFAULT NOW(),
     PRIMARY KEY (user_id, production_id)
 );
+
+CREATE TABLE IF NOT EXISTS seen_obras (
+    user_id  INT NOT NULL REFERENCES users(id),
+    obra_id  INT NOT NULL REFERENCES obras(id),
+    seen_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (user_id, obra_id)
+);

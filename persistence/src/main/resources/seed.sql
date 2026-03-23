@@ -49,11 +49,17 @@ INSERT INTO productions (name, obra_id, productora_id, synopsis, direction, thea
  NULL, NULL, 'Teatro Nacional Cervantes', '2026-03-01', '2026-06-30', 'Revista',
  NULL, 'https://alternativateatral.com/obra95254-la-revista-del-cervantes'),
 
-('Doradas',
+('Doradas — Temporada 2026',
  (SELECT id FROM obras WHERE title = 'Doradas'),
  (SELECT id FROM productoras WHERE name = 'Teatro Nacional Cervantes'),
- NULL, NULL, 'Teatro Nacional Cervantes', '2026-03-01', '2026-06-30', 'Drama',
+ NULL, 'Claudio Tolcachir', 'Teatro Nacional Cervantes', '2026-03-01', '2026-06-30', 'Drama',
  NULL, 'https://alternativateatral.com/obra99872-doradas'),
+
+('Doradas — Temporada 2010',
+ (SELECT id FROM obras WHERE title = 'Doradas'),
+ (SELECT id FROM productoras WHERE name = 'Teatro Nacional Cervantes'),
+ NULL, 'Claudio Tolcachir', 'Teatro del Sur', '2010-04-01', '2010-11-30', 'Drama',
+ NULL, NULL),
 
 ('El ávido espectador',
  (SELECT id FROM obras WHERE title = 'El ávido espectador'),

@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/button.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/play-detail.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/alert.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/user-lists.css" />
 </head>
 <body>
 
@@ -94,6 +95,35 @@
             </c:if>
         </div>
     </c:if>
+
+    <%-- ═══════════════ ACCIONES (wishlist / ya la vi) ═══════════════ --%>
+    <div class="obra-action-bar">
+        <%-- Wishlist button (per production) --%>
+        <c:if test="${selectedProduction != null}">
+            <form action="${pageContext.request.contextPath}/productions/${selectedProduction.id}/wishlist"
+                  method="post" class="obra-action-form">
+                <input type="hidden" name="obraId"      value="${obra.id}" />
+                <input type="hidden" name="action"      value="${isInWishlist ? 'remove' : 'add'}" />
+                <button type="submit" class="obra-action-btn ${isInWishlist ? 'obra-action-btn-active' : ''}">
+                    <span aria-hidden="true">${isInWishlist ? '♥' : '♡'}</span>
+                    <c:out value="${isInWishlist ? 'En wishlist' : 'Agregar a wishlist'}" />
+                </button>
+            </form>
+        </c:if>
+
+        <%-- Seen button (per obra) --%>
+        <form action="${pageContext.request.contextPath}/obras/${obra.id}/seen"
+              method="post" class="obra-action-form">
+            <c:if test="${selectedProduction != null}">
+                <input type="hidden" name="produccionId" value="${selectedProduction.id}" />
+            </c:if>
+            <input type="hidden" name="action" value="${hasSeen ? 'remove' : 'add'}" />
+            <button type="submit" class="obra-action-btn obra-action-btn-seen ${hasSeen ? 'obra-action-btn-active' : ''}">
+                <span aria-hidden="true">${hasSeen ? '✓' : '○'}</span>
+                <c:out value="${hasSeen ? 'Ya la vi' : 'Marcar como vista'}" />
+            </button>
+        </form>
+    </div>
 
     <%-- ═══════════════ BODY ═══════════════ --%>
     <div class="obra-content">
@@ -328,6 +358,12 @@
                 <h3 class="obra-sidebar-title">EXPLORÁ MÁS</h3>
                 <a href="${pageContext.request.contextPath}/cartelera" class="btn btn-outline btn-md obra-sidebar-cta">
                     VER TODA LA CARTELERA
+                </a>
+                <a href="${pageContext.request.contextPath}/wishlist" class="btn btn-outline btn-md obra-sidebar-cta">
+                    MI WISHLIST
+                </a>
+                <a href="${pageContext.request.contextPath}/watchlist" class="btn btn-outline btn-md obra-sidebar-cta">
+                    YA LAS VI
                 </a>
             </div>
         </aside>

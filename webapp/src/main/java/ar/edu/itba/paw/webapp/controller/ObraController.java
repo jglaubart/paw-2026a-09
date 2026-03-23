@@ -4,6 +4,8 @@ import ar.edu.itba.paw.interfaces.services.ObraService;
 import ar.edu.itba.paw.interfaces.services.ProductionService;
 import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
+import ar.edu.itba.paw.interfaces.services.SeenService;
+import ar.edu.itba.paw.interfaces.services.WatchlistService;
 import ar.edu.itba.paw.models.Obra;
 import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.Review;
@@ -27,16 +29,22 @@ public class ObraController {
     private final ProductionService productionService;
     private final RatingService ratingService;
     private final ReviewService reviewService;
+    private final WatchlistService watchlistService;
+    private final SeenService seenService;
 
     @Autowired
     public ObraController(final ObraService obraService,
                           final ProductionService productionService,
                           final RatingService ratingService,
-                          final ReviewService reviewService) {
+                          final ReviewService reviewService,
+                          final WatchlistService watchlistService,
+                          final SeenService seenService) {
         this.obraService = obraService;
         this.productionService = productionService;
         this.ratingService = ratingService;
         this.reviewService = reviewService;
+        this.watchlistService = watchlistService;
+        this.seenService = seenService;
     }
 
     @RequestMapping(value = "/obras/{id:\\d+}", method = RequestMethod.GET)
@@ -71,6 +79,15 @@ public class ObraController {
                 .map(r -> r.getScore()).orElse(null));
         mav.addObject("avgRating", ratingService.getObraAverageRating(id).orElse(null));
         mav.addObject("userReview", reviewService.findByUserAndObra(HARDCODED_USER_ID, id).orElse(null));
+
+        if (selectedProduction != null) {
+            mav.addObject("isInWishlist",
+                    watchlistService.isInWatchlist(HARDCODED_USER_ID, selectedProduction.getId()));
+        } else {
+            mav.addObject("isInWishlist", false);
+        }
+        mav.addObject("hasSeen", seenService.hasSeen(HARDCODED_USER_ID, id));
+
         return mav;
     }
 }
