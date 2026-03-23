@@ -6,15 +6,12 @@
 <c:url var="homeUrl"         value="/" />
 <c:url var="carteleraUrl"    value="/cartelera" />
 <c:url var="teatrosUrl"      value="/teatros" />
-<c:url var="experienciasUrl" value="/experiencias" />
-
 <header class="navbar">
     <a class="navbar-logo" href="${homeUrl}">PLATEA</a>
 
     <nav class="navbar-nav" aria-label="Navegación principal">
         <a class="navbar-link ${activeSection == 'cartelera'    ? 'navbar-link-active' : ''}" href="${carteleraUrl}">CARTELERA</a>
         <a class="navbar-link ${activeSection == 'teatros'      ? 'navbar-link-active' : ''}" href="${teatrosUrl}">TEATROS</a>
-        <a class="navbar-link ${activeSection == 'experiencias' ? 'navbar-link-active' : ''}" href="${experienciasUrl}">EXPERIENCIAS</a>
     </nav>
 
     <div class="navbar-actions">
