@@ -7,5 +7,5 @@ import java.util.Optional;
 public interface ProductoraService {
     Optional<Productora> findById(long id);
     List<Productora> findAll();
-    Productora create(String name, String bio, Long imageId, String instagram, String website);
+    Productora create(String name, String bio, String imageUrl, String instagram, String website);
 }

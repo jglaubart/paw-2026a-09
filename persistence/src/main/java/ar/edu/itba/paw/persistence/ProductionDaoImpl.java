@@ -24,11 +24,9 @@ public class ProductionDaoImpl implements ProductionDao {
 
     private static final RowMapper<Production> PRODUCTION_MAPPER = (rs, rowNum) -> {
         final Date startDate = rs.getDate("start_date");
-        final Date endDate = rs.getDate("end_date");
+        final Date endDate   = rs.getDate("end_date");
         final long productoraId = rs.getLong("productora_id");
         final boolean productoraNull = rs.wasNull();
-        final long imageId = rs.getLong("image_id");
-        final boolean imageNull = rs.wasNull();
         return new Production(
                 rs.getLong("id"),
                 rs.getString("name"),
@@ -38,9 +36,8 @@ public class ProductionDaoImpl implements ProductionDao {
                 rs.getString("direction"),
                 rs.getString("theater"),
                 startDate != null ? startDate.toLocalDate() : null,
-                endDate != null ? endDate.toLocalDate() : null,
-                imageNull ? null : imageId,
-                rs.getString("genre"),
+                endDate   != null ? endDate.toLocalDate()   : null,
+                rs.getString("image_url"),
                 rs.getString("instagram"),
                 rs.getString("website")
         );
@@ -87,7 +84,7 @@ public class ProductionDaoImpl implements ProductionDao {
     @Override
     public List<Production> findByObraId(final long obraId) {
         return jdbcTemplate.query(
-                "SELECT * FROM productions WHERE obra_id = ? ORDER BY name",
+                "SELECT * FROM productions WHERE obra_id = ? ORDER BY start_date DESC",
                 new Object[]{ obraId },
                 PRODUCTION_MAPPER
         );
@@ -122,7 +119,9 @@ public class ProductionDaoImpl implements ProductionDao {
     @Override
     public List<Production> findByGenre(final String genre, final int page, final int pageSize) {
         return jdbcTemplate.query(
-                "SELECT * FROM productions WHERE LOWER(genre) = LOWER(?) ORDER BY name LIMIT ? OFFSET ?",
+                "SELECT p.* FROM productions p " +
+                "JOIN obras o ON p.obra_id = o.id " +
+                "WHERE LOWER(o.genre) = LOWER(?) ORDER BY p.name LIMIT ? OFFSET ?",
                 new Object[]{ genre, pageSize, (long) page * pageSize },
                 PRODUCTION_MAPPER
         );
@@ -131,8 +130,8 @@ public class ProductionDaoImpl implements ProductionDao {
     @Override
     public Production create(final String name, final long obraId, final Long productoraId,
                              final String synopsis, final String direction, final String theater,
-                             final LocalDate startDate, final LocalDate endDate, final Long imageId,
-                             final String genre, final String instagram, final String website) {
+                             final LocalDate startDate, final LocalDate endDate, final String imageUrl,
+                             final String instagram, final String website) {
         final Map<String, Object> params = new HashMap<>();
         params.put("name", name);
         params.put("obra_id", obraId);
@@ -141,13 +140,12 @@ public class ProductionDaoImpl implements ProductionDao {
         params.put("direction", direction);
         params.put("theater", theater);
         params.put("start_date", startDate != null ? Date.valueOf(startDate) : null);
-        params.put("end_date", endDate != null ? Date.valueOf(endDate) : null);
-        params.put("image_id", imageId);
-        params.put("genre", genre);
+        params.put("end_date",   endDate   != null ? Date.valueOf(endDate)   : null);
+        params.put("image_url", imageUrl);
         params.put("instagram", instagram);
         params.put("website", website);
         final Number key = jdbcInsert.executeAndReturnKey(params);
         return new Production(key.longValue(), name, obraId, productoraId, synopsis, direction,
-                theater, startDate, endDate, imageId, genre, instagram, website);
+                theater, startDate, endDate, imageUrl, instagram, website);
     }
 }

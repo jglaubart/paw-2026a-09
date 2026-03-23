@@ -21,7 +21,11 @@
       "Bash(brew services:*)",
       "Bash(pg_isready)",
       "Read(//usr/local/**)",
-      "Read(//opt/homebrew/var/**)"
+      "Read(//opt/homebrew/var/**)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_network_requests",
+      "Bash(curl -s \"https://www.alternativateatral.com/get-json.php?t=novedades&r=cartelera\")"
     ]
   }
 }

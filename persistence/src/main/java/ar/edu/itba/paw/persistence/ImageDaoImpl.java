@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Repository
+// images table removed — images are now stored as URLs (image_url VARCHAR in productions/productoras)
 public class ImageDaoImpl implements ImageDao {
 
     private final JdbcTemplate jdbcTemplate;

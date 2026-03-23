@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReviewService {
-    Review create(long userId, long obraId, String body);
-    Optional<Review> findByUserAndObra(long userId, long obraId);
-    List<Review> findByObra(long obraId);
+    Review create(long userId, long productionId, String body);
+    Optional<Review> findByUserAndProduction(long userId, long productionId);
+    List<Review> findByProduction(long productionId);
     List<Review> findByUser(long userId);
 }

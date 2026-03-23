@@ -30,8 +30,8 @@ public class ProductoraServiceImpl implements ProductoraService {
     }
 
     @Override
-    public Productora create(final String name, final String bio, final Long imageId,
+    public Productora create(final String name, final String bio, final String imageUrl,
                              final String instagram, final String website) {
-        return productoraDao.create(name, bio, imageId, instagram, website);
+        return productoraDao.create(name, bio, imageUrl, instagram, website);
     }
 }

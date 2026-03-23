@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReviewDao {
-    Optional<Review> findByUserAndObra(long userId, long obraId);
-    List<Review> findByObra(long obraId);
+    Optional<Review> findByUserAndProduction(long userId, long productionId);
+    List<Review> findByProduction(long productionId);
     List<Review> findByUser(long userId);
-    Review create(long userId, long obraId, String body, long ratingId);
+    Review create(long userId, long productionId, String body, long ratingId);
 }

@@ -15,5 +15,5 @@ public interface ProductionDao {
     List<Production> findByGenre(String genre, int page, int pageSize);
     Production create(String name, long obraId, Long productoraId, String synopsis,
                       String direction, String theater, LocalDate startDate, LocalDate endDate,
-                      Long imageId, String genre, String instagram, String website);
+                      String imageUrl, String instagram, String website);
 }

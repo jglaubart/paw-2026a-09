@@ -18,11 +18,9 @@ public class WatchlistDaoImpl implements WatchlistDao {
 
     private static final RowMapper<Production> PRODUCTION_MAPPER = (rs, rowNum) -> {
         final Date startDate = rs.getDate("start_date");
-        final Date endDate = rs.getDate("end_date");
+        final Date endDate   = rs.getDate("end_date");
         final long productoraId = rs.getLong("productora_id");
         final boolean productoraNull = rs.wasNull();
-        final long imageId = rs.getLong("image_id");
-        final boolean imageNull = rs.wasNull();
         return new Production(
                 rs.getLong("id"),
                 rs.getString("name"),
@@ -32,9 +30,8 @@ public class WatchlistDaoImpl implements WatchlistDao {
                 rs.getString("direction"),
                 rs.getString("theater"),
                 startDate != null ? startDate.toLocalDate() : null,
-                endDate != null ? endDate.toLocalDate() : null,
-                imageNull ? null : imageId,
-                rs.getString("genre"),
+                endDate   != null ? endDate.toLocalDate()   : null,
+                rs.getString("image_url"),
                 rs.getString("instagram"),
                 rs.getString("website")
         );
