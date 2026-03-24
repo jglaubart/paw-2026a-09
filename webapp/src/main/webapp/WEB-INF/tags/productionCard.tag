@@ -11,6 +11,14 @@
 <c:if test="${not empty detailUrl}">
     <c:url var="resolvedDetailUrl" value="${detailUrl}" />
 </c:if>
+<c:choose>
+    <c:when test="${not empty imageUrl}">
+        <c:url var="resolvedImageUrl" value="${imageUrl}" />
+    </c:when>
+    <c:otherwise>
+        <c:url var="resolvedImageUrl" value="/images/placeholder.jpg" />
+    </c:otherwise>
+</c:choose>
 
 <article class="production-card ${not empty resolvedDetailUrl ? 'production-card-clickable' : ''}">
     <c:choose>
@@ -20,13 +28,19 @@
                     <c:choose>
                         <c:when test="${not empty imageUrl}">
                             <img class="production-card-image"
-                                 src="${imageUrl}"
+                                 src="${resolvedImageUrl}"
                                  alt="${fn:escapeXml(title)}" />
                         </c:when>
                         <c:otherwise>
                             <div class="production-card-placeholder" aria-hidden="true"></div>
                         </c:otherwise>
                     </c:choose>
+                    <c:if test="${not empty rating}">
+                        <span class="production-card-rating-pill">
+                            <span class="production-card-rating-pill-star" aria-hidden="true">★</span>
+                            <c:out value="${rating}" />
+                        </span>
+                    </c:if>
                     <c:if test="${not empty badge}">
                         <span class="production-card-badge"><c:out value="${badge}" /></span>
                     </c:if>
@@ -38,13 +52,19 @@
                 <c:choose>
                     <c:when test="${not empty imageUrl}">
                         <img class="production-card-image"
-                             src="${imageUrl}"
+                             src="${resolvedImageUrl}"
                              alt="${fn:escapeXml(title)}" />
                     </c:when>
                     <c:otherwise>
                         <div class="production-card-placeholder" aria-hidden="true"></div>
                     </c:otherwise>
                 </c:choose>
+                <c:if test="${not empty rating}">
+                    <span class="production-card-rating-pill">
+                        <span class="production-card-rating-pill-star" aria-hidden="true">★</span>
+                        <c:out value="${rating}" />
+                    </span>
+                </c:if>
                 <c:if test="${not empty badge}">
                     <span class="production-card-badge"><c:out value="${badge}" /></span>
                 </c:if>
@@ -54,16 +74,10 @@
 
     <div class="production-card-info">
         <h3 class="production-card-title"><c:out value="${title}" /></h3>
-        <c:if test="${not empty venue || not empty rating}">
+        <c:if test="${not empty venue}">
             <div class="production-card-meta">
                 <c:if test="${not empty venue}">
                     <span class="production-card-venue"><c:out value="${venue}" /></span>
-                </c:if>
-                <c:if test="${not empty rating}">
-                    <span class="production-card-rating">
-                        <span class="production-card-rating-star" aria-hidden="true">★</span>
-                        <c:out value="${rating}" />
-                    </span>
                 </c:if>
             </div>
         </c:if>

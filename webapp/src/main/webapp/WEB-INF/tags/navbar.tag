@@ -7,6 +7,7 @@
 <c:url var="carteleraUrl"    value="/cartelera" />
 <c:url var="wishlistUrl"     value="/wishlist" />
 <c:url var="watchlistUrl"    value="/watchlist" />
+<c:url var="searchUrl"       value="/search" />
 <header class="navbar">
     <a class="navbar-logo" href="${homeUrl}">PLATEA</a>
 
@@ -17,7 +18,7 @@
     </nav>
 
     <div class="navbar-actions">
-        <form action="${pageContext.request.contextPath}/search" method="get" class="navbar-search">
+        <form action="${searchUrl}" method="get" class="navbar-search">
             <span class="navbar-search-icon" aria-hidden="true">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2.5"

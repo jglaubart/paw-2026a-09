@@ -54,6 +54,30 @@
     text-transform: uppercase;
 }
 
+.production-card-rating-pill {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28rem;
+    padding: 0.32rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(15, 15, 18, 0.84);
+    color: #fff4d6;
+    border: 1px solid rgba(255, 214, 102, 0.42);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+    font-size: 0.76rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.production-card-rating-pill-star {
+    color: #ffcf5a;
+    font-size: 0.78rem;
+}
+
 .production-card-info {
     display: flex;
     flex-direction: column;
@@ -88,18 +112,4 @@
     text-overflow: ellipsis;
     flex: 1;
     min-width: 0;
-}
-
-.production-card-rating {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.2rem;
-    font-size: 0.78rem;
-    color: rgba(255, 255, 255, 0.75);
-    flex-shrink: 0;
-}
-
-.production-card-rating-star {
-    color: #f5a623;
-    font-size: 0.72rem;
 }

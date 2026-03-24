@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.interfaces.services.ProductionService;
 import ar.edu.itba.paw.models.Production;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,13 @@ public class HomeController {
     private static final int PAGE_SIZE = 8;
 
     private final ProductionService productionService;
+    private final RatingService ratingService;
 
     @Autowired
-    public HomeController(final ProductionService productionService) {
+    public HomeController(final ProductionService productionService,
+                          final RatingService ratingService) {
         this.productionService = productionService;
+        this.ratingService = ratingService;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -29,7 +33,18 @@ public class HomeController {
         final List<Production> all = productionService.findAll(0, PAGE_SIZE);
         mav.addObject("availableProductions", available);
         mav.addObject("allProductions", all);
+        mav.addObject("productionRatings", ratingService.getProductionRatingLabels(collectProductionIds(available, all)));
         mav.addObject("featuredProduction", available.isEmpty() ? null : available.get(0));
         return mav;
+    }
+
+    private List<Long> collectProductionIds(final List<Production>... groups) {
+        final java.util.ArrayList<Long> productionIds = new java.util.ArrayList<>();
+        for (final List<Production> productions : groups) {
+            for (final Production production : productions) {
+                productionIds.add(production.getId());
+            }
+        }
+        return productionIds;
     }
 }

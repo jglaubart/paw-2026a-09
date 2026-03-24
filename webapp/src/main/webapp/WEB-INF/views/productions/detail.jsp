@@ -16,12 +16,27 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/button.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/hero.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/play-detail.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/production-detail-page.css" />
 </head>
 <body>
 
     <paw:navbar />
 
     <c:set var="imgUrl" value="${not empty production.imageUrl ? production.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}" />
+    <c:if test="${obra != null}">
+        <c:url var="obraUrl" value="/obras/${obra.id}" />
+    </c:if>
+    <c:if test="${productora != null}">
+        <c:url var="productoraUrl" value="/productoras/${productora.id}" />
+    </c:if>
+    <c:url var="watchlistActionUrl" value="/productions/${production.id}/watchlist" />
+    <c:url var="rateActionUrl" value="/productions/${production.id}/rate" />
+    <c:if test="${production.website != null}">
+        <c:url var="productionWebsiteUrl" value="${production.website}" />
+    </c:if>
+    <c:if test="${production.instagram != null}">
+        <c:url var="productionInstagramUrl" value="${production.instagram}" />
+    </c:if>
 
     <paw:hero
         title="${fn:escapeXml(production.name)}"
@@ -30,7 +45,7 @@
         badge="PRODUCCIÓN"
     />
 
-    <main>
+    <main class="production-detail-page">
         <section class="play-detail">
             <div class="play-detail-body">
                 <div class="play-detail-info">
@@ -38,13 +53,13 @@
 
                     <c:if test="${obra != null}">
                         <p class="play-detail-meta">
-                            Obra: <a href="${pageContext.request.contextPath}/obras/${obra.id}" style="color: #7c3aed;"><c:out value="${obra.title}" /></a>
+                            Obra: <a href="${obraUrl}" class="production-detail-link"><c:out value="${obra.title}" /></a>
                         </p>
                     </c:if>
 
                     <c:if test="${productora != null}">
                         <p class="play-detail-meta">
-                            Productora: <a href="${pageContext.request.contextPath}/productoras/${productora.id}" style="color: #7c3aed;"><c:out value="${productora.name}" /></a>
+                            Productora: <a href="${productoraUrl}" class="production-detail-link"><c:out value="${productora.name}" /></a>
                         </p>
                     </c:if>
 
@@ -78,56 +93,51 @@
 
                     <%-- Rating promedio --%>
                     <c:if test="${avgRating != null}">
-                        <div class="play-detail-rating">
-                            <span style="color: #f5a623; font-size: 1.5rem;">★</span>
-                            <span style="font-size: 1.3rem; font-weight: bold;"><c:out value="${String.format('%.1f', avgRating)}" />/10</span>
+                        <div class="play-detail-rating production-detail-rating">
+                            <span class="production-detail-rating-star">★</span>
+                            <span class="production-detail-rating-value"><c:out value="${String.format('%.1f', avgRating)}" />/10</span>
                         </div>
                     </c:if>
 
-                    <%-- Links externos --%>
-                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <div class="production-detail-links">
                         <c:if test="${production.website != null}">
-                            <a href="${fn:escapeXml(production.website)}" target="_blank" class="btn btn-md" style="background: #7c3aed; color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px;">Comprar Entradas</a>
+                            <a href="${productionWebsiteUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-md">Comprar Entradas</a>
                         </c:if>
                         <c:if test="${production.instagram != null}">
-                            <a href="${fn:escapeXml(production.instagram)}" target="_blank" style="color: #7c3aed;">Instagram</a>
+                            <a href="${productionInstagramUrl}" target="_blank" rel="noopener noreferrer" class="production-detail-external-link">Instagram</a>
                         </c:if>
                     </div>
                 </div>
 
-                <%-- Sidebar: Watchlist + Rating --%>
-                <div class="play-detail-sidebar" style="display: flex; flex-direction: column; gap: 1.5rem;">
-
-                    <%-- Watchlist --%>
-                    <div style="background: rgba(255,255,255,0.06); border-radius: 8px; padding: 1.5rem;">
-                        <h3 style="margin-bottom: 0.5rem;">Watchlist</h3>
-                        <form action="${pageContext.request.contextPath}/productions/${production.id}/watchlist" method="post">
+                <div class="play-detail-sidebar production-detail-sidebar">
+                    <div class="production-detail-panel">
+                        <h3 class="production-detail-panel-title">Watchlist</h3>
+                        <form action="${watchlistActionUrl}" method="post">
                             <c:choose>
                                 <c:when test="${inWatchlist}">
                                     <input type="hidden" name="action" value="remove" />
-                                    <button type="submit" class="btn btn-md" style="background: #e50914; color: white; border: none; cursor: pointer; width: 100%; padding: 0.5rem;">Quitar de Watchlist</button>
+                                    <button type="submit" class="btn btn-danger btn-md production-detail-watchlist-btn">Quitar de Watchlist</button>
                                 </c:when>
                                 <c:otherwise>
                                     <input type="hidden" name="action" value="add" />
-                                    <button type="submit" class="btn btn-md" style="background: #7c3aed; color: white; border: none; cursor: pointer; width: 100%; padding: 0.5rem;">Agregar a Watchlist</button>
+                                    <button type="submit" class="btn btn-primary btn-md production-detail-watchlist-btn">Agregar a Watchlist</button>
                                 </c:otherwise>
                             </c:choose>
                         </form>
                     </div>
 
-                    <%-- Calificar producción --%>
-                    <div style="background: rgba(255,255,255,0.06); border-radius: 8px; padding: 1.5rem;">
-                        <h3 style="margin-bottom: 0.5rem;">Calificar Producción</h3>
+                    <div class="production-detail-panel">
+                        <h3 class="production-detail-panel-title">Calificar Producción</h3>
                         <c:if test="${userScore != null}">
-                            <p style="color: #f5a623;">Tu puntaje: <c:out value="${userScore}" />/10</p>
+                            <p class="production-detail-score">Tu puntaje: <c:out value="${userScore}" />/10</p>
                         </c:if>
-                        <form action="${pageContext.request.contextPath}/productions/${production.id}/rate" method="post" style="display: flex; gap: 0.5rem; align-items: center;">
-                            <select name="score" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 0.4rem;">
+                        <form action="${rateActionUrl}" method="post" class="production-detail-rate-form">
+                            <select name="score" class="production-detail-score-select">
                                 <c:forEach var="i" begin="1" end="10">
                                     <option value="${i}" ${userScore != null && userScore == i ? 'selected' : ''}><c:out value="${i}" /></option>
                                 </c:forEach>
                             </select>
-                            <button type="submit" class="btn btn-md" style="background: #7c3aed; color: white; border: none; cursor: pointer; padding: 0.4rem 1rem;">Calificar</button>
+                            <button type="submit" class="btn btn-primary btn-md production-detail-rate-btn">Calificar</button>
                         </form>
                     </div>
                 </div>

@@ -65,6 +65,18 @@
     opacity: 1;
 }
 
+.btn-danger {
+    background: #e50914;
+    color: #fff;
+    border-color: #e50914;
+}
+
+.btn-danger:hover {
+    background: #c40812;
+    border-color: #c40812;
+    opacity: 1;
+}
+
 .btn-outline {
     background: transparent;
     color: #fff;

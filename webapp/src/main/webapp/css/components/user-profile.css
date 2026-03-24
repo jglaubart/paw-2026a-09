@@ -1,0 +1,68 @@
+.user-profile-page {
+    padding: 2rem 0 3rem;
+}
+
+.user-profile-header,
+.user-profile-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.user-profile-header {
+    margin-bottom: 1.5rem;
+}
+
+.user-profile-title {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.user-profile-subtitle {
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 0.35rem;
+}
+
+.user-profile-section {
+    margin-top: 2rem;
+}
+
+.user-profile-empty-text,
+.user-profile-review-meta,
+.user-profile-no-reviews {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.user-profile-review-card {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.user-profile-review-meta {
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+
+.user-profile-review-link {
+    color: #7c3aed;
+    text-decoration: none;
+}
+
+.user-profile-review-link:hover {
+    text-decoration: underline;
+}
+
+.user-profile-review-body {
+    margin: 0;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .user-profile-header,
+    .user-profile-section {
+        padding: 0 1rem;
+    }
+}

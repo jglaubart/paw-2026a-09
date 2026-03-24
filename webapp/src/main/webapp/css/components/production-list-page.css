@@ -1,0 +1,15 @@
+.production-list-empty {
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.production-list-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+}
+
+.production-list-pagination-link {
+    text-decoration: none;
+}

@@ -10,6 +10,7 @@ public interface ProductionService {
     List<Production> findAll(int page, int pageSize);
     List<Production> findAvailable(int page, int pageSize);
     List<Production> findByObraId(long obraId);
+    Optional<Production> findSelectedByObraId(long obraId, Long preferredProductionId);
     List<Production> findByProductoraId(long productoraId);
     List<Production> search(String query, int page, int pageSize);
     List<Production> findByGenre(String genre, int page, int pageSize);

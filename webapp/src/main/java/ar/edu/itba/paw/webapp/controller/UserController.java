@@ -37,7 +37,16 @@ public class UserController {
         final List<Production> watchlist = watchlistService.findByUser(HARDCODED_USER_ID);
         final List<Review> reviews = reviewService.findByUser(HARDCODED_USER_ID);
         mav.addObject("watchlist", watchlist);
+        mav.addObject("productionRatings", ratingService.getProductionRatingLabels(collectProductionIds(watchlist)));
         mav.addObject("reviews", reviews);
         return mav;
+    }
+
+    private List<Long> collectProductionIds(final List<Production> productions) {
+        final List<Long> productionIds = new java.util.ArrayList<>();
+        for (final Production production : productions) {
+            productionIds.add(production.getId());
+        }
+        return productionIds;
     }
 }

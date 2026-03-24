@@ -22,6 +22,8 @@
 
     <paw:navbar />
 
+    <c:url var="carteleraUrl" value="/cartelera" />
+
     <main class="user-list-page">
 
         <header class="user-list-header">
@@ -40,6 +42,7 @@
                             title="${fn:escapeXml(p.name)}"
                             imageUrl="${not empty p.imageUrl ? p.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
                             venue="${fn:escapeXml(p.theater)}"
+                            rating="${productionRatings[p.id]}"
                             detailUrl="${detailUrl}"
                         />
                     </c:forEach>
@@ -50,7 +53,7 @@
                     <span class="user-list-empty-icon" aria-hidden="true">♡</span>
                     <p class="user-list-empty-text">Tu wishlist está vacía.</p>
                     <p class="user-list-empty-hint">Explorá la cartelera y agregá producciones que te interesen.</p>
-                    <a href="${pageContext.request.contextPath}/cartelera" class="btn btn-primary btn-md">
+                    <a href="${carteleraUrl}" class="btn btn-primary btn-md">
                         Ver cartelera
                     </a>
                 </div>

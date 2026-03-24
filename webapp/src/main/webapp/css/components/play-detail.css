@@ -13,9 +13,16 @@
     height: 70vh;
     min-height: 480px;
     background-color: #0d0b10;
-    background-size: cover;
-    background-position: right center;
     overflow: hidden;
+}
+
+.obra-hero-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: right center;
 }
 
 /* Strong left-to-right gradient so title sits on dark, image shows on right */

@@ -15,29 +15,40 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/search.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/button.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/production-card.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/productora-detail.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/section-row.css" />
 </head>
 <body>
 
     <paw:navbar />
 
-    <main>
-        <section style="padding: 2rem; max-width: 900px; margin: 0 auto;">
-            <div style="display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;">
+    <c:if test="${not empty productora.imageUrl}">
+        <c:url var="productoraImageUrl" value="${productora.imageUrl}" />
+    </c:if>
+    <c:if test="${not empty productora.instagram}">
+        <c:url var="productoraInstagramUrl" value="${productora.instagram}" />
+    </c:if>
+    <c:if test="${not empty productora.website}">
+        <c:url var="productoraWebsiteUrl" value="${productora.website}" />
+    </c:if>
+
+    <main class="productora-detail-page">
+        <section class="productora-detail-hero">
+            <div class="productora-detail-layout">
                 <c:if test="${not empty productora.imageUrl}">
-                    <img src="${fn:escapeXml(productora.imageUrl)}" alt="${fn:escapeXml(productora.name)}" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;" />
+                    <img src="${productoraImageUrl}" alt="${fn:escapeXml(productora.name)}" class="productora-detail-image" />
                 </c:if>
                 <div>
-                    <h1><c:out value="${productora.name}" /></h1>
+                    <h1 class="productora-detail-name"><c:out value="${productora.name}" /></h1>
                     <c:if test="${productora.bio != null}">
-                        <p style="color: rgba(255,255,255,0.8); margin-top: 0.5rem;"><c:out value="${productora.bio}" /></p>
+                        <p class="productora-detail-bio"><c:out value="${productora.bio}" /></p>
                     </c:if>
-                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <div class="productora-detail-links">
                         <c:if test="${productora.instagram != null}">
-                            <a href="${fn:escapeXml(productora.instagram)}" target="_blank" style="color: #7c3aed;">Instagram</a>
+                            <a href="${productoraInstagramUrl}" target="_blank" rel="noopener noreferrer" class="productora-detail-link">Instagram</a>
                         </c:if>
                         <c:if test="${productora.website != null}">
-                            <a href="${fn:escapeXml(productora.website)}" target="_blank" style="color: #7c3aed;">Sitio Web</a>
+                            <a href="${productoraWebsiteUrl}" target="_blank" rel="noopener noreferrer" class="productora-detail-link">Sitio Web</a>
                         </c:if>
                     </div>
                 </div>
@@ -52,6 +63,7 @@
                         title="${fn:escapeXml(p.name)}"
                         imageUrl="${not empty p.imageUrl ? p.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
                         venue="${fn:escapeXml(p.theater)}"
+                        rating="${productionRatings[p.id]}"
                         detailUrl="${detailUrl}"
                     />
                 </c:forEach>

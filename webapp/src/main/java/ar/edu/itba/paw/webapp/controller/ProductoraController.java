@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.ProductionService;
 import ar.edu.itba.paw.interfaces.services.ProductoraService;
+import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.Productora;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +20,15 @@ public class ProductoraController {
 
     private final ProductoraService productoraService;
     private final ProductionService productionService;
+    private final RatingService ratingService;
 
     @Autowired
     public ProductoraController(final ProductoraService productoraService,
-                                final ProductionService productionService) {
+                                final ProductionService productionService,
+                                final RatingService ratingService) {
         this.productoraService = productoraService;
         this.productionService = productionService;
+        this.ratingService = ratingService;
     }
 
     @RequestMapping(value = "/productoras/{id:\\d+}", method = RequestMethod.GET)
@@ -38,6 +42,15 @@ public class ProductoraController {
         final ModelAndView mav = new ModelAndView("productoras/detail");
         mav.addObject("productora", productora);
         mav.addObject("productions", productions);
+        mav.addObject("productionRatings", ratingService.getProductionRatingLabels(collectProductionIds(productions)));
         return mav;
+    }
+
+    private List<Long> collectProductionIds(final List<Production> productions) {
+        final List<Long> productionIds = new java.util.ArrayList<>();
+        for (final Production production : productions) {
+            productionIds.add(production.getId());
+        }
+        return productionIds;
     }
 }

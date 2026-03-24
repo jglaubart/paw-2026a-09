@@ -1,13 +1,8 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.interfaces.services.ObraService;
 import ar.edu.itba.paw.interfaces.services.ProductionService;
-import ar.edu.itba.paw.interfaces.services.ProductoraService;
 import ar.edu.itba.paw.interfaces.services.RatingService;
-import ar.edu.itba.paw.interfaces.services.WatchlistService;
-import ar.edu.itba.paw.models.Obra;
 import ar.edu.itba.paw.models.Production;
-import ar.edu.itba.paw.models.Productora;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,22 +21,13 @@ public class ProductionController {
     private static final int PAGE_SIZE = 8;
 
     private final ProductionService productionService;
-    private final ObraService obraService;
-    private final ProductoraService productoraService;
     private final RatingService ratingService;
-    private final WatchlistService watchlistService;
 
     @Autowired
     public ProductionController(final ProductionService productionService,
-                                final ObraService obraService,
-                                final ProductoraService productoraService,
-                                final RatingService ratingService,
-                                final WatchlistService watchlistService) {
+                                final RatingService ratingService) {
         this.productionService = productionService;
-        this.obraService = obraService;
-        this.productoraService = productoraService;
         this.ratingService = ratingService;
-        this.watchlistService = watchlistService;
     }
 
     @RequestMapping(value = "/productions/{id:\\d+}", method = RequestMethod.GET)
@@ -76,9 +62,18 @@ public class ProductionController {
             productions = productionService.findAll(page, PAGE_SIZE);
         }
         mav.addObject("productions", productions);
+        mav.addObject("productionRatings", ratingService.getProductionRatingLabels(collectProductionIds(productions)));
         mav.addObject("page", page);
         mav.addObject("available", available);
         mav.addObject("genre", genre);
         return mav;
+    }
+
+    private List<Long> collectProductionIds(final List<Production> productions) {
+        final List<Long> productionIds = new java.util.ArrayList<>();
+        for (final Production production : productions) {
+            productionIds.add(production.getId());
+        }
+        return productionIds;
     }
 }

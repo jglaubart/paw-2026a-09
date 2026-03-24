@@ -20,6 +20,8 @@
 
     <paw:navbar />
 
+    <c:url var="carteleraUrl" value="/cartelera" />
+
     <main class="user-list-page">
 
         <header class="user-list-header">
@@ -49,7 +51,7 @@
                     <span class="user-list-empty-icon" aria-hidden="true">✓</span>
                     <p class="user-list-empty-text">Todavía no marcaste ninguna obra como vista.</p>
                     <p class="user-list-empty-hint">Cuando veas una obra, marcala desde su página.</p>
-                    <a href="${pageContext.request.contextPath}/cartelera" class="btn btn-primary btn-md">
+                    <a href="${carteleraUrl}" class="btn btn-primary btn-md">
                         Ver cartelera
                     </a>
                 </div>

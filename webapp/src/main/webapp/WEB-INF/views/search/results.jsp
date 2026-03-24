@@ -15,20 +15,46 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/search.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/button.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/production-card.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/search-results-page.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/section-row.css" />
 </head>
 <body>
 
     <paw:navbar />
 
-    <main>
-        <%-- Search form --%>
-        <section style="padding: 2rem; max-width: 900px; margin: 0 auto;">
-            <h1>Buscar Producciones</h1>
-            <form action="${pageContext.request.contextPath}/search" method="get" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem;">
+    <c:url var="searchUrl" value="/search" />
+    <c:url var="previousPageUrl" value="/search">
+        <c:if test="${not empty query}">
+            <c:param name="q" value="${query}" />
+        </c:if>
+        <c:if test="${not empty genre}">
+            <c:param name="genre" value="${genre}" />
+        </c:if>
+        <c:if test="${available}">
+            <c:param name="available" value="true" />
+        </c:if>
+        <c:param name="page" value="${page - 1}" />
+    </c:url>
+    <c:url var="nextPageUrl" value="/search">
+        <c:if test="${not empty query}">
+            <c:param name="q" value="${query}" />
+        </c:if>
+        <c:if test="${not empty genre}">
+            <c:param name="genre" value="${genre}" />
+        </c:if>
+        <c:if test="${available}">
+            <c:param name="available" value="true" />
+        </c:if>
+        <c:param name="page" value="${page + 1}" />
+    </c:url>
+
+    <main class="search-results-page">
+        <section class="search-results-filters">
+            <h1 class="search-results-title">Buscar Producciones</h1>
+            <form action="${searchUrl}" method="get" class="search-results-form">
                 <input type="text" name="q" value="${fn:escapeXml(query)}" placeholder="Buscar por nombre, obra, productora, teatro..."
-                       style="flex: 1; min-width: 200px; background: rgba(255,255,255,0.08); color: white; border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; padding: 0.6rem;" />
-                <select name="genre" style="background: rgba(255,255,255,0.08); color: white; border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; padding: 0.6rem;">
+                       class="search-results-input" />
+                <select name="genre" class="search-results-select">
                     <option value="">Todos los géneros</option>
                     <option value="Drama" ${genre == 'Drama' ? 'selected' : ''}>Drama</option>
                     <option value="Comedia" ${genre == 'Comedia' ? 'selected' : ''}>Comedia</option>
@@ -36,15 +62,14 @@
                     <option value="Tragedia" ${genre == 'Tragedia' ? 'selected' : ''}>Tragedia</option>
                     <option value="Infantil" ${genre == 'Infantil' ? 'selected' : ''}>Infantil</option>
                 </select>
-                <label style="display: flex; align-items: center; gap: 0.3rem; color: rgba(255,255,255,0.7);">
+                <label class="search-results-toggle">
                     <input type="checkbox" name="available" value="true" ${available ? 'checked' : ''} />
                     Solo disponibles
                 </label>
-                <button type="submit" class="btn btn-md" style="background: #7c3aed; color: white; border: none; cursor: pointer; padding: 0.6rem 1.2rem; border-radius: 4px;">Buscar</button>
+                <button type="submit" class="btn btn-primary btn-md search-results-submit">Buscar</button>
             </form>
         </section>
 
-        <%-- Results --%>
         <c:choose>
             <c:when test="${not empty results}">
                 <paw:sectionRow title="Resultados" subtitle="${fn:length(results)} producciones encontradas">
@@ -56,26 +81,26 @@
                             title="${fn:escapeXml(p.name)}"
                             imageUrl="${not empty p.imageUrl ? p.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
                             venue="${fn:escapeXml(p.theater)}"
+                            rating="${productionRatings[p.id]}"
                             detailUrl="${detailUrl}"
                         />
                     </c:forEach>
                 </paw:sectionRow>
             </c:when>
             <c:otherwise>
-                <section style="padding: 4rem 2rem; text-align: center;">
+                <section class="search-results-empty">
                     <h2>No se encontraron resultados</h2>
-                    <p style="color: rgba(255,255,255,0.5);">Intentá con otra búsqueda o cambiá los filtros.</p>
+                    <p class="search-results-empty-text">Intentá con otra búsqueda o cambiá los filtros.</p>
                 </section>
             </c:otherwise>
         </c:choose>
 
-        <%-- Paginación --%>
-        <div style="display: flex; justify-content: center; gap: 1rem; padding: 2rem;">
+        <div class="search-results-pagination">
             <c:if test="${page > 0}">
-                <a href="${pageContext.request.contextPath}/search?q=${fn:escapeXml(query)}&genre=${fn:escapeXml(genre)}&available=${available}&page=${page - 1}" class="btn btn-md" style="background: #7c3aed; color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px;">← Anterior</a>
+                <a href="${previousPageUrl}" class="btn btn-primary btn-md search-results-link">← Anterior</a>
             </c:if>
             <c:if test="${fn:length(results) == 12}">
-                <a href="${pageContext.request.contextPath}/search?q=${fn:escapeXml(query)}&genre=${fn:escapeXml(genre)}&available=${available}&page=${page + 1}" class="btn btn-md" style="background: #7c3aed; color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px;">Siguiente →</a>
+                <a href="${nextPageUrl}" class="btn btn-primary btn-md search-results-link">Siguiente →</a>
             </c:if>
         </div>
     </main>

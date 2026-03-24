@@ -2,6 +2,8 @@ package ar.edu.itba.paw.interfaces.services;
 
 import ar.edu.itba.paw.models.PlayRating;
 import ar.edu.itba.paw.models.ProductionRating;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 
 public interface RatingService {
@@ -11,4 +13,5 @@ public interface RatingService {
     Optional<ProductionRating> getProductionRating(long userId, long productionId);
     Optional<Double> getObraAverageRating(long obraId);
     Optional<Double> getProductionAverageRating(long productionId);
+    Map<Long, String> getProductionRatingLabels(Collection<Long> productionIds);
 }

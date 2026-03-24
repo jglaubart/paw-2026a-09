@@ -10,6 +10,9 @@
 <%@ taglib prefix="paw" tagdir="/WEB-INF/tags" %>
 
 <c:set var="heroBadge" value="${not empty badge ? badge : 'DESTACADO'}" />
+<c:if test="${not empty imageUrl}">
+    <c:url var="resolvedImageUrl" value="${imageUrl}" />
+</c:if>
 <c:if test="${not empty ticketUrl}">
     <c:url var="resolvedTicketUrl" value="${ticketUrl}" />
 </c:if>
@@ -17,7 +20,7 @@
 <section class="hero">
     <c:if test="${not empty imageUrl}">
         <img class="hero-bg-image"
-             src="${imageUrl}"
+             src="${resolvedImageUrl}"
              alt=""
              aria-hidden="true" />
     </c:if>

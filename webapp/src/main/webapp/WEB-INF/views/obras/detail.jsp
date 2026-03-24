@@ -23,15 +23,22 @@
 
 <paw:navbar />
 
+<c:if test="${selectedProduction != null && not empty selectedProduction.imageUrl}">
+    <c:url var="heroImageUrl" value="${selectedProduction.imageUrl}" />
+</c:if>
+<c:if test="${selectedProduction != null && not empty selectedProduction.website}">
+    <c:url var="selectedProductionWebsiteUrl" value="${selectedProduction.website}" />
+</c:if>
+<c:url var="carteleraUrl" value="/cartelera" />
+<c:url var="wishlistUrl" value="/wishlist" />
+<c:url var="watchlistUrl" value="/watchlist" />
+
 <main class="obra-detail-page">
 
-    <%-- ═══════════════ HERO ═══════════════ --%>
-    <c:set var="heroStyle" value="" />
-    <c:if test="${selectedProduction != null && not empty selectedProduction.imageUrl}">
-        <c:set var="heroStyle" value="background-image: url('${fn:escapeXml(selectedProduction.imageUrl)}');" />
-    </c:if>
-
-    <section class="obra-hero" style="${heroStyle}">
+    <section class="obra-hero">
+        <c:if test="${not empty heroImageUrl}">
+            <img class="obra-hero-image" src="${heroImageUrl}" alt="" aria-hidden="true" />
+        </c:if>
         <div class="obra-hero-overlay">
             <div class="obra-hero-top">
                 <c:if test="${not empty obra.genre}">
@@ -99,7 +106,8 @@
     <div class="obra-action-bar">
         <%-- Wishlist button (per production) --%>
         <c:if test="${selectedProduction != null}">
-            <form action="${pageContext.request.contextPath}/productions/${selectedProduction.id}/wishlist"
+            <c:url var="wishlistActionUrl" value="/productions/${selectedProduction.id}/wishlist" />
+            <form action="${wishlistActionUrl}"
                   method="post" class="obra-action-form">
                 <input type="hidden" name="obraId"      value="${obra.id}" />
                 <input type="hidden" name="action"      value="${isInWishlist ? 'remove' : 'add'}" />
@@ -111,7 +119,8 @@
         </c:if>
 
         <%-- Seen button (per obra) --%>
-        <form action="${pageContext.request.contextPath}/obras/${obra.id}/seen"
+        <c:url var="seenActionUrl" value="/obras/${obra.id}/seen" />
+        <form action="${seenActionUrl}"
               method="post" class="obra-action-form">
             <c:if test="${selectedProduction != null}">
                 <input type="hidden" name="produccionId" value="${selectedProduction.id}" />
@@ -165,7 +174,7 @@
                 <div class="obra-section-head">
                     <h2 class="obra-heading">Sinopsis</h2>
                     <c:if test="${selectedProduction != null && not empty selectedProduction.website}">
-                        <a href="${fn:escapeXml(selectedProduction.website)}"
+                        <a href="${selectedProductionWebsiteUrl}"
                            class="btn btn-primary btn-md"
                            target="_blank" rel="noopener noreferrer">
                             Comprar Entradas (Sitio Externo) ↗
@@ -262,7 +271,7 @@
                                     <div>
                                         <strong class="obra-info-label">Retiro de entradas</strong>
                                         <p class="obra-info-value">
-                                            <a href="${fn:escapeXml(selectedProduction.website)}"
+                                            <a href="${selectedProductionWebsiteUrl}"
                                                target="_blank" rel="noopener noreferrer"
                                                class="obra-info-link">
                                                 Sitio oficial ↗
@@ -312,7 +321,8 @@
                         <c:if test="${userScore != null}">
                             <p class="obra-user-score">Tu puntaje: <strong><c:out value="${userScore}" />/10</strong></p>
                         </c:if>
-                        <form action="${pageContext.request.contextPath}/productions/${selectedProduction.id}/rate"
+                        <c:url var="rateActionUrl" value="/productions/${selectedProduction.id}/rate" />
+                        <form action="${rateActionUrl}"
                               method="post" class="obra-rate-form-inner">
                             <input type="hidden" name="obraId" value="${obra.id}" />
                             <select name="score" class="obra-score-select">
@@ -338,8 +348,9 @@
                                 </blockquote>
                             </c:when>
                             <c:otherwise>
-                                <form action="${pageContext.request.contextPath}/productions/${selectedProduction.id}/review"
-                                      method="post">
+                                <c:url var="reviewActionUrl" value="/productions/${selectedProduction.id}/review" />
+                                <form action="${reviewActionUrl}"
+                                       method="post">
                                     <input type="hidden" name="obraId" value="${obra.id}" />
                                     <textarea name="body" rows="3" class="obra-review-textarea"
                                               placeholder="Escribí tu reseña..."></textarea>
@@ -357,13 +368,13 @@
         <aside class="obra-sidebar-col">
             <div class="obra-sidebar-card">
                 <h3 class="obra-sidebar-title">EXPLORÁ MÁS</h3>
-                <a href="${pageContext.request.contextPath}/cartelera" class="btn btn-outline btn-md obra-sidebar-cta">
+                <a href="${carteleraUrl}" class="btn btn-outline btn-md obra-sidebar-cta">
                     VER TODA LA CARTELERA
                 </a>
-                <a href="${pageContext.request.contextPath}/wishlist" class="btn btn-outline btn-md obra-sidebar-cta">
+                <a href="${wishlistUrl}" class="btn btn-outline btn-md obra-sidebar-cta">
                     MI WISHLIST
                 </a>
-                <a href="${pageContext.request.contextPath}/watchlist" class="btn btn-outline btn-md obra-sidebar-cta">
+                <a href="${watchlistUrl}" class="btn btn-outline btn-md obra-sidebar-cta">
                     YA LAS VI
                 </a>
             </div>

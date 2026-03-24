@@ -16,15 +16,18 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/button.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/production-card.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/section-row.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/user-profile.css" />
 </head>
 <body>
 
     <paw:navbar />
 
-    <main>
-        <section style="padding: 2rem; max-width: 900px; margin: 0 auto;">
-            <h1>Mi Perfil</h1>
-            <p style="color: rgba(255,255,255,0.6);">Usuario de demostración (hardcoded)</p>
+    <c:url var="carteleraUrl" value="/cartelera" />
+
+    <main class="user-profile-page">
+        <section class="user-profile-header">
+            <h1 class="user-profile-title">Mi Perfil</h1>
+            <p class="user-profile-subtitle">Usuario de demostración (hardcoded)</p>
         </section>
 
         <%-- Watchlist --%>
@@ -39,35 +42,37 @@
                             title="${fn:escapeXml(p.name)}"
                             imageUrl="${not empty p.imageUrl ? p.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
                             venue="${fn:escapeXml(p.theater)}"
+                            rating="${productionRatings[p.id]}"
                             detailUrl="${detailUrl}"
                         />
                     </c:forEach>
                 </paw:sectionRow>
             </c:when>
             <c:otherwise>
-                <section style="padding: 2rem; max-width: 900px; margin: 0 auto;">
+                <section class="user-profile-section">
                     <h2>Mi Watchlist</h2>
-                    <p style="color: rgba(255,255,255,0.5);">Tu watchlist está vacía. Explorá producciones y agregalas.</p>
+                    <p class="user-profile-empty-text">Tu watchlist está vacía. Explorá producciones y agregalas.</p>
+                    <a href="${carteleraUrl}" class="btn btn-primary btn-md">Ver cartelera</a>
                 </section>
             </c:otherwise>
         </c:choose>
 
-        <%-- Reseñas --%>
-        <section style="padding: 2rem; max-width: 900px; margin: 0 auto;">
+        <section class="user-profile-section">
             <h2>Mis Reseñas</h2>
             <c:choose>
                 <c:when test="${not empty reviews}">
                     <c:forEach var="r" items="${reviews}">
-                        <div style="background: rgba(255,255,255,0.04); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.08);">
-                            <p style="color: rgba(255,255,255,0.5); font-size: 0.85rem; margin-bottom: 0.5rem;">
-                                <a href="${pageContext.request.contextPath}/obras/${r.obraId}" style="color: #7c3aed;">Obra #<c:out value="${r.obraId}" /></a>
+                        <c:url var="reviewObraUrl" value="/obras/${r.obraId}" />
+                        <div class="user-profile-review-card">
+                            <p class="user-profile-review-meta">
+                                <a href="${reviewObraUrl}" class="user-profile-review-link">Obra #<c:out value="${r.obraId}" /></a>
                             </p>
-                            <p><c:out value="${r.body}" /></p>
+                            <p class="user-profile-review-body"><c:out value="${r.body}" /></p>
                         </div>
                     </c:forEach>
                 </c:when>
                 <c:otherwise>
-                    <p style="color: rgba(255,255,255,0.5);">No escribiste reseñas todavía.</p>
+                    <p class="user-profile-no-reviews">No escribiste reseñas todavía.</p>
                 </c:otherwise>
             </c:choose>
         </section>

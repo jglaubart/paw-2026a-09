@@ -41,6 +41,22 @@ public class ProductionServiceImpl implements ProductionService {
     }
 
     @Override
+    public Optional<Production> findSelectedByObraId(final long obraId, final Long preferredProductionId) {
+        final List<Production> productions = productionDao.findByObraId(obraId);
+        if (productions.isEmpty()) {
+            return Optional.empty();
+        }
+        if (preferredProductionId != null) {
+            for (final Production production : productions) {
+                if (production.getId() == preferredProductionId) {
+                    return Optional.of(production);
+                }
+            }
+        }
+        return Optional.of(productions.get(0));
+    }
+
+    @Override
     public List<Production> findByProductoraId(final long productoraId) {
         return productionDao.findByProductoraId(productoraId);
     }

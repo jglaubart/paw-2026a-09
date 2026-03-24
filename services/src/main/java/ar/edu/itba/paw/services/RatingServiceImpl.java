@@ -8,6 +8,10 @@ import ar.edu.itba.paw.models.ProductionRating;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -55,5 +59,20 @@ public class RatingServiceImpl implements RatingService {
     @Override
     public Optional<Double> getProductionAverageRating(final long productionId) {
         return productionRatingDao.findAverageByProduction(productionId);
+    }
+
+    @Override
+    public Map<Long, String> getProductionRatingLabels(final Collection<Long> productionIds) {
+        final Map<Long, String> labels = new HashMap<>();
+        for (final Long productionId : productionIds) {
+            if (productionId == null || labels.containsKey(productionId)) {
+                continue;
+            }
+            final String ratingLabel = productionRatingDao.findAverageByProduction(productionId)
+                    .map(avg -> String.format(Locale.US, "%.1f", avg))
+                    .orElse("N/A");
+            labels.put(productionId, ratingLabel);
+        }
+        return labels;
     }
 }

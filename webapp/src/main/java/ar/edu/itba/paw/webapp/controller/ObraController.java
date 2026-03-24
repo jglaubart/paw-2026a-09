@@ -62,15 +62,7 @@ public class ObraController {
         final List<Production> productions = productionService.findByObraId(id);
         mav.addObject("productions", productions);
 
-        Production selectedProduction = productions.isEmpty() ? null : productions.get(0);
-        if (produccionId != null) {
-            for (final Production p : productions) {
-                if (p.getId() == produccionId) {
-                    selectedProduction = p;
-                    break;
-                }
-            }
-        }
+        final Production selectedProduction = productionService.findSelectedByObraId(id, produccionId).orElse(null);
         mav.addObject("selectedProduction", selectedProduction);
 
         if (selectedProduction != null) {

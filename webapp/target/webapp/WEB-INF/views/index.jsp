@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/search.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/button.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/hero.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/home-page.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/production-card.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/section-row.css" />
 </head>
@@ -53,6 +54,7 @@
                         title="${fn:escapeXml(p.name)}"
                         imageUrl="${not empty p.imageUrl ? p.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
                         venue="${fn:escapeXml(p.theater)}"
+                        rating="${productionRatings[p.id]}"
                         detailUrl="${detailUrl}"
                     />
                 </c:forEach>
@@ -69,6 +71,7 @@
                         title="${fn:escapeXml(p.name)}"
                         imageUrl="${not empty p.imageUrl ? p.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/principito.jpg')}"
                         venue="${fn:escapeXml(p.theater)}"
+                        rating="${productionRatings[p.id]}"
                         detailUrl="${detailUrl}"
                     />
                 </c:forEach>
@@ -76,9 +79,9 @@
         </c:if>
 
         <c:if test="${empty availableProductions and empty allProductions}">
-            <section style="padding: 4rem 2rem; text-align: center;">
+            <section class="home-page-empty">
                 <h2>No hay producciones cargadas aún</h2>
-                <p style="color: rgba(255,255,255,0.6);">Cargá datos en la base de datos para verlos aquí.</p>
+                <p class="home-page-empty-text">Cargá datos en la base de datos para verlos aquí.</p>
             </section>
         </c:if>
     </main>

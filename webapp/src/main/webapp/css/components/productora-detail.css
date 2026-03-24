@@ -1,0 +1,61 @@
+.productora-detail-page {
+    padding: 2rem 0 3rem;
+}
+
+.productora-detail-hero {
+    max-width: 900px;
+    margin: 0 auto 2rem;
+    padding: 0 2rem;
+}
+
+.productora-detail-layout {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.productora-detail-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.productora-detail-name {
+    margin: 0;
+    font-size: 2.2rem;
+}
+
+.productora-detail-bio {
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 0.5rem;
+    line-height: 1.7;
+}
+
+.productora-detail-links {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.productora-detail-link {
+    color: #7c3aed;
+    text-decoration: none;
+}
+
+.productora-detail-link:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .productora-detail-hero {
+        padding: 0 1rem;
+    }
+
+    .productora-detail-layout {
+        gap: 1.25rem;
+    }
+}
