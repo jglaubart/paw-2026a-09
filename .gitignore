@@ -13,7 +13,11 @@ out/
 .DS_Store
 Thumbs.db
 
-# Local utils / docs (no pushear)
-PRD-platea.md
-utils/
+#Utils
+/utils/
 
+#compile 
+*.jar
+*.class
+*.lst
+*.war
