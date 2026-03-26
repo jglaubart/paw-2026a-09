@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.ProductionDao;
 import ar.edu.itba.paw.models.Production;
+import ar.edu.itba.paw.models.ProductionSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -101,29 +103,94 @@ public class ProductionDaoImpl implements ProductionDao {
 
     @Override
     public List<Production> search(final String query, final int page, final int pageSize) {
-        final String pattern = "%" + query.toLowerCase() + "%";
-        return jdbcTemplate.query(
+        return search(new ProductionSearchCriteria(query, null, null, null, null, false), page, pageSize);
+    }
+
+    @Override
+    public List<Production> search(final ProductionSearchCriteria criteria, final int page, final int pageSize) {
+        final StringBuilder sql = new StringBuilder(
                 "SELECT p.* FROM productions p " +
                 "JOIN obras o ON p.obra_id = o.id " +
                 "LEFT JOIN productoras pr ON p.productora_id = pr.id " +
-                "WHERE LOWER(p.name) LIKE ? " +
-                "   OR LOWER(o.title) LIKE ? " +
-                "   OR LOWER(pr.name) LIKE ? " +
-                "   OR LOWER(p.theater) LIKE ? " +
-                "ORDER BY p.name LIMIT ? OFFSET ?",
-                new Object[]{ pattern, pattern, pattern, pattern, pageSize, (long) page * pageSize },
-                PRODUCTION_MAPPER
+                "WHERE 1 = 1"
         );
+        final List<Object> params = new ArrayList<>();
+
+        if (criteria.getQuery() != null) {
+            final String pattern = "%" + criteria.getQuery().toLowerCase() + "%";
+            sql.append(" AND (LOWER(p.name) LIKE ? OR LOWER(o.title) LIKE ? OR LOWER(pr.name) LIKE ? OR LOWER(p.theater) LIKE ?)");
+            params.add(pattern);
+            params.add(pattern);
+            params.add(pattern);
+            params.add(pattern);
+        }
+
+        if (criteria.getGenre() != null) {
+            sql.append(" AND LOWER(o.genre) = LOWER(?)");
+            params.add(criteria.getGenre());
+        }
+
+        if (criteria.getTheater() != null) {
+            sql.append(" AND LOWER(p.theater) = LOWER(?)");
+            params.add(criteria.getTheater());
+        }
+
+        if (criteria.isAvailableOnly()) {
+            sql.append(
+                    " AND EXISTS (" +
+                    "  SELECT 1 FROM shows s_available " +
+                    "  WHERE s_available.production_id = p.id AND s_available.show_date >= CURRENT_DATE" +
+                    " )"
+            );
+        }
+
+        if (criteria.getDateFrom() != null || criteria.getDateTo() != null) {
+            sql.append(
+                    " AND EXISTS (" +
+                    "  SELECT 1 FROM shows s_date " +
+                    "  WHERE s_date.production_id = p.id"
+            );
+            if (criteria.getDateFrom() != null) {
+                sql.append(" AND s_date.show_date >= ?");
+                params.add(Date.valueOf(criteria.getDateFrom()));
+            }
+            if (criteria.getDateTo() != null) {
+                sql.append(" AND s_date.show_date <= ?");
+                params.add(Date.valueOf(criteria.getDateTo()));
+            }
+            sql.append(" )");
+        }
+
+        sql.append(" ORDER BY p.name LIMIT ? OFFSET ?");
+        params.add(pageSize);
+        params.add((long) page * pageSize);
+
+        return jdbcTemplate.query(sql.toString(), params.toArray(), PRODUCTION_MAPPER);
     }
 
     @Override
     public List<Production> findByGenre(final String genre, final int page, final int pageSize) {
-        return jdbcTemplate.query(
-                "SELECT p.* FROM productions p " +
+        return search(new ProductionSearchCriteria(null, genre, null, null, null, false), page, pageSize);
+    }
+
+    @Override
+    public List<String> findAvailableGenres() {
+        return jdbcTemplate.queryForList(
+                "SELECT DISTINCT o.genre FROM productions p " +
                 "JOIN obras o ON p.obra_id = o.id " +
-                "WHERE LOWER(o.genre) = LOWER(?) ORDER BY p.name LIMIT ? OFFSET ?",
-                new Object[]{ genre, pageSize, (long) page * pageSize },
-                PRODUCTION_MAPPER
+                "WHERE o.genre IS NOT NULL AND o.genre <> '' " +
+                "ORDER BY o.genre",
+                String.class
+        );
+    }
+
+    @Override
+    public List<String> findAvailableTheaters() {
+        return jdbcTemplate.queryForList(
+                "SELECT DISTINCT theater FROM productions " +
+                "WHERE theater IS NOT NULL AND theater <> '' " +
+                "ORDER BY theater",
+                String.class
         );
     }
 

@@ -23,13 +23,21 @@
 
     <paw:navbar />
 
-    <c:url var="searchUrl" value="/search" />
     <c:url var="previousPageUrl" value="/search">
         <c:if test="${not empty query}">
             <c:param name="q" value="${query}" />
         </c:if>
         <c:if test="${not empty genre}">
             <c:param name="genre" value="${genre}" />
+        </c:if>
+        <c:if test="${not empty theater}">
+            <c:param name="theater" value="${theater}" />
+        </c:if>
+        <c:if test="${not empty dateFrom}">
+            <c:param name="dateFrom" value="${dateFrom}" />
+        </c:if>
+        <c:if test="${not empty dateTo}">
+            <c:param name="dateTo" value="${dateTo}" />
         </c:if>
         <c:if test="${available}">
             <c:param name="available" value="true" />
@@ -43,6 +51,15 @@
         <c:if test="${not empty genre}">
             <c:param name="genre" value="${genre}" />
         </c:if>
+        <c:if test="${not empty theater}">
+            <c:param name="theater" value="${theater}" />
+        </c:if>
+        <c:if test="${not empty dateFrom}">
+            <c:param name="dateFrom" value="${dateFrom}" />
+        </c:if>
+        <c:if test="${not empty dateTo}">
+            <c:param name="dateTo" value="${dateTo}" />
+        </c:if>
         <c:if test="${available}">
             <c:param name="available" value="true" />
         </c:if>
@@ -51,24 +68,34 @@
 
     <main class="search-results-page">
         <section class="search-results-filters">
-            <h1 class="search-results-title">Buscar Producciones</h1>
-            <form action="${searchUrl}" method="get" class="search-results-form">
-                <input type="text" name="q" value="${fn:escapeXml(query)}" placeholder="Buscar por nombre, obra, productora, teatro..."
-                       class="search-results-input" />
-                <select name="genre" class="search-results-select">
-                    <option value="">Todos los géneros</option>
-                    <option value="Drama" ${genre == 'Drama' ? 'selected' : ''}>Drama</option>
-                    <option value="Comedia" ${genre == 'Comedia' ? 'selected' : ''}>Comedia</option>
-                    <option value="Musical" ${genre == 'Musical' ? 'selected' : ''}>Musical</option>
-                    <option value="Tragedia" ${genre == 'Tragedia' ? 'selected' : ''}>Tragedia</option>
-                    <option value="Infantil" ${genre == 'Infantil' ? 'selected' : ''}>Infantil</option>
-                </select>
-                <label class="search-results-toggle">
-                    <input type="checkbox" name="available" value="true" ${available ? 'checked' : ''} />
-                    Solo disponibles
-                </label>
-                <button type="submit" class="btn btn-primary btn-md search-results-submit">Buscar</button>
-            </form>
+            <p class="search-results-kicker">Busqueda</p>
+            <h1 class="search-results-title">Resultados</h1>
+            <p class="search-results-copy">Ajustá texto y filtros desde la barra superior.</p>
+
+            <div class="search-results-active-filters">
+                <c:if test="${not empty query}">
+                    <span class="search-results-chip">Texto: <c:out value="${query}" /></span>
+                </c:if>
+                <c:if test="${not empty genre}">
+                    <span class="search-results-chip">Género: <c:out value="${genre}" /></span>
+                </c:if>
+                <c:if test="${not empty theater}">
+                    <span class="search-results-chip">Sala: <c:out value="${theater}" /></span>
+                </c:if>
+                <c:if test="${not empty dateFrom}">
+                    <span class="search-results-chip">Desde: <c:out value="${dateFrom}" /></span>
+                </c:if>
+                <c:if test="${not empty dateTo}">
+                    <span class="search-results-chip">Hasta: <c:out value="${dateTo}" /></span>
+                </c:if>
+                <c:if test="${available}">
+                    <span class="search-results-chip">Solo disponibles</span>
+                </c:if>
+            </div>
+
+            <c:if test="${not empty dateRangeError}">
+                <p class="search-results-error"><c:out value="${dateRangeError}" /></p>
+            </c:if>
         </section>
 
         <c:choose>
@@ -87,6 +114,12 @@
                         />
                     </c:forEach>
                 </paw:sectionRow>
+            </c:when>
+            <c:when test="${not empty dateRangeError}">
+                <section class="search-results-empty">
+                    <h2>Corregí el rango de fechas</h2>
+                    <p class="search-results-empty-text">Ajustá las fechas para poder ver resultados.</p>
+                </section>
             </c:when>
             <c:otherwise>
                 <section class="search-results-empty">

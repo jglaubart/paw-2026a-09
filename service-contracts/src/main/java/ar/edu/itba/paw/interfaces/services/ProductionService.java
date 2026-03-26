@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.interfaces.services;
 
 import ar.edu.itba.paw.models.Production;
+import ar.edu.itba.paw.models.ProductionSearchCriteria;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +14,10 @@ public interface ProductionService {
     Optional<Production> findSelectedByObraId(long obraId, Long preferredProductionId);
     List<Production> findByProductoraId(long productoraId);
     List<Production> search(String query, int page, int pageSize);
+    List<Production> search(ProductionSearchCriteria criteria, int page, int pageSize);
     List<Production> findByGenre(String genre, int page, int pageSize);
+    List<String> findAvailableGenres();
+    List<String> findAvailableTheaters();
     Production create(String name, long obraId, Long productoraId, String synopsis,
                       String direction, String theater, LocalDate startDate, LocalDate endDate,
                       String imageUrl, String instagram, String website);
