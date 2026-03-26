@@ -25,6 +25,9 @@
     <paw:navbar />
 
     <c:choose>
+        <c:when test="${not empty heroSlides}">
+            <paw:hero slides="${heroSlides}" badge="EN ESCENA" />
+        </c:when>
         <c:when test="${featuredProduction != null}">
             <c:set var="heroImageUrl" value="${not empty featuredProduction.imageUrl ? featuredProduction.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}" />
             <paw:hero
@@ -45,6 +48,24 @@
     </c:choose>
 
     <main>
+        <c:if test="${not empty todayProductions}">
+            <paw:sectionRow title="Para Hoy" subtitle="Obras con función hoy">
+                <c:forEach var="p" items="${todayProductions}">
+                    <c:url var="detailUrl" value="/obras/${p.obraId}">
+                        <c:param name="produccionId" value="${p.id}" />
+                    </c:url>
+                    <paw:productionCard
+                        title="${fn:escapeXml(p.name)}"
+                        imageUrl="${not empty p.imageUrl ? p.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
+                        venue="${fn:escapeXml(p.theater)}"
+                        rating="${productionRatings[p.id]}"
+                        badge="HOY"
+                        detailUrl="${detailUrl}"
+                    />
+                </c:forEach>
+            </paw:sectionRow>
+        </c:if>
+
         <c:if test="${not empty availableProductions}">
             <paw:sectionRow title="En Cartelera" subtitle="Producciones con funciones disponibles">
                 <c:forEach var="p" items="${availableProductions}">
