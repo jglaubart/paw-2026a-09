@@ -25,9 +25,12 @@ public class ReviewController {
     public ModelAndView createReview(@PathVariable("id") final long productionId,
                                      @RequestParam("body") final String body,
                                      @RequestParam(value = "obraId", required = false) final Long obraId) {
+        boolean reviewCreated = false;
+
         if (body != null && !body.trim().isEmpty()) {
             try {
                 reviewService.create(HARDCODED_USER_ID, productionId, body.trim());
+                reviewCreated = true;
             } catch (IllegalStateException e) {
                 if (obraId != null) {
                     return new ModelAndView("redirect:/obras/" + obraId
@@ -37,8 +40,9 @@ public class ReviewController {
             }
         }
         if (obraId != null) {
-            return new ModelAndView("redirect:/obras/" + obraId + "?produccionId=" + productionId);
+            return new ModelAndView("redirect:/obras/" + obraId + "?produccionId=" + productionId
+                    + (reviewCreated ? "&review=saved" : ""));
         }
-        return new ModelAndView("redirect:/productions/" + productionId);
+        return new ModelAndView("redirect:/productions/" + productionId + (reviewCreated ? "?review=saved" : ""));
     }
 }

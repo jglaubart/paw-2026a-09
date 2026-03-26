@@ -17,8 +17,10 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/search.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/button.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/play-detail.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/star-rating.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/alert.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/user-lists.css" />
+    <script src="${pageContext.request.contextPath}/js/components/star-rating.js" defer></script>
 </head>
 <body>
 
@@ -192,97 +194,40 @@
                     </c:otherwise>
                 </c:choose>
 
-                <%-- INFORMACIÓN ÚTIL --%>
                 <c:if test="${selectedProduction != null}">
-                    <div class="obra-info-box">
-                        <h3 class="obra-info-box-title">INFORMACIÓN ÚTIL</h3>
-                        <div class="obra-info-grid">
+                    <div class="obra-meta-strip">
+                        <c:if test="${not empty selectedProduction.theater}">
+                            <div class="obra-meta-inline-item">
+                                <span class="obra-meta-inline-label">Teatro</span>
+                                <p class="obra-meta-inline-value"><c:out value="${selectedProduction.theater}" /></p>
+                            </div>
+                        </c:if>
 
-                            <c:if test="${not empty selectedProduction.theater}">
-                                <div class="obra-info-item">
-                                    <span class="obra-info-icon" aria-hidden="true">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                                             stroke="currentColor" stroke-width="2.5"
-                                             stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/>
-                                            <circle cx="12" cy="10" r="3"/>
-                                        </svg>
-                                    </span>
-                                    <div>
-                                        <strong class="obra-info-label">Teatro</strong>
-                                        <p class="obra-info-value"><c:out value="${selectedProduction.theater}" /></p>
-                                    </div>
-                                </div>
-                            </c:if>
+                        <c:if test="${selectedProduction.startDate != null}">
+                            <div class="obra-meta-inline-item">
+                                <span class="obra-meta-inline-label">Funciones</span>
+                                <p class="obra-meta-inline-value">
+                                    <c:out value="${selectedProduction.startDate}" />
+                                    <c:if test="${selectedProduction.endDate != null}">
+                                        — <c:out value="${selectedProduction.endDate}" />
+                                    </c:if>
+                                </p>
+                            </div>
+                        </c:if>
 
-                            <c:if test="${selectedProduction.startDate != null}">
-                                <div class="obra-info-item">
-                                    <span class="obra-info-icon" aria-hidden="true">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                                             stroke="currentColor" stroke-width="2.5"
-                                             stroke-linecap="round" stroke-linejoin="round">
-                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                                            <line x1="16" y1="2" x2="16" y2="6"/>
-                                            <line x1="8"  y1="2" x2="8"  y2="6"/>
-                                            <line x1="3"  y1="10" x2="21" y2="10"/>
-                                        </svg>
-                                    </span>
-                                    <div>
-                                        <strong class="obra-info-label">Funciones</strong>
-                                        <p class="obra-info-value">
-                                            <c:out value="${selectedProduction.startDate}" />
-                                            <c:if test="${selectedProduction.endDate != null}">
-                                                — <c:out value="${selectedProduction.endDate}" />
-                                            </c:if>
-                                        </p>
-                                    </div>
-                                </div>
-                            </c:if>
+                        <c:if test="${not empty obra.genre}">
+                            <div class="obra-meta-inline-item">
+                                <span class="obra-meta-inline-label">Género</span>
+                                <p class="obra-meta-inline-value"><c:out value="${obra.genre}" /></p>
+                            </div>
+                        </c:if>
 
-                            <c:if test="${not empty selectedProduction.direction}">
-                                <div class="obra-info-item">
-                                    <span class="obra-info-icon" aria-hidden="true">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                                             stroke="currentColor" stroke-width="2.5"
-                                             stroke-linecap="round" stroke-linejoin="round">
-                                            <polygon points="23 7 16 12 23 17 23 7"/>
-                                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-                                        </svg>
-                                    </span>
-                                    <div>
-                                        <strong class="obra-info-label">Dirección</strong>
-                                        <p class="obra-info-value"><c:out value="${selectedProduction.direction}" /></p>
-                                    </div>
-                                </div>
-                            </c:if>
-
-                            <c:if test="${not empty selectedProduction.website}">
-                                <div class="obra-info-item">
-                                    <span class="obra-info-icon" aria-hidden="true">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                                             stroke="currentColor" stroke-width="2.5"
-                                             stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M20 12V22H4V12"/>
-                                            <path d="M22 7H2v5h20V7z"/>
-                                            <path d="M12 22V7"/>
-                                            <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
-                                            <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
-                                        </svg>
-                                    </span>
-                                    <div>
-                                        <strong class="obra-info-label">Retiro de entradas</strong>
-                                        <p class="obra-info-value">
-                                            <a href="${selectedProductionWebsiteUrl}"
-                                               target="_blank" rel="noopener noreferrer"
-                                               class="obra-info-link">
-                                                Sitio oficial ↗
-                                            </a>
-                                        </p>
-                                    </div>
-                                </div>
-                            </c:if>
-
-                        </div>
+                        <c:if test="${not empty selectedProduction.direction}">
+                            <div class="obra-meta-inline-item">
+                                <span class="obra-meta-inline-label">Dirección</span>
+                                <p class="obra-meta-inline-value"><c:out value="${selectedProduction.direction}" /></p>
+                            </div>
+                        </c:if>
                     </div>
                 </c:if>
             </section>
@@ -292,75 +237,137 @@
                 <div class="obra-section-head">
                     <div class="obra-reviews-head">
                         <h2 class="obra-reviews-section-title">Qué dice la gente</h2>
-                        <c:if test="${avgRating != null}">
+                        <c:if test="${avgStars != null}">
                             <span class="obra-avg-rating">
-                                <span class="obra-avg-stars" aria-hidden="true">★★★★★</span>
-                                <fmt:formatNumber value="${avgRating}" maxFractionDigits="1" /> / 10
+                                <span class="obra-avg-stars" aria-hidden="true">
+                                    <span class="obra-avg-stars-base">★★★★★</span>
+                                    <span class="obra-avg-stars-fill" style="width: ${avgStarsPercent}%;">★★★★★</span>
+                                </span>
+                                <span class="obra-avg-rating-value">
+                                    <fmt:formatNumber value="${avgStars}" maxFractionDigits="1" /> / 5
+                                </span>
+                                <span class="obra-avg-rating-meta">
+                                    <c:out value="${fn:length(reviews)}" /> reseña${fn:length(reviews) == 1 ? '' : 's'}
+                                </span>
                             </span>
                         </c:if>
                     </div>
                 </div>
 
-                <c:if test="${not empty reviews}">
-                    <div class="obra-reviews-grid">
-                        <c:forEach var="r" items="${reviews}">
-                            <div class="obra-review-card">
-                                <div class="obra-review-header">
-                                    <span class="obra-review-avatar">U<c:out value="${r.userId}" /></span>
-                                    <span class="obra-review-author">Usuario #<c:out value="${r.userId}" /></span>
+                <c:choose>
+                    <c:when test="${not empty reviews}">
+                        <div class="obra-reviews-grid">
+                            <c:forEach var="r" items="${reviews}">
+                                <div class="obra-review-card">
+                                    <div class="obra-review-header">
+                                        <span class="obra-review-avatar">U<c:out value="${r.userId}" /></span>
+                                        <span class="obra-review-author">Usuario #<c:out value="${r.userId}" /></span>
+                                    </div>
+                                    <p class="obra-review-body">"<c:out value="${r.body}" />"</p>
                                 </div>
-                                <p class="obra-review-body">"<c:out value="${r.body}" />"</p>
-                            </div>
-                        </c:forEach>
-                    </div>
-                </c:if>
+                            </c:forEach>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="obra-reviews-empty">
+                            Todavía no hay reseñas publicadas para esta versión.
+                        </div>
+                    </c:otherwise>
+                </c:choose>
 
                 <%-- CALIFICAR + RESEÑAR --%>
-                <div class="obra-interact-row">
-                    <div class="obra-interact-card">
-                        <h4 class="obra-interact-title">Calificar obra</h4>
-                        <c:if test="${userScore != null}">
-                            <p class="obra-user-score">Tu puntaje: <strong><c:out value="${userScore}" />/10</strong></p>
-                        </c:if>
-                        <c:url var="rateActionUrl" value="/productions/${selectedProduction.id}/rate" />
-                        <form action="${rateActionUrl}"
-                              method="post" class="obra-rate-form-inner">
-                            <input type="hidden" name="obraId" value="${obra.id}" />
-                            <select name="score" class="obra-score-select">
-                                <c:forEach var="i" begin="1" end="10">
-                                    <option value="${i}" ${userScore != null && userScore == i ? 'selected' : ''}>
-                                        <c:out value="${i}" />
-                                    </option>
-                                </c:forEach>
-                            </select>
-                            <button type="submit" class="btn btn-primary btn-md">Calificar</button>
-                        </form>
-                    </div>
+                <c:if test="${selectedProduction != null}">
+                    <div class="obra-interact-panel">
+                        <div class="obra-participation-rating">
+                            <div class="obra-interact-head">
+                                <h3 class="obra-interact-title">Tu calificación</h3>
+                                <span class="obra-rating-value">
+                                    <c:choose>
+                                        <c:when test="${userStars != null}">
+                                            <fmt:formatNumber value="${userStars}" maxFractionDigits="1" />/5
+                                        </c:when>
+                                        <c:otherwise>
+                                            --/5
+                                        </c:otherwise>
+                                    </c:choose>
+                                </span>
+                            </div>
 
-                    <div class="obra-interact-card">
-                        <h4 class="obra-interact-title">Escribir reseña</h4>
-                        <c:if test="${param.error == 'rate_first'}">
-                            <paw:alert message="Tenés que calificar la obra antes de escribir una reseña." variant="warning" />
-                        </c:if>
-                        <c:choose>
-                            <c:when test="${userReview != null}">
-                                <blockquote class="obra-user-review">
-                                    "<c:out value="${userReview.body}" />"
-                                </blockquote>
-                            </c:when>
-                            <c:otherwise>
-                                <c:url var="reviewActionUrl" value="/productions/${selectedProduction.id}/review" />
-                                <form action="${reviewActionUrl}"
-                                       method="post">
-                                    <input type="hidden" name="obraId" value="${obra.id}" />
-                                    <textarea name="body" rows="3" class="obra-review-textarea"
-                                              placeholder="Escribí tu reseña..."></textarea>
-                                    <button type="submit" class="btn btn-primary btn-md">Enviar reseña</button>
-                                </form>
-                            </c:otherwise>
-                        </c:choose>
+                            <c:if test="${param.rating == 'saved'}">
+                                <p class="obra-inline-feedback obra-inline-feedback-success">
+                                    Guardada.
+                                </p>
+                            </c:if>
+
+                            <c:url var="rateActionUrl" value="/productions/${selectedProduction.id}/rate" />
+                            <form action="${rateActionUrl}"
+                                  method="post"
+                                  accept-charset="UTF-8"
+                                  class="obra-rate-form-inner">
+                                <input type="hidden" name="obraId" value="${obra.id}" />
+                                <paw:starRating
+                                    name="score"
+                                    currentValue="${userStars}"
+                                    max="5"
+                                    groupLabel="Tu calificación"
+                                    promptText="Sin calificar"
+                                    autosubmit="true" />
+                            </form>
+                        </div>
+
+                        <div class="obra-participation-review ${userStars == null ? 'obra-participation-review-locked' : ''}" data-review-module>
+                            <div class="obra-interact-head">
+                                <h3 class="obra-interact-title">Tu reseña</h3>
+                            </div>
+
+                            <c:if test="${param.error == 'rate_first'}">
+                                <p class="obra-inline-feedback obra-inline-feedback-warning">
+                                    Primero calificá.
+                                </p>
+                            </c:if>
+
+                            <c:if test="${param.review == 'saved'}">
+                                <p class="obra-inline-feedback obra-inline-feedback-success">
+                                    Publicada.
+                                </p>
+                            </c:if>
+
+                            <c:choose>
+                                <c:when test="${userReview != null}">
+                                    <div class="obra-user-review-card">
+                                        <blockquote class="obra-user-review">
+                                            "<c:out value="${userReview.body}" />"
+                                        </blockquote>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:url var="reviewActionUrl" value="/productions/${selectedProduction.id}/review" />
+                                    <form action="${reviewActionUrl}"
+                                          method="post"
+                                          accept-charset="UTF-8"
+                                          class="obra-review-form ${userStars == null ? 'obra-review-form-locked' : ''}"
+                                          data-review-gate>
+                                        <input type="hidden" name="obraId" value="${obra.id}" />
+                                        <textarea name="body"
+                                                  rows="4"
+                                                  class="obra-review-textarea"
+                                                  placeholder="${userStars != null ? '¿Qué te dejó esta obra?' : 'Calificá para escribir'}"
+                                                  data-enabled-placeholder="¿Qué te dejó esta obra?"
+                                                  data-disabled-placeholder="Calificá para escribir"
+                                                  ${userStars == null ? 'disabled' : ''}></textarea>
+                                        <div class="obra-review-actions">
+                                            <button type="submit"
+                                                    class="btn btn-primary btn-md obra-review-submit"
+                                                    ${userStars == null ? 'disabled' : ''}>
+                                                Publicar reseña
+                                            </button>
+                                        </div>
+                                    </form>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
                     </div>
-                </div>
+                </c:if>
             </section>
 
         </div>

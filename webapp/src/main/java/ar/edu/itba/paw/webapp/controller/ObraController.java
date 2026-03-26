@@ -68,14 +68,22 @@ public class ObraController {
         if (selectedProduction != null) {
             final long pid = selectedProduction.getId();
             mav.addObject("reviews", reviewService.findByProduction(pid));
-            mav.addObject("userScore", ratingService.getProductionRating(HARDCODED_USER_ID, pid)
-                    .map(r -> r.getScore()).orElse(null));
-            mav.addObject("avgRating", ratingService.getProductionAverageRating(pid).orElse(null));
+            final Integer userScore = ratingService.getProductionRating(HARDCODED_USER_ID, pid)
+                    .map(r -> r.getScore()).orElse(null);
+            final Double avgRating = ratingService.getProductionAverageRating(pid).orElse(null);
+            mav.addObject("userScore", userScore);
+            mav.addObject("userStars", mapScoreToStars(userScore));
+            mav.addObject("avgRating", avgRating);
+            mav.addObject("avgStars", avgRating != null ? avgRating / 2.0d : null);
+            mav.addObject("avgStarsPercent", avgRating != null ? Math.max(0d, Math.min(100d, avgRating * 10d)) : 0d);
             mav.addObject("userReview", reviewService.findByUserAndProduction(HARDCODED_USER_ID, pid).orElse(null));
         } else {
             mav.addObject("reviews", Collections.emptyList());
             mav.addObject("userScore", null);
+            mav.addObject("userStars", null);
             mav.addObject("avgRating", null);
+            mav.addObject("avgStars", null);
+            mav.addObject("avgStarsPercent", 0d);
             mav.addObject("userReview", null);
         }
 
@@ -88,5 +96,13 @@ public class ObraController {
         mav.addObject("hasSeen", seenService.hasSeen(HARDCODED_USER_ID, id));
 
         return mav;
+    }
+
+    private Double mapScoreToStars(final Integer score) {
+        if (score == null) {
+            return null;
+        }
+
+        return Math.max(0.5d, Math.min(5d, score / 2.0d));
     }
 }
