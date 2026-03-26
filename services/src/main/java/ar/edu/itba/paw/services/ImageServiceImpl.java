@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-// images table removed — images are now stored as URLs
+@Service
 public class ImageServiceImpl implements ImageService {
 
     private final ImageDao imageDao;
