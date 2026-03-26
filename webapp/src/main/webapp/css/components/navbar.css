@@ -115,10 +115,19 @@
     color: var(--platea-text-primary);
 }
 
+.navbar-link-active {
+    text-shadow: 0 0 14px rgba(186, 158, 255, 0.18);
+}
+
 .navbar-link:hover::after,
 .navbar-link-active::after {
     opacity: 1;
     transform: scaleX(1);
+}
+
+.navbar-link-active::after {
+    background: linear-gradient(90deg, rgba(186, 158, 255, 0), rgba(186, 158, 255, 1), rgba(186, 158, 255, 0));
+    box-shadow: 0 0 16px rgba(186, 158, 255, 0.22);
 }
 
 .navbar-actions {

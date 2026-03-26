@@ -41,10 +41,7 @@
                                  class="search-form-panel"
                                  aria-label="Filtros de búsqueda">
                             <div class="search-form-panel-header">
-                                <div class="search-form-panel-heading">
-                                    <p class="search-form-panel-kicker">Busqueda avanzada</p>
-                                    <h2 class="search-form-panel-title">Curá la cartelera con precisión</h2>
-                                </div>
+                                <h2 class="search-form-panel-title">Busqueda avanzada</h2>
 
                                 <button type="button"
                                         class="search-form-panel-close"
@@ -59,44 +56,9 @@
                                 </button>
                             </div>
 
-                            <p class="search-form-panel-copy">
-                                Combiná género, sala, rango de fechas y disponibilidad en una capa flotante sin romper la composición del header.
-                            </p>
-
                             <c:if test="${not empty searchFeedback}">
                                 <p class="search-form-error search-form-error-panel"><c:out value="${searchFeedback}" /></p>
                             </c:if>
-
-                            <div class="search-form-active-filters">
-                                <div class="search-form-active-filters-header">
-                                    <p class="search-form-active-filters-kicker">Filtros activos</p>
-                                    <span class="search-form-active-filters-count ${activeFilterCount == 0 ? 'is-empty' : ''}" data-search-filter-count>
-                                        <c:out value="${activeFilterCount}" />
-                                    </span>
-                                </div>
-
-                                <div class="search-form-chip-list" data-search-chip-list>
-                                    <c:if test="${not empty param.genre}">
-                                        <span class="search-form-chip">Género: <c:out value="${param.genre}" /></span>
-                                    </c:if>
-                                    <c:if test="${not empty param.theater}">
-                                        <span class="search-form-chip">Sala: <c:out value="${param.theater}" /></span>
-                                    </c:if>
-                                    <c:if test="${not empty param.dateFrom}">
-                                        <span class="search-form-chip">Desde: <c:out value="${param.dateFrom}" /></span>
-                                    </c:if>
-                                    <c:if test="${not empty param.dateTo}">
-                                        <span class="search-form-chip">Hasta: <c:out value="${param.dateTo}" /></span>
-                                    </c:if>
-                                    <c:if test="${param.available == 'true'}">
-                                        <span class="search-form-chip">Solo disponibles</span>
-                                    </c:if>
-                                </div>
-
-                                <p class="search-form-empty-state" data-search-empty-state ${hasActiveFilters ? 'hidden="hidden"' : ''}>
-                                    Todavía no hay filtros activos. Afiná la búsqueda para descubrir una cartelera más precisa.
-                                </p>
-                            </div>
 
                             <div class="search-form-grid search-form-grid-navbar">
                                 <div class="search-form-field">
