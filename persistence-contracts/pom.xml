@@ -8,11 +8,15 @@
     <artifactId>platea</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-
   <groupId>ar.edu.itba.paw</groupId>
   <artifactId>persistence-contracts</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>persistence-contracts</name>
-
+  <dependencies>
+    <dependency>
+      <groupId>ar.edu.itba.paw</groupId>
+      <artifactId>models</artifactId>
+    </dependency>
+  </dependencies>
 </project>
