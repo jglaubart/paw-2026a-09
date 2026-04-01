@@ -36,6 +36,7 @@ public class SearchController {
             @RequestParam(value = "q", required = false) final String query,
             @RequestParam(value = "genre", required = false) final String genre,
             @RequestParam(value = "theater", required = false) final String theater,
+            @RequestParam(value = "location", required = false) final String location,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             @RequestParam(value = "dateFrom", required = false) final LocalDate dateFrom,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -46,12 +47,14 @@ public class SearchController {
         final String normalizedQuery = trimToNull(query);
         final String normalizedGenre = trimToNull(genre);
         final String normalizedTheater = trimToNull(theater);
+        final String normalizedLocation = trimToNull(location);
         final boolean availableOnly = Boolean.TRUE.equals(available);
         final int normalizedPage = Math.max(page, 0);
 
         mav.addObject("query", normalizedQuery);
         mav.addObject("genre", normalizedGenre);
         mav.addObject("theater", normalizedTheater);
+        mav.addObject("location", normalizedLocation);
         mav.addObject("dateFrom", dateFrom);
         mav.addObject("dateTo", dateTo);
         mav.addObject("available", availableOnly);
@@ -68,6 +71,7 @@ public class SearchController {
                             normalizedQuery,
                             normalizedGenre,
                             normalizedTheater,
+                            normalizedLocation,
                             dateFrom,
                             dateTo,
                             availableOnly

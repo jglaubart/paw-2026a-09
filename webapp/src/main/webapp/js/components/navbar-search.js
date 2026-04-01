@@ -1,6 +1,6 @@
 (function () {
     var forms = document.querySelectorAll("[data-navbar-search]");
-    var filterNames = ["genre", "theater", "dateFrom", "dateTo", "available"];
+    var filterNames = ["genre", "theater", "location", "dateFrom", "dateTo", "available"];
 
     if (!forms.length) {
         return;
@@ -48,10 +48,220 @@
         return parts[2] + "/" + parts[1] + "/" + parts[0];
     }
 
+    function getFieldValue(field) {
+        if (!field) {
+            return "";
+        }
+
+        if (field.tagName === "SELECT") {
+            return field.options[field.selectedIndex] ? field.options[field.selectedIndex].text : field.value;
+        }
+
+        return field.value;
+    }
+
+    function normalizeToken(value) {
+        if (!value) {
+            return "";
+        }
+
+        return value
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/\s+/g, " ")
+            .replace(/^\s+|\s+$/g, "");
+    }
+
+    function getWordTokens(value) {
+        var normalized = normalizeToken(value);
+
+        if (!normalized) {
+            return [];
+        }
+
+        return normalized.split(/[^a-z0-9]+/).filter(function (token) {
+            return token.length > 0;
+        });
+    }
+
+    function attachLocationCombobox(form) {
+        var combobox = form.querySelector("[data-location-combobox]");
+        var input;
+        var dropdown;
+        var optionButtons;
+        var emptyState;
+        var activeIndex = -1;
+
+        if (!combobox) {
+            return;
+        }
+
+        input = combobox.querySelector("[data-location-input]");
+        dropdown = combobox.querySelector("[data-location-dropdown]");
+        optionButtons = toArray(combobox.querySelectorAll("[data-location-option]"));
+        emptyState = combobox.querySelector("[data-location-empty]");
+
+        if (!input || !dropdown) {
+            return;
+        }
+
+        function visibleOptions() {
+            return optionButtons.filter(function (button) {
+                return !button.parentElement.hidden;
+            });
+        }
+
+        function closeDropdown() {
+            dropdown.hidden = true;
+            input.setAttribute("aria-expanded", "false");
+            activeIndex = -1;
+            optionButtons.forEach(function (button) {
+                button.classList.remove("is-active");
+            });
+        }
+
+        function openDropdown() {
+            dropdown.hidden = false;
+            input.setAttribute("aria-expanded", "true");
+        }
+
+        function applyActive(index) {
+            var visible = visibleOptions();
+            activeIndex = index;
+
+            visible.forEach(function (button, buttonIndex) {
+                if (buttonIndex === activeIndex) {
+                    button.classList.add("is-active");
+                    button.scrollIntoView({ block: "nearest" });
+                } else {
+                    button.classList.remove("is-active");
+                }
+            });
+        }
+
+        function filterOptions() {
+            var queryTokens = getWordTokens(input.value);
+            var visibleCount = 0;
+
+            optionButtons.forEach(function (button) {
+                var optionTokens = getWordTokens(button.getAttribute("data-location-value"));
+                var matches = true;
+
+                if (queryTokens.length) {
+                    matches = queryTokens.every(function (queryToken) {
+                        return optionTokens.some(function (optionToken) {
+                            return optionToken.indexOf(queryToken) === 0;
+                        });
+                    });
+                }
+
+                button.parentElement.hidden = !matches;
+
+                if (matches) {
+                    visibleCount += 1;
+                }
+            });
+
+            if (emptyState) {
+                emptyState.hidden = visibleCount > 0;
+            }
+
+            activeIndex = -1;
+            optionButtons.forEach(function (button) {
+                button.classList.remove("is-active");
+            });
+        }
+
+        function selectOption(button) {
+            input.value = button.getAttribute("data-location-value") || "";
+            renderChips(form);
+            closeDropdown();
+        }
+
+        optionButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                selectOption(button);
+            });
+        });
+
+        input.addEventListener("focus", function () {
+            filterOptions();
+            openDropdown();
+        });
+
+        input.addEventListener("click", function () {
+            filterOptions();
+            openDropdown();
+        });
+
+        input.addEventListener("input", function () {
+            filterOptions();
+            openDropdown();
+            renderChips(form);
+        });
+
+        input.addEventListener("keydown", function (event) {
+            var visible;
+
+            if (event.key === "Escape") {
+                closeDropdown();
+                return;
+            }
+
+            visible = visibleOptions();
+
+            if (!visible.length) {
+                return;
+            }
+
+            if (event.key === "ArrowDown") {
+                event.preventDefault();
+                if (dropdown.hidden) {
+                    openDropdown();
+                }
+                applyActive((activeIndex + 1) % visible.length);
+                return;
+            }
+
+            if (event.key === "ArrowUp") {
+                event.preventDefault();
+                if (dropdown.hidden) {
+                    openDropdown();
+                }
+                applyActive(activeIndex <= 0 ? visible.length - 1 : activeIndex - 1);
+                return;
+            }
+
+            if (event.key === "Enter" && !dropdown.hidden && activeIndex >= 0) {
+                event.preventDefault();
+                selectOption(visible[activeIndex]);
+            }
+        });
+
+        document.addEventListener("click", function (event) {
+            if (!combobox.contains(event.target)) {
+                closeDropdown();
+            }
+        });
+
+        form.addEventListener("reset", function () {
+            closeDropdown();
+            if (emptyState) {
+                emptyState.hidden = true;
+            }
+            optionButtons.forEach(function (button) {
+                button.parentElement.hidden = false;
+                button.classList.remove("is-active");
+            });
+        });
+    }
+
     function getFilterState(form) {
         var state = [];
         var genre = form.querySelector('[name="genre"]');
         var theater = form.querySelector('[name="theater"]');
+        var location = form.querySelector('[name="location"]');
         var dateFrom = form.querySelector('[name="dateFrom"]');
         var dateTo = form.querySelector('[name="dateTo"]');
         var available = form.querySelector('[name="available"]');
@@ -60,14 +270,21 @@
         if (genre && genre.value) {
             state.push({
                 label: getFieldLabel(form, "navbar-search-genre", "Genero"),
-                value: genre.options[genre.selectedIndex] ? genre.options[genre.selectedIndex].text : genre.value
+                value: getFieldValue(genre)
             });
         }
 
         if (theater && theater.value) {
             state.push({
                 label: getFieldLabel(form, "navbar-search-theater", "Sala"),
-                value: theater.options[theater.selectedIndex] ? theater.options[theater.selectedIndex].text : theater.value
+                value: getFieldValue(theater)
+            });
+        }
+
+        if (location && location.value) {
+            state.push({
+                label: getFieldLabel(form, "navbar-search-location", "Zona"),
+                value: getFieldValue(location)
             });
         }
 
@@ -184,7 +401,7 @@
         if (nextState) {
             details.classList.add("search-form-details-open");
             updatePanelOffset(form);
-            focusTarget = form.querySelector('[name="genre"]') || form.querySelector('[name="theater"]');
+            focusTarget = form.querySelector('[name="genre"]') || form.querySelector('[name="theater"]') || form.querySelector('[name="location"]');
 
             if (focusTarget) {
                 window.setTimeout(function () {
@@ -299,6 +516,8 @@
                 clearFilters(form);
             });
         }
+
+        attachLocationCombobox(form);
     }
 
     toArray(forms).forEach(bindForm);

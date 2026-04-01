@@ -33,6 +33,9 @@
         <c:if test="${not empty theater}">
             <c:param name="theater" value="${theater}" />
         </c:if>
+        <c:if test="${not empty location}">
+            <c:param name="location" value="${location}" />
+        </c:if>
         <c:if test="${not empty dateFrom}">
             <c:param name="dateFrom" value="${dateFrom}" />
         </c:if>
@@ -53,6 +56,9 @@
         </c:if>
         <c:if test="${not empty theater}">
             <c:param name="theater" value="${theater}" />
+        </c:if>
+        <c:if test="${not empty location}">
+            <c:param name="location" value="${location}" />
         </c:if>
         <c:if test="${not empty dateFrom}">
             <c:param name="dateFrom" value="${dateFrom}" />
@@ -81,6 +87,9 @@
                 </c:if>
                 <c:if test="${not empty theater}">
                     <span class="search-results-chip">Sala: <c:out value="${theater}" /></span>
+                </c:if>
+                <c:if test="${not empty location}">
+                    <span class="search-results-chip">Zona: <c:out value="${location}" /></span>
                 </c:if>
                 <c:if test="${not empty dateFrom}">
                     <span class="search-results-chip">Desde: <c:out value="${dateFrom}" /></span>

@@ -26,4 +26,9 @@ public class SearchModelAttributesAdvice {
     public List<String> searchTheaters() {
         return productionService.findAvailableTheaters();
     }
+
+    @ModelAttribute("searchLocations")
+    public List<String> searchLocations() {
+        return productionService.findAvailableLocations();
+    }
 }

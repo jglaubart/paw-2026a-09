@@ -5,8 +5,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <c:url var="searchUrl" value="/search" />
-<c:set var="hasActiveFilters" value="${not empty param.genre or not empty param.theater or not empty param.dateFrom or not empty param.dateTo or param.available == 'true'}" />
-<c:set var="activeFilterCount" value="${(not empty param.genre ? 1 : 0) + (not empty param.theater ? 1 : 0) + (not empty param.dateFrom ? 1 : 0) + (not empty param.dateTo ? 1 : 0) + (param.available == 'true' ? 1 : 0)}" />
+<c:set var="hasActiveFilters" value="${not empty param.genre or not empty param.theater or not empty param.location or not empty param.dateFrom or not empty param.dateTo or param.available == 'true'}" />
+<c:set var="activeFilterCount" value="${(not empty param.genre ? 1 : 0) + (not empty param.theater ? 1 : 0) + (not empty param.location ? 1 : 0) + (not empty param.dateFrom ? 1 : 0) + (not empty param.dateTo ? 1 : 0) + (param.available == 'true' ? 1 : 0)}" />
 <c:set var="searchFeedback" value="${not empty error ? error : dateRangeError}" />
 
 <form action="${searchUrl}" method="get" class="search-form search-form-${variant} ${hasActiveFilters ? 'search-form-has-active-filters' : ''}" data-navbar-search>
@@ -101,6 +101,54 @@
                                            name="dateTo"
                                            value="${fn:escapeXml(param.dateTo)}"
                                            class="search-form-input search-form-input-date" />
+                                </div>
+
+                                <div class="search-form-field search-form-location-field">
+                                    <label class="search-form-label" for="navbar-search-location">Zona</label>
+                                    <div class="search-form-combobox" data-location-combobox>
+                                        <label class="search-form-query search-form-query-panel" for="navbar-search-location">
+                                            <span class="search-form-icon" aria-hidden="true">
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                                     stroke="currentColor" stroke-width="2.05"
+                                                     stroke-linecap="round" stroke-linejoin="round">
+                                                    <circle cx="11" cy="11" r="7"/>
+                                                    <line x1="16.5" y1="16.5" x2="21" y2="21"/>
+                                                </svg>
+                                            </span>
+                                            <input id="navbar-search-location"
+                                                   type="text"
+                                                   name="location"
+                                                   value="${fn:escapeXml(param.location)}"
+                                                   placeholder="Buscar zona"
+                                                   autocomplete="off"
+                                                   class="search-form-input search-form-input-query"
+                                                   data-location-input
+                                                   aria-expanded="false"
+                                                   aria-controls="navbar-search-location-list" />
+                                        </label>
+
+                                        <div id="navbar-search-location-list"
+                                             class="search-form-location-dropdown"
+                                             data-location-dropdown
+                                             role="listbox">
+                                            <ul class="search-form-location-options" data-location-options>
+                                                <c:forEach var="searchLocation" items="${searchLocations}">
+                                                    <li class="search-form-location-item" data-location-item>
+                                                        <button type="button"
+                                                                class="search-form-location-option"
+                                                                data-location-option
+                                                                data-location-value="${fn:escapeXml(searchLocation)}"
+                                                                role="option">
+                                                            <c:out value="${searchLocation}" />
+                                                        </button>
+                                                    </li>
+                                                </c:forEach>
+                                            </ul>
+                                            <p class="search-form-location-empty" data-location-empty hidden>
+                                                No encontramos zonas para esa busqueda.
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <label class="search-form-check search-form-check-navbar" for="navbar-search-available">
