@@ -37,7 +37,11 @@ CREATE TABLE IF NOT EXISTS shows (
     production_id INT NOT NULL REFERENCES productions(id),
     show_date     DATE NOT NULL,
     show_time     TIME NOT NULL,
-    theater       VARCHAR(255)
+    theater       VARCHAR(255),
+    address       VARCHAR(255),
+    barrio        VARCHAR(120),
+    ciudad_partido VARCHAR(120),
+    provincia     VARCHAR(120)
 );
 
 CREATE TABLE IF NOT EXISTS users (

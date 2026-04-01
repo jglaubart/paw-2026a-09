@@ -30,7 +30,11 @@ public class ShowDaoImpl implements ShowDao {
                     rs.getLong("production_id"),
                     rs.getDate("show_date").toLocalDate(),
                     rs.getTime("show_time").toLocalTime(),
-                    rs.getString("theater")
+                    rs.getString("theater"),
+                    rs.getString("address"),
+                    rs.getString("barrio"),
+                    rs.getString("ciudad_partido"),
+                    rs.getString("provincia")
             );
 
     @Autowired
@@ -44,7 +48,7 @@ public class ShowDaoImpl implements ShowDao {
     @Override
     public Optional<Show> findById(final long id) {
         final List<Show> results = jdbcTemplate.query(
-                "SELECT id, production_id, show_date, show_time, theater FROM shows WHERE id = ?",
+                "SELECT id, production_id, show_date, show_time, theater, address, barrio, ciudad_partido, provincia FROM shows WHERE id = ?",
                 new Object[]{ id },
                 SHOW_MAPPER
         );
@@ -54,7 +58,7 @@ public class ShowDaoImpl implements ShowDao {
     @Override
     public List<Show> findByProductionId(final long productionId) {
         return jdbcTemplate.query(
-                "SELECT id, production_id, show_date, show_time, theater FROM shows " +
+                "SELECT id, production_id, show_date, show_time, theater, address, barrio, ciudad_partido, provincia FROM shows " +
                 "WHERE production_id = ? ORDER BY show_date, show_time",
                 new Object[]{ productionId },
                 SHOW_MAPPER
@@ -64,7 +68,7 @@ public class ShowDaoImpl implements ShowDao {
     @Override
     public List<Show> findFutureByProductionId(final long productionId) {
         return jdbcTemplate.query(
-                "SELECT id, production_id, show_date, show_time, theater FROM shows " +
+                "SELECT id, production_id, show_date, show_time, theater, address, barrio, ciudad_partido, provincia FROM shows " +
                 "WHERE production_id = ? AND show_date >= CURRENT_DATE ORDER BY show_date, show_time",
                 new Object[]{ productionId },
                 SHOW_MAPPER

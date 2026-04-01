@@ -7,6 +7,7 @@ public class ProductionSearchCriteria {
     private final String query;
     private final String genre;
     private final String theater;
+    private final String location;
     private final LocalDate dateFrom;
     private final LocalDate dateTo;
     private final boolean availableOnly;
@@ -14,12 +15,14 @@ public class ProductionSearchCriteria {
     public ProductionSearchCriteria(final String query,
                                     final String genre,
                                     final String theater,
+                                    final String location,
                                     final LocalDate dateFrom,
                                     final LocalDate dateTo,
                                     final boolean availableOnly) {
         this.query = query;
         this.genre = genre;
         this.theater = theater;
+        this.location = location;
         this.dateFrom = dateFrom;
         this.dateTo = dateTo;
         this.availableOnly = availableOnly;
@@ -35,6 +38,10 @@ public class ProductionSearchCriteria {
 
     public String getTheater() {
         return theater;
+    }
+
+    public String getLocation() {
+        return location;
     }
 
     public LocalDate getDateFrom() {

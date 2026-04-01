@@ -88,6 +88,11 @@ public class ProductionServiceImpl implements ProductionService {
     }
 
     @Override
+    public List<String> findAvailableLocations() {
+        return productionDao.findAvailableLocations();
+    }
+
+    @Override
     public Production create(final String name, final long obraId, final Long productoraId,
                              final String synopsis, final String direction, final String theater,
                              final LocalDate startDate, final LocalDate endDate, final String imageUrl,

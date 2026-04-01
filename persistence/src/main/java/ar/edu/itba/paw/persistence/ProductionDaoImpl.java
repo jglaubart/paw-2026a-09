@@ -103,7 +103,7 @@ public class ProductionDaoImpl implements ProductionDao {
 
     @Override
     public List<Production> search(final String query, final int page, final int pageSize) {
-        return search(new ProductionSearchCriteria(query, null, null, null, null, false), page, pageSize);
+        return search(new ProductionSearchCriteria(query, null, null, null, null, null, false), page, pageSize);
     }
 
     @Override
@@ -133,6 +133,21 @@ public class ProductionDaoImpl implements ProductionDao {
         if (criteria.getTheater() != null) {
             sql.append(" AND LOWER(p.theater) = LOWER(?)");
             params.add(criteria.getTheater());
+        }
+
+        if (criteria.getLocation() != null) {
+            sql.append(
+                    " AND EXISTS (" +
+                    "  SELECT 1 FROM shows s_location " +
+                    "  WHERE s_location.production_id = p.id " +
+                    "    AND LOWER(CASE " +
+                    "      WHEN UPPER(s_location.ciudad_partido) = 'CABA' AND s_location.barrio IS NOT NULL AND s_location.barrio <> '' " +
+                    "      THEN s_location.barrio || ' - CABA' " +
+                    "      ELSE s_location.ciudad_partido " +
+                    "    END) = LOWER(?)" +
+                    " )"
+            );
+            params.add(criteria.getLocation());
         }
 
         if (criteria.isAvailableOnly()) {
@@ -170,7 +185,7 @@ public class ProductionDaoImpl implements ProductionDao {
 
     @Override
     public List<Production> findByGenre(final String genre, final int page, final int pageSize) {
-        return search(new ProductionSearchCriteria(null, genre, null, null, null, false), page, pageSize);
+        return search(new ProductionSearchCriteria(null, genre, null, null, null, null, false), page, pageSize);
     }
 
     @Override
@@ -190,6 +205,21 @@ public class ProductionDaoImpl implements ProductionDao {
                 "SELECT DISTINCT theater FROM productions " +
                 "WHERE theater IS NOT NULL AND theater <> '' " +
                 "ORDER BY theater",
+                String.class
+        );
+    }
+
+    @Override
+    public List<String> findAvailableLocations() {
+        return jdbcTemplate.queryForList(
+                "SELECT DISTINCT CASE " +
+                "  WHEN UPPER(s.ciudad_partido) = 'CABA' AND s.barrio IS NOT NULL AND s.barrio <> '' " +
+                "  THEN s.barrio || ' - CABA' " +
+                "  ELSE s.ciudad_partido " +
+                "END AS location " +
+                "FROM shows s " +
+                "WHERE s.ciudad_partido IS NOT NULL AND s.ciudad_partido <> '' " +
+                "ORDER BY location",
                 String.class
         );
     }

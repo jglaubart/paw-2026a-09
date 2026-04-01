@@ -277,131 +277,81 @@ INSERT INTO productions (name, obra_id, productora_id, synopsis, direction, thea
 
 -- 5. Funciones (shows reales — datos de la cartelera marzo/abril 2026)
 
+
 -- La Revista del Cervantes (múltiples días)
-INSERT INTO shows (production_id, show_date, show_time, theater) VALUES
-((SELECT id FROM productions WHERE name = 'La Revista del Cervantes'), '2026-03-27', '20:00', 'Teatro Nacional Cervantes'),
-((SELECT id FROM productions WHERE name = 'La Revista del Cervantes'), '2026-03-28', '20:00', 'Teatro Nacional Cervantes'),
-((SELECT id FROM productions WHERE name = 'La Revista del Cervantes'), '2026-03-29', '20:00', 'Teatro Nacional Cervantes'),
-((SELECT id FROM productions WHERE name = 'La Revista del Cervantes'), '2026-04-03', '20:00', 'Teatro Nacional Cervantes'),
-((SELECT id FROM productions WHERE name = 'La Revista del Cervantes'), '2026-04-04', '20:30', 'Teatro Nacional Cervantes'),
-((SELECT id FROM productions WHERE name = 'La Revista del Cervantes'), '2026-04-05', '20:00', 'Teatro Nacional Cervantes'),
+INSERT INTO shows (production_id, show_date, show_time, theater, address, barrio, ciudad_partido, provincia) VALUES
+((SELECT id FROM productions WHERE name = 'La Revista del Cervantes'), '2026-03-27', '20:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'La Revista del Cervantes'), '2026-03-28', '20:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'La Revista del Cervantes'), '2026-03-29', '20:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'La Revista del Cervantes'), '2026-04-03', '20:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'La Revista del Cervantes'), '2026-04-04', '20:30', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'La Revista del Cervantes'), '2026-04-05', '20:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Doradas — Temporada 2026'), '2026-03-27', '18:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Doradas — Temporada 2026'), '2026-03-28', '18:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Doradas — Temporada 2026'), '2026-03-29', '18:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Doradas — Temporada 2026'), '2026-04-03', '18:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Doradas — Temporada 2026'), '2026-04-04', '18:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'El ávido espectador'), '2026-03-27', '21:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'El ávido espectador'), '2026-03-28', '21:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'El ávido espectador'), '2026-03-29', '21:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'El ávido espectador'), '2026-04-03', '21:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Nacha & Favero'), '2026-04-08', '20:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Nacha & Favero'), '2026-04-15', '20:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Nacha & Favero'), '2026-04-22', '20:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Nacha & Favero'), '2026-05-06', '20:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Nacha & Favero'), '2026-05-13', '20:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Nacha & Favero'), '2026-05-27', '20:00', 'Teatro Nacional Cervantes', 'Libertad 815', 'Retiro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'A navegar, Piratas!'), '2026-03-28', '16:15', 'Paseo La Plaza', 'Av Corrientes 1660', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'A navegar, Piratas!'), '2026-03-29', '16:15', 'Paseo La Plaza', 'Av Corrientes 1660', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'La bella durmiente y el ladrón'), '2026-03-28', '17:30', 'Paseo La Plaza', 'Av Corrientes 1660', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'La bella durmiente y el ladrón'), '2026-03-29', '17:30', 'Paseo La Plaza', 'Av Corrientes 1660', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'La bella durmiente y el ladrón'), '2026-04-04', '17:30', 'Paseo La Plaza', 'Av Corrientes 1660', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'La bella durmiente y el ladrón'), '2026-04-05', '17:30', 'Paseo La Plaza', 'Av Corrientes 1660', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Experiencia Queen — Greatest Hits Tour 2026'), '2026-06-04', '20:00', 'Teatro Maipú', 'Maipú 380', NULL, 'Banfield', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Alma Mahler — Sinfonía de vida, arte y seducción'), '2026-03-29', '20:00', 'Centro Cultural de la Cooperación', 'Corrientes 1543', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Alma Mahler — Sinfonía de vida, arte y seducción'), '2026-04-05', '20:00', 'Centro Cultural de la Cooperación', 'Corrientes 1543', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Alma Mahler — Sinfonía de vida, arte y seducción'), '2026-04-12', '20:00', 'Centro Cultural de la Cooperación', 'Corrientes 1543', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Alma Mahler — Sinfonía de vida, arte y seducción'), '2026-04-26', '20:00', 'Centro Cultural de la Cooperación', 'Corrientes 1543', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Tamorto (romance de arlequín y la muerte)'), '2026-03-29', '19:30', 'Auditorio AIC Abasto', 'Humahuaca 3640', 'Almagro', 'CABA', 'CABA'),
+((SELECT id FROM productions WHERE name = 'Tamorto (romance de arlequín y la muerte)'), '2026-04-05', '19:30', 'Auditorio AIC Abasto', 'Humahuaca 3640', 'Almagro', 'CABA', 'CABA'),
+((SELECT id FROM productions WHERE name = 'Circo Transatlántico'), '2026-03-29', '20:00', 'Teatro El Extranjero', 'Valentín Gómez 3378', 'Balvanera', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Circo Transatlántico'), '2026-04-05', '20:00', 'Teatro El Extranjero', 'Valentín Gómez 3378', 'Balvanera', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Crónica de una fuga'), '2026-03-25', '18:30', 'Fundación SAGAI', NULL, NULL, 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Crónica de una fuga'), '2026-04-01', '18:30', 'Fundación SAGAI', NULL, NULL, 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Me encantaría que gustes de mí'), '2026-03-26', '20:30', 'Beckett Teatro', 'Guardia Vieja 3556', 'Almagro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Me encantaría que gustes de mí'), '2026-04-02', '20:30', 'Beckett Teatro', 'Guardia Vieja 3556', 'Almagro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Me encantaría que gustes de mí'), '2026-04-09', '20:30', 'Beckett Teatro', 'Guardia Vieja 3556', 'Almagro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Un mar incógnito'), '2026-03-26', '20:30', 'Centro Cultural de la Cooperación', 'Corrientes 1543', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Un mar incógnito'), '2026-04-02', '20:30', 'Centro Cultural de la Cooperación', 'Corrientes 1543', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Perla Guaraní'), '2026-03-23', '20:00', 'Fundación SAGAI', NULL, NULL, 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Perla Guaraní'), '2026-03-30', '20:00', 'Fundación SAGAI', NULL, NULL, 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Perla Guaraní'), '2026-04-06', '20:00', 'Fundación SAGAI', NULL, NULL, 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Carnelli, algo que tiembla cederá'), '2026-03-26', '20:00', 'Centro Cultural de la Cooperación', 'Corrientes 1543', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Carnelli, algo que tiembla cederá'), '2026-04-02', '20:00', 'Centro Cultural de la Cooperación', 'Corrientes 1543', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'La ceremonia'), '2026-03-26', '20:30', 'Sala del Café Artigas', NULL, NULL, 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'La ceremonia'), '2026-04-02', '20:30', 'Sala del Café Artigas', NULL, NULL, 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'AMOR/VENENO — Tangos y Boleros'), '2026-03-29', '16:00', 'Teatro El Desguace', 'México 3694', 'Almagro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'AMOR/VENENO — Tangos y Boleros'), '2026-04-05', '16:00', 'Teatro El Desguace', 'México 3694', 'Almagro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = '¡HARTAZGO!'), '2026-03-29', '21:00', 'Teatro El Deseo', NULL, NULL, 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = '¡HARTAZGO!'), '2026-04-05', '21:00', 'Teatro El Deseo', NULL, NULL, 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Hansel y Gretel'), '2026-03-29', '16:00', 'La Galera Encantada', 'Humboldt 1591', 'Palermo', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Hansel y Gretel'), '2026-04-05', '16:00', 'La Galera Encantada', 'Humboldt 1591', 'Palermo', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Los tres chanchitos'), '2026-03-23', '16:00', 'La Galera Encantada', 'Humboldt 1591', 'Palermo', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Los tres chanchitos'), '2026-03-28', '16:00', 'La Galera Encantada', 'Humboldt 1591', 'Palermo', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Un jueves largo y verde'), '2026-03-24', '20:00', 'Tadron Teatro', NULL, NULL, 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Un jueves largo y verde'), '2026-03-31', '20:00', 'Tadron Teatro', NULL, NULL, 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Diente por diente'), '2026-03-29', '20:00', 'Sala del Café Artigas', NULL, NULL, 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Diente por diente'), '2026-04-05', '20:00', 'Sala del Café Artigas', NULL, NULL, 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'La Wagner'), '2026-03-31', '21:00', 'Espacio Callejón', 'Humahuaca 3759', 'Almagro', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Ricardo Behrens — INMERSIVO'), '2026-04-18', '21:00', 'La Sede Teatro', 'Sarmiento 1495', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Ricardo Behrens — INMERSIVO'), '2026-05-16', '21:00', 'La Sede Teatro', 'Sarmiento 1495', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'I Love Stand Up — Stand up show'), '2026-03-29', '21:00', 'The Cavern Buenos Aires', 'Av. Corrientes 1660', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'I Love Stand Up — Stand up show'), '2026-03-30', '21:00', 'The Cavern Buenos Aires', 'Av. Corrientes 1660', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'I Love Stand Up — Stand up show'), '2026-04-05', '21:00', 'The Cavern Buenos Aires', 'Av. Corrientes 1660', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'I Love Stand Up — Stand up show'), '2026-04-06', '21:00', 'The Cavern Buenos Aires', 'Av. Corrientes 1660', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'I Love Stand Up — Stand up show'), '2026-04-07', '22:30', 'The Cavern Buenos Aires', 'Av. Corrientes 1660', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'I Love Stand Up — Stand up show'), '2026-04-11', '22:30', 'The Cavern Buenos Aires', 'Av. Corrientes 1660', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'I Love Stand Up — Stand up show'), '2026-04-12', '22:30', 'The Cavern Buenos Aires', 'Av. Corrientes 1660', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'Nada del Amor me produce envidia'), '2026-04-13', '20:00', 'Fundación SAGAI', '25 de Mayo 586', 'San Nicolas', 'CABA', 'Buenos Aires'),
+((SELECT id FROM productions WHERE name = 'NoNiNaS Tango — Vida y obra de Astor Piazzolla'), '2026-03-27', '20:00', 'Centro Municipal de Arte', 'San Martín 797', NULL, 'Avellaneda', 'Buenos Aires');
 
--- Doradas
-((SELECT id FROM productions WHERE name = 'Doradas — Temporada 2026'), '2026-03-27', '18:00', 'Teatro Nacional Cervantes'),
-((SELECT id FROM productions WHERE name = 'Doradas — Temporada 2026'), '2026-03-28', '18:00', 'Teatro Nacional Cervantes'),
-((SELECT id FROM productions WHERE name = 'Doradas — Temporada 2026'), '2026-03-29', '18:00', 'Teatro Nacional Cervantes'),
-((SELECT id FROM productions WHERE name = 'Doradas — Temporada 2026'), '2026-04-03', '18:00', 'Teatro Nacional Cervantes'),
-((SELECT id FROM productions WHERE name = 'Doradas — Temporada 2026'), '2026-04-04', '18:00', 'Teatro Nacional Cervantes'),
-
--- El ávido espectador
-((SELECT id FROM productions WHERE name = 'El ávido espectador'), '2026-03-27', '21:00', 'Teatro Nacional Cervantes'),
-((SELECT id FROM productions WHERE name = 'El ávido espectador'), '2026-03-28', '21:00', 'Teatro Nacional Cervantes'),
-((SELECT id FROM productions WHERE name = 'El ávido espectador'), '2026-03-29', '21:00', 'Teatro Nacional Cervantes'),
-((SELECT id FROM productions WHERE name = 'El ávido espectador'), '2026-04-03', '21:00', 'Teatro Nacional Cervantes'),
-
--- Nacha & Favero
-((SELECT id FROM productions WHERE name = 'Nacha & Favero'), '2026-04-08', '20:00', 'Teatro Nacional Cervantes'),
-((SELECT id FROM productions WHERE name = 'Nacha & Favero'), '2026-04-15', '20:00', 'Teatro Nacional Cervantes'),
-((SELECT id FROM productions WHERE name = 'Nacha & Favero'), '2026-04-22', '20:00', 'Teatro Nacional Cervantes'),
-((SELECT id FROM productions WHERE name = 'Nacha & Favero'), '2026-05-06', '20:00', 'Teatro Nacional Cervantes'),
-((SELECT id FROM productions WHERE name = 'Nacha & Favero'), '2026-05-13', '20:00', 'Teatro Nacional Cervantes'),
-((SELECT id FROM productions WHERE name = 'Nacha & Favero'), '2026-05-27', '20:00', 'Teatro Nacional Cervantes'),
-
--- A navegar Piratas
-((SELECT id FROM productions WHERE name = 'A navegar, Piratas!'), '2026-03-28', '16:15', 'Paseo La Plaza'),
-((SELECT id FROM productions WHERE name = 'A navegar, Piratas!'), '2026-03-29', '16:15', 'Paseo La Plaza'),
-
--- La bella durmiente
-((SELECT id FROM productions WHERE name = 'La bella durmiente y el ladrón'), '2026-03-28', '17:30', 'Paseo La Plaza'),
-((SELECT id FROM productions WHERE name = 'La bella durmiente y el ladrón'), '2026-03-29', '17:30', 'Paseo La Plaza'),
-((SELECT id FROM productions WHERE name = 'La bella durmiente y el ladrón'), '2026-04-04', '17:30', 'Paseo La Plaza'),
-((SELECT id FROM productions WHERE name = 'La bella durmiente y el ladrón'), '2026-04-05', '17:30', 'Paseo La Plaza'),
-
--- Experiencia Queen
-((SELECT id FROM productions WHERE name = 'Experiencia Queen — Greatest Hits Tour 2026'), '2026-06-04', '20:00', 'Teatro Maipú'),
-
--- Alma Mahler
-((SELECT id FROM productions WHERE name = 'Alma Mahler — Sinfonía de vida, arte y seducción'), '2026-03-29', '20:00', 'Centro Cultural de la Cooperación'),
-((SELECT id FROM productions WHERE name = 'Alma Mahler — Sinfonía de vida, arte y seducción'), '2026-04-05', '20:00', 'Centro Cultural de la Cooperación'),
-((SELECT id FROM productions WHERE name = 'Alma Mahler — Sinfonía de vida, arte y seducción'), '2026-04-12', '20:00', 'Centro Cultural de la Cooperación'),
-((SELECT id FROM productions WHERE name = 'Alma Mahler — Sinfonía de vida, arte y seducción'), '2026-04-26', '20:00', 'Centro Cultural de la Cooperación'),
-
--- Tamorto
-((SELECT id FROM productions WHERE name = 'Tamorto (romance de arlequín y la muerte)'), '2026-03-29', '19:30', 'Auditorio AIC Abasto'),
-((SELECT id FROM productions WHERE name = 'Tamorto (romance de arlequín y la muerte)'), '2026-04-05', '19:30', 'Auditorio AIC Abasto'),
-
--- Circo Transatlántico
-((SELECT id FROM productions WHERE name = 'Circo Transatlántico'), '2026-03-29', '20:00', 'Teatro El Extranjero'),
-((SELECT id FROM productions WHERE name = 'Circo Transatlántico'), '2026-04-05', '20:00', 'Teatro El Extranjero'),
-
--- Crónica de una fuga
-((SELECT id FROM productions WHERE name = 'Crónica de una fuga'), '2026-03-25', '18:30', 'Fundación SAGAI'),
-((SELECT id FROM productions WHERE name = 'Crónica de una fuga'), '2026-04-01', '18:30', 'Fundación SAGAI'),
-
--- Me encantaría que gustes de mí
-((SELECT id FROM productions WHERE name = 'Me encantaría que gustes de mí'), '2026-03-26', '20:30', 'Beckett Teatro'),
-((SELECT id FROM productions WHERE name = 'Me encantaría que gustes de mí'), '2026-04-02', '20:30', 'Beckett Teatro'),
-((SELECT id FROM productions WHERE name = 'Me encantaría que gustes de mí'), '2026-04-09', '20:30', 'Beckett Teatro'),
-
--- Un mar incógnito
-((SELECT id FROM productions WHERE name = 'Un mar incógnito'), '2026-03-26', '20:30', 'Centro Cultural de la Cooperación'),
-((SELECT id FROM productions WHERE name = 'Un mar incógnito'), '2026-04-02', '20:30', 'Centro Cultural de la Cooperación'),
-
--- Perla Guaraní
-((SELECT id FROM productions WHERE name = 'Perla Guaraní'), '2026-03-23', '20:00', 'Fundación SAGAI'),
-((SELECT id FROM productions WHERE name = 'Perla Guaraní'), '2026-03-30', '20:00', 'Fundación SAGAI'),
-((SELECT id FROM productions WHERE name = 'Perla Guaraní'), '2026-04-06', '20:00', 'Fundación SAGAI'),
-
--- Carnelli
-((SELECT id FROM productions WHERE name = 'Carnelli, algo que tiembla cederá'), '2026-03-26', '20:00', 'Centro Cultural de la Cooperación'),
-((SELECT id FROM productions WHERE name = 'Carnelli, algo que tiembla cederá'), '2026-04-02', '20:00', 'Centro Cultural de la Cooperación'),
-
--- La ceremonia
-((SELECT id FROM productions WHERE name = 'La ceremonia'), '2026-03-26', '20:30', 'Sala del Café Artigas'),
-((SELECT id FROM productions WHERE name = 'La ceremonia'), '2026-04-02', '20:30', 'Sala del Café Artigas'),
-
--- AMOR/VENENO
-((SELECT id FROM productions WHERE name = 'AMOR/VENENO — Tangos y Boleros'), '2026-03-29', '16:00', 'Teatro El Desguace'),
-((SELECT id FROM productions WHERE name = 'AMOR/VENENO — Tangos y Boleros'), '2026-04-05', '16:00', 'Teatro El Desguace'),
-
--- ¡HARTAZGO!
-((SELECT id FROM productions WHERE name = '¡HARTAZGO!'), '2026-03-29', '21:00', 'Teatro El Deseo'),
-((SELECT id FROM productions WHERE name = '¡HARTAZGO!'), '2026-04-05', '21:00', 'Teatro El Deseo'),
-
--- Hansel y Gretel
-((SELECT id FROM productions WHERE name = 'Hansel y Gretel'), '2026-03-29', '16:00', 'La Galera Encantada'),
-((SELECT id FROM productions WHERE name = 'Hansel y Gretel'), '2026-04-05', '16:00', 'La Galera Encantada'),
-
--- Los tres chanchitos
-((SELECT id FROM productions WHERE name = 'Los tres chanchitos'), '2026-03-23', '16:00', 'La Galera Encantada'),
-((SELECT id FROM productions WHERE name = 'Los tres chanchitos'), '2026-03-28', '16:00', 'La Galera Encantada'),
-
--- Un jueves largo y verde
-((SELECT id FROM productions WHERE name = 'Un jueves largo y verde'), '2026-03-24', '20:00', 'Tadron Teatro'),
-((SELECT id FROM productions WHERE name = 'Un jueves largo y verde'), '2026-03-31', '20:00', 'Tadron Teatro'),
-
--- Diente por diente
-((SELECT id FROM productions WHERE name = 'Diente por diente'), '2026-03-29', '20:00', 'Sala del Café Artigas'),
-((SELECT id FROM productions WHERE name = 'Diente por diente'), '2026-04-05', '20:00', 'Sala del Café Artigas'),
-
--- La Wagner
-((SELECT id FROM productions WHERE name = 'La Wagner'), '2026-03-31', '21:00', 'Espacio Callejón'),
-
--- Ricardo Behrens INMERSIVO
-((SELECT id FROM productions WHERE name = 'Ricardo Behrens — INMERSIVO'), '2026-04-18', '21:00', 'La Sede Teatro'),
-((SELECT id FROM productions WHERE name = 'Ricardo Behrens — INMERSIVO'), '2026-05-16', '21:00', 'La Sede Teatro'),
-
--- I Love Stand Up
-((SELECT id FROM productions WHERE name = 'I Love Stand Up — Stand up show'), '2026-03-29', '21:00', 'The Cavern Buenos Aires'),
-((SELECT id FROM productions WHERE name = 'I Love Stand Up — Stand up show'), '2026-03-30', '21:00', 'The Cavern Buenos Aires'),
-((SELECT id FROM productions WHERE name = 'I Love Stand Up — Stand up show'), '2026-04-05', '21:00', 'The Cavern Buenos Aires'),
-((SELECT id FROM productions WHERE name = 'I Love Stand Up — Stand up show'), '2026-04-06', '21:00', 'The Cavern Buenos Aires'),
-((SELECT id FROM productions WHERE name = 'I Love Stand Up — Stand up show'), '2026-04-07', '22:30', 'The Cavern Buenos Aires'),
-((SELECT id FROM productions WHERE name = 'I Love Stand Up — Stand up show'), '2026-04-11', '22:30', 'The Cavern Buenos Aires'),
-((SELECT id FROM productions WHERE name = 'I Love Stand Up — Stand up show'), '2026-04-12', '22:30', 'The Cavern Buenos Aires'),
-
--- Nada del Amor me produce envidia
-((SELECT id FROM productions WHERE name = 'Nada del Amor me produce envidia'), '2026-04-13', '20:00', 'Fundación SAGAI'),
-
--- NoNiNaS Tango
-((SELECT id FROM productions WHERE name = 'NoNiNaS Tango — Vida y obra de Astor Piazzolla'), '2026-03-27', '20:00', 'Centro Municipal de Arte');
