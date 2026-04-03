@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="paw" tagdir="/WEB-INF/tags" %>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -11,26 +12,15 @@
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/favicon.png" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/main.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/navbar.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/search.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/button.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/alert.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/play-petitions-admin.css" />
 </head>
 <body>
-<c:url var="homeUrl" value="/" />
-<c:url var="carteleraUrl" value="/cartelera" />
-<c:url var="wishlistUrl" value="/wishlist" />
-<c:url var="watchlistUrl" value="/watchlist" />
 <c:url var="heroImageUrl" value="/images/Portadas/hamlet.jpg" />
 
-<header class="navbar">
-    <a class="navbar-logo" href="${homeUrl}">PLATEA</a>
-
-    <nav class="navbar-nav" aria-label="Navegación principal">
-        <a class="navbar-link" href="${carteleraUrl}">CARTELERA</a>
-        <a class="navbar-link" href="${wishlistUrl}">WATCHLIST</a>
-        <a class="navbar-link" href="${watchlistUrl}">HISTORIAL</a>
-    </nav>
-</header>
+<paw:navbar />
 
 <section class="petition-admin-hero">
     <div class="petition-admin-hero-backdrop" style="background-image: linear-gradient(90deg, rgba(20,20,20,0.94) 0%, rgba(20,20,20,0.78) 50%, rgba(20,20,20,0.92) 100%), url('${pageContext.request.contextPath}${heroImageUrl}');"></div>
@@ -62,13 +52,19 @@
         </div>
 
         <c:if test="${updated eq 'approved'}">
-            <div class="alert alert-success petition-admin-alert"><div class="alert-message">La petición fue aprobada.</div></div>
+            <div class="petition-admin-alert">
+                <paw:alert variant="success" message="La petición fue aprobada." showClose="false" />
+            </div>
         </c:if>
         <c:if test="${updated eq 'rejected'}">
-            <div class="alert alert-warning petition-admin-alert"><div class="alert-message">La petición fue rechazada.</div></div>
+            <div class="petition-admin-alert">
+                <paw:alert variant="warning" message="La petición fue rechazada." showClose="false" />
+            </div>
         </c:if>
         <c:if test="${error eq 'not_found'}">
-            <div class="alert alert-error petition-admin-alert"><div class="alert-message">No encontramos la petición solicitada.</div></div>
+            <div class="petition-admin-alert">
+                <paw:alert variant="error" message="No encontramos la petición solicitada." showClose="false" />
+            </div>
         </c:if>
 
         <div class="petition-admin-list">

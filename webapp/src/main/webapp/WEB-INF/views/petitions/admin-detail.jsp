@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="paw" tagdir="/WEB-INF/tags" %>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -11,25 +12,13 @@
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/favicon.png" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/main.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/navbar.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/search.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/button.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/alert.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/play-petitions-admin.css" />
 </head>
 <body>
-<c:url var="homeUrl" value="/" />
-<c:url var="carteleraUrl" value="/cartelera" />
-<c:url var="wishlistUrl" value="/wishlist" />
-<c:url var="watchlistUrl" value="/watchlist" />
-
-<header class="navbar">
-    <a class="navbar-logo" href="${homeUrl}">PLATEA</a>
-
-    <nav class="navbar-nav" aria-label="Navegación principal">
-        <a class="navbar-link" href="${carteleraUrl}">CARTELERA</a>
-        <a class="navbar-link" href="${wishlistUrl}">WATCHLIST</a>
-        <a class="navbar-link" href="${watchlistUrl}">HISTORIAL</a>
-    </nav>
-</header>
+<paw:navbar />
 
 <main class="petition-admin-page petition-admin-page-detail">
     <section class="petition-admin-shell petition-admin-detail-shell">
@@ -43,10 +32,10 @@
             <p class="petition-admin-card-meta"><c:out value="${petition.petitionerEmail}" /> · <c:out value="${petition.theater}" /></p>
         </div>
 
-        <c:if test="${updated eq 'approved'}"><div class="alert alert-success petition-admin-alert"><div class="alert-message">La petición fue aprobada y se notificó al solicitante.</div></div></c:if>
-        <c:if test="${updated eq 'rejected'}"><div class="alert alert-warning petition-admin-alert"><div class="alert-message">La petición fue rechazada y se notificó al solicitante.</div></div></c:if>
-        <c:if test="${error eq 'already_resolved'}"><div class="alert alert-error petition-admin-alert"><div class="alert-message">La petición ya estaba resuelta.</div></div></c:if>
-        <c:if test="${error eq 'invalid_action'}"><div class="alert alert-error petition-admin-alert"><div class="alert-message">La acción solicitada no es válida.</div></div></c:if>
+        <c:if test="${updated eq 'approved'}"><div class="petition-admin-alert"><paw:alert variant="success" message="La petición fue aprobada y se notificó al solicitante." showClose="false" /></div></c:if>
+        <c:if test="${updated eq 'rejected'}"><div class="petition-admin-alert"><paw:alert variant="warning" message="La petición fue rechazada y se notificó al solicitante." showClose="false" /></div></c:if>
+        <c:if test="${error eq 'already_resolved'}"><div class="petition-admin-alert"><paw:alert variant="error" message="La petición ya estaba resuelta." showClose="false" /></div></c:if>
+        <c:if test="${error eq 'invalid_action'}"><div class="petition-admin-alert"><paw:alert variant="error" message="La acción solicitada no es válida." showClose="false" /></div></c:if>
 
         <div class="petition-admin-detail-grid">
             <section class="petition-admin-panel petition-admin-panel-story">

@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="paw" tagdir="/WEB-INF/tags" %>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -11,26 +12,15 @@
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/favicon.png" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/main.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/navbar.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/search.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/button.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/alert.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/play-petition-form.css" />
 </head>
 <body>
-<c:url var="homeUrl" value="/" />
-<c:url var="carteleraUrl" value="/cartelera" />
-<c:url var="wishlistUrl" value="/wishlist" />
-<c:url var="watchlistUrl" value="/watchlist" />
 <c:url var="heroImageUrl" value="/images/Portadas/hamilton.jpg" />
 
-<header class="navbar">
-    <a class="navbar-logo" href="${homeUrl}">PLATEA</a>
-
-    <nav class="navbar-nav" aria-label="Navegación principal">
-        <a class="navbar-link" href="${carteleraUrl}">CARTELERA</a>
-        <a class="navbar-link" href="${wishlistUrl}">WATCHLIST</a>
-        <a class="navbar-link" href="${watchlistUrl}">HISTORIAL</a>
-    </nav>
-</header>
+<paw:navbar />
 
 <section class="petition-hero">
     <div class="petition-hero-backdrop" style="background-image: linear-gradient(90deg, rgba(20,20,20,0.94) 0%, rgba(20,20,20,0.74) 45%, rgba(20,20,20,0.88) 100%), url('${pageContext.request.contextPath}${heroImageUrl}');"></div>
@@ -73,20 +63,14 @@
             </div>
 
             <c:if test="${created}">
-                <div class="alert alert-success petition-form-alert" role="alert">
-                    <div class="alert-content">
-                        <p class="alert-title">Solicitud enviada</p>
-                        <p class="alert-message">Recibimos tu petición y te enviamos un correo de confirmación al email informado.</p>
-                    </div>
+                <div class="petition-form-alert">
+                    <paw:alert variant="success" title="Solicitud enviada" message="Recibimos tu petición y te enviamos un correo de confirmación al email informado." showClose="false" />
                 </div>
             </c:if>
 
             <c:if test="${not empty errors['global']}">
-                <div class="alert alert-error petition-form-alert" role="alert">
-                    <div class="alert-content">
-                        <p class="alert-title">No pudimos enviar la petición</p>
-                        <p class="alert-message"><c:out value="${errors['global']}" /></p>
-                    </div>
+                <div class="petition-form-alert">
+                    <paw:alert variant="error" title="No pudimos enviar la petición" message="${errors['global']}" showClose="false" />
                 </div>
             </c:if>
 
