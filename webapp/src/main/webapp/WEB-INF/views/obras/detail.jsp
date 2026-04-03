@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/alert.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/user-lists.css" />
     <script src="${pageContext.request.contextPath}/js/components/star-rating.js" defer></script>
+    <script src="${pageContext.request.contextPath}/js/components/share-dialog.js" defer></script>
 </head>
 <body>
 
@@ -134,7 +135,54 @@
                 <c:out value="${hasSeen ? 'Ya la vi' : 'Marcar como vista'}" />
             </button>
         </form>
+
+        <c:if test="${selectedProduction != null}">
+            <button type="button" class="obra-action-btn obra-action-btn-share" data-share-open>
+                <span aria-hidden="true">↗</span>
+                Compartir por mail
+            </button>
+        </c:if>
     </div>
+
+    <c:if test="${param.share == 'sent'}">
+        <div class="obra-action-feedback-wrap">
+            <p class="obra-inline-feedback obra-inline-feedback-success">Publicación compartida por mail.</p>
+        </div>
+    </c:if>
+    <c:if test="${param.share == 'invalid'}">
+        <div class="obra-action-feedback-wrap">
+            <p class="obra-inline-feedback obra-inline-feedback-warning">Completá un nombre y un mail válidos para compartir.</p>
+        </div>
+    </c:if>
+
+    <c:if test="${selectedProduction != null}">
+        <dialog class="obra-share-dialog" data-share-dialog>
+            <form method="dialog" class="obra-share-dialog-close-form">
+                <button type="submit" class="obra-share-dialog-close" aria-label="Cerrar compartir">×</button>
+            </form>
+
+            <div class="obra-share-dialog-body">
+                <p class="obra-share-dialog-kicker">Compartir publicación</p>
+                <h2 class="obra-share-dialog-title">Mandá esta obra por mail</h2>
+                <p class="obra-share-dialog-copy">Vamos a enviarle la publicación seleccionada con un template de Platea y tu nombre como remitente.</p>
+
+                <c:url var="shareActionUrl" value="/obras/${obra.id}/share" />
+                <form action="${shareActionUrl}" method="post" class="obra-share-form">
+                    <input type="hidden" name="produccionId" value="${selectedProduction.id}" />
+
+                    <label class="obra-share-label" for="share-sender-name">Tu nombre</label>
+                    <input id="share-sender-name" name="senderName" type="text" class="obra-share-input" maxlength="80" required />
+
+                    <label class="obra-share-label" for="share-recipient-email">Mail de destino</label>
+                    <input id="share-recipient-email" name="recipientEmail" type="email" class="obra-share-input" maxlength="255" required />
+
+                    <div class="obra-share-actions">
+                        <button type="submit" class="btn btn-primary btn-md">Enviar publicación</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
+    </c:if>
 
     <%-- ═══════════════ BODY ═══════════════ --%>
     <div class="obra-content">
@@ -260,8 +308,8 @@
                             <c:forEach var="r" items="${reviews}">
                                 <div class="obra-review-card">
                                     <div class="obra-review-header">
-                                        <span class="obra-review-avatar">U<c:out value="${r.userId}" /></span>
-                                        <span class="obra-review-author">Usuario #<c:out value="${r.userId}" /></span>
+                                        <span class="obra-review-avatar">${fn:toUpperCase(fn:substring(r.userEmail, 0, 1))}</span>
+                                        <span class="obra-review-author"><c:out value="${r.userEmail}" /></span>
                                     </div>
                                     <p class="obra-review-body">"<c:out value="${r.body}" />"</p>
                                 </div>
@@ -315,56 +363,49 @@
                             </form>
                         </div>
 
-                        <div class="obra-participation-review ${userStars == null ? 'obra-participation-review-locked' : ''}" data-review-module>
+                        <div class="obra-participation-review" data-review-module>
                             <div class="obra-interact-head">
                                 <h3 class="obra-interact-title">Tu reseña</h3>
                             </div>
 
-                            <c:if test="${param.error == 'rate_first'}">
+                            <c:if test="${param.error == 'invalid_review'}">
                                 <p class="obra-inline-feedback obra-inline-feedback-warning">
-                                    Primero calificá.
+                                    Completá un mail válido y escribí una reseña.
                                 </p>
                             </c:if>
 
                             <c:if test="${param.review == 'saved'}">
                                 <p class="obra-inline-feedback obra-inline-feedback-success">
-                                    Publicada.
+                                    Reseña guardada.
                                 </p>
                             </c:if>
 
-                            <c:choose>
-                                <c:when test="${userReview != null}">
-                                    <div class="obra-user-review-card">
-                                        <blockquote class="obra-user-review">
-                                            "<c:out value="${userReview.body}" />"
-                                        </blockquote>
-                                    </div>
-                                </c:when>
-                                <c:otherwise>
-                                    <c:url var="reviewActionUrl" value="/productions/${selectedProduction.id}/review" />
-                                    <form action="${reviewActionUrl}"
-                                          method="post"
-                                          accept-charset="UTF-8"
-                                          class="obra-review-form ${userStars == null ? 'obra-review-form-locked' : ''}"
-                                          data-review-gate>
-                                        <input type="hidden" name="obraId" value="${obra.id}" />
-                                        <textarea name="body"
-                                                  rows="4"
-                                                  class="obra-review-textarea"
-                                                  placeholder="${userStars != null ? '¿Qué te dejó esta obra?' : 'Calificá para escribir'}"
-                                                  data-enabled-placeholder="¿Qué te dejó esta obra?"
-                                                  data-disabled-placeholder="Calificá para escribir"
-                                                  ${userStars == null ? 'disabled' : ''}></textarea>
-                                        <div class="obra-review-actions">
-                                            <button type="submit"
-                                                    class="btn btn-primary btn-md obra-review-submit"
-                                                    ${userStars == null ? 'disabled' : ''}>
-                                                Publicar reseña
-                                            </button>
-                                        </div>
-                                    </form>
-                                </c:otherwise>
-                            </c:choose>
+                            <c:url var="reviewActionUrl" value="/productions/${selectedProduction.id}/review" />
+                            <form action="${reviewActionUrl}"
+                                  method="post"
+                                  accept-charset="UTF-8"
+                                  class="obra-review-form">
+                                <input type="hidden" name="obraId" value="${obra.id}" />
+                                <input type="email"
+                                       name="email"
+                                       class="obra-review-email"
+                                       placeholder="tu-mail@ejemplo.com"
+                                       value="${fn:escapeXml(reviewEmail)}"
+                                       maxlength="255"
+                                       required />
+                                <textarea name="body"
+                                          rows="4"
+                                          class="obra-review-textarea"
+                                          placeholder="¿Qué te dejó esta obra?"
+                                          required><c:out value="${userReview != null ? userReview.body : ''}" /></textarea>
+                                <div class="obra-review-actions">
+                                    <span class="obra-review-help">Una reseña por mail. Si ya existe, la actualizamos.</span>
+                                    <button type="submit"
+                                            class="btn btn-primary btn-md obra-review-submit">
+                                        ${userReview != null ? 'Actualizar reseña' : 'Publicar reseña'}
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </c:if>

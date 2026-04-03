@@ -43,8 +43,6 @@ public class MailServiceImpl implements MailService {
     public void sendPetitionConfirmation(final PlayPetition petition) {
         final Locale locale = resolveLocale();
         final Context context = baseContext(petition, locale);
-        context.setVariable("ctaUrl", publicBaseUrl + "/subir-obra");
-        context.setVariable("ctaLabel", messageSource.getMessage("mail.petition.confirmation.cta", null, locale));
         sendHtmlMail(
                 petition.getPetitionerEmail(),
                 messageSource.getMessage("mail.petition.confirmation.subject", new Object[]{ petition.getTitle() }, locale),
@@ -82,6 +80,27 @@ public class MailServiceImpl implements MailService {
                 petition.getPetitionerEmail(),
                 messageSource.getMessage("mail.petition.rejected.subject", new Object[]{ petition.getTitle() }, locale),
                 "petition-rejected",
+                context
+        );
+    }
+
+    @Async
+    @Override
+    public void sendSharedProduction(final String recipientEmail, final String senderName,
+                                     final String obraTitle, final String productionName,
+                                     final String synopsis, final String detailUrl) {
+        final Locale locale = resolveLocale();
+        final Context context = new Context(locale);
+        context.setVariable("senderName", senderName);
+        context.setVariable("obraTitle", obraTitle);
+        context.setVariable("productionName", productionName);
+        context.setVariable("synopsis", synopsis);
+        context.setVariable("ctaUrl", detailUrl.startsWith("http") ? detailUrl : publicBaseUrl + detailUrl);
+        context.setVariable("ctaLabel", messageSource.getMessage("mail.share.cta", null, locale));
+        sendHtmlMail(
+                recipientEmail,
+                messageSource.getMessage("mail.share.subject", new Object[]{ senderName, obraTitle }, locale),
+                "share-production",
                 context
         );
     }

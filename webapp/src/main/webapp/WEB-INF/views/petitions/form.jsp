@@ -16,9 +16,11 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/button.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/alert.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/play-petition-form.css" />
+    <script src="${pageContext.request.contextPath}/js/components/play-petition-form.js" defer></script>
 </head>
 <body>
 <c:url var="heroImageUrl" value="/images/Portadas/hamilton.jpg" />
+<c:set var="maxUploadMb" value="5" />
 
 <paw:navbar />
 
@@ -51,7 +53,7 @@
 
             <div class="petition-form-sidebar-card petition-form-sidebar-card-accent">
                 <p class="petition-form-sidebar-title">Antes de enviar</p>
-                <p class="petition-form-sidebar-copy">Los campos con <span class="petition-form-required">*</span> son obligatorios. Cuanto mejor cargada esté la ficha, menos ida y vuelta va a necesitar el equipo.</p>
+                <p class="petition-form-sidebar-copy">Los campos con <span class="petition-form-required">*</span> son obligatorios. La imagen de portada puede pesar hasta <c:out value="${maxUploadMb}" /> MB.</p>
             </div>
         </aside>
 
@@ -74,7 +76,7 @@
                 </div>
             </c:if>
 
-            <form action="${pageContext.request.contextPath}/subir-obra" method="post" enctype="multipart/form-data" class="petition-form-card">
+            <form action="${pageContext.request.contextPath}/subir-obra" method="post" enctype="multipart/form-data" class="petition-form-card" data-play-petition-form>
                 <section class="petition-form-step">
                     <div class="petition-form-step-heading">
                         <span class="petition-form-step-number">1</span>
@@ -148,9 +150,10 @@
 
                         <div class="petition-form-field petition-form-field-full petition-form-upload-field">
                             <label for="coverImage">Imagen de portada <span class="petition-form-required">*</span></label>
-                            <input id="coverImage" name="coverImage" type="file" accept="image/*" />
-                            <p class="petition-form-hint">Subí un afiche o una imagen promocional en formato imagen.</p>
+                            <input id="coverImage" name="coverImage" type="file" accept="image/*" data-max-bytes="5242880" />
+                            <p class="petition-form-hint">Subí un afiche o una imagen promocional en formato imagen. Tamaño máximo: <c:out value="${maxUploadMb}" /> MB.</p>
                             <c:if test="${not empty errors['coverImage']}"><span class="petition-form-error"><c:out value="${errors['coverImage']}" /></span></c:if>
+                            <span class="petition-form-error petition-form-error-hidden" data-cover-image-size-error>La imagen excede el tamaño máximo permitido de <c:out value="${maxUploadMb}" /> MB.</span>
                         </div>
 
                         <div class="petition-form-field petition-form-field-full">

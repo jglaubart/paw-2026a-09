@@ -20,29 +20,36 @@ public class ReviewDaoImpl implements ReviewDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    // user_id and production_id come from the JOIN with production_ratings (not stored in production_reviews)
     private static final RowMapper<Review> REVIEW_MAPPER = (rs, rowNum) ->
-            new Review(rs.getLong("id"), rs.getLong("user_id"),
-                    rs.getLong("production_id"), rs.getString("body"), rs.getLong("rating_id"));
+            new Review(
+                    rs.getLong("id"),
+                    rs.getLong("user_id"),
+                    rs.getString("user_email"),
+                    rs.getLong("production_id"),
+                    rs.getLong("obra_id"),
+                    rs.getString("body"),
+                    rs.getObject("rating_id") != null ? rs.getLong("rating_id") : null
+            );
 
     private static final String SELECT_WITH_JOIN =
-            "SELECT r.id, r.body, r.rating_id, pr.user_id, pr.production_id " +
+            "SELECT r.id, r.body, r.rating_id, r.user_id, r.production_id, p.obra_id, u.email AS user_email " +
             "FROM production_reviews r " +
-            "JOIN production_ratings pr ON r.rating_id = pr.id ";
+            "JOIN users u ON r.user_id = u.id " +
+            "JOIN productions p ON r.production_id = p.id ";
 
     @Autowired
     public ReviewDaoImpl(final DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName("production_reviews")
-                .usingColumns("rating_id", "body")
+                .usingColumns("user_id", "production_id", "body")
                 .usingGeneratedKeyColumns("id");
     }
 
     @Override
     public Optional<Review> findByUserAndProduction(final long userId, final long productionId) {
         final List<Review> results = jdbcTemplate.query(
-                SELECT_WITH_JOIN + "WHERE pr.user_id = ? AND pr.production_id = ?",
+                SELECT_WITH_JOIN + "WHERE r.user_id = ? AND r.production_id = ?",
                 new Object[]{ userId, productionId },
                 REVIEW_MAPPER
         );
@@ -52,7 +59,7 @@ public class ReviewDaoImpl implements ReviewDao {
     @Override
     public List<Review> findByProduction(final long productionId) {
         return jdbcTemplate.query(
-                SELECT_WITH_JOIN + "WHERE pr.production_id = ?",
+                SELECT_WITH_JOIN + "WHERE r.production_id = ? ORDER BY r.created_at DESC",
                 new Object[]{ productionId },
                 REVIEW_MAPPER
         );
@@ -61,18 +68,28 @@ public class ReviewDaoImpl implements ReviewDao {
     @Override
     public List<Review> findByUser(final long userId) {
         return jdbcTemplate.query(
-                SELECT_WITH_JOIN + "WHERE pr.user_id = ?",
+                SELECT_WITH_JOIN + "WHERE r.user_id = ? ORDER BY r.created_at DESC",
                 new Object[]{ userId },
                 REVIEW_MAPPER
         );
     }
 
     @Override
-    public Review create(final long userId, final long productionId, final String body, final long ratingId) {
+    public Review create(final long userId, final long productionId, final String body) {
         final Map<String, Object> params = new HashMap<>();
-        params.put("rating_id", ratingId);
+        params.put("user_id", userId);
+        params.put("production_id", productionId);
         params.put("body", body);
         final Number key = jdbcInsert.executeAndReturnKey(params);
-        return new Review(key.longValue(), userId, productionId, body, ratingId);
+        return findByUserAndProduction(userId, productionId).orElseThrow();
+    }
+
+    @Override
+    public Review update(final long userId, final long productionId, final String body) {
+        jdbcTemplate.update(
+                "UPDATE production_reviews SET body = ?, created_at = NOW() WHERE user_id = ? AND production_id = ?",
+                body, userId, productionId
+        );
+        return findByUserAndProduction(userId, productionId).orElseThrow();
     }
 }

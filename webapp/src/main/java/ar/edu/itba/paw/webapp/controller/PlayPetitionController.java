@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.GenreService;
 import ar.edu.itba.paw.interfaces.services.PlayPetitionService;
 import ar.edu.itba.paw.models.Genre;
+import ar.edu.itba.paw.webapp.config.WebConfig;
 import ar.edu.itba.paw.webapp.form.PlayPetitionForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +26,8 @@ import java.util.Map;
 @Controller
 public class PlayPetitionController {
 
+    private static final long MAX_IMAGE_UPLOAD_BYTES = WebConfig.MAX_UPLOAD_SIZE_BYTES;
+
     private final PlayPetitionService playPetitionService;
     private final GenreService genreService;
 
@@ -36,8 +39,13 @@ public class PlayPetitionController {
     }
 
     @RequestMapping(value = "/subir-obra", method = RequestMethod.GET)
-    public ModelAndView form(@RequestParam(value = "created", required = false) final String created) {
-        final ModelAndView mav = petitionForm(new PlayPetitionForm(), new LinkedHashMap<>());
+    public ModelAndView form(@RequestParam(value = "created", required = false) final String created,
+                             @RequestParam(value = "imageTooLarge", required = false) final String imageTooLarge) {
+        final Map<String, String> errors = new LinkedHashMap<>();
+        if ("1".equals(imageTooLarge)) {
+            errors.put("coverImage", "La imagen excede el tamaño máximo permitido de " + readableUploadLimit() + ".");
+        }
+        final ModelAndView mav = petitionForm(new PlayPetitionForm(), errors);
         mav.addObject("created", "1".equals(created));
         return mav;
     }
@@ -119,6 +127,8 @@ public class PlayPetitionController {
             errors.put("coverImage", "Subí una imagen de portada.");
         } else if (form.getCoverImage().getContentType() == null || !form.getCoverImage().getContentType().startsWith("image/")) {
             errors.put("coverImage", "La portada debe ser una imagen válida.");
+        } else if (form.getCoverImage().getSize() > MAX_IMAGE_UPLOAD_BYTES) {
+            errors.put("coverImage", "La imagen excede el tamaño máximo permitido de " + readableUploadLimit() + ".");
         }
 
         if (hasText(form.getTicketUrl()) && !isValidUrl(form.getTicketUrl())) {
@@ -205,5 +215,9 @@ public class PlayPetitionController {
 
     private boolean hasText(final String value) {
         return value != null && !value.trim().isEmpty();
+    }
+
+    private String readableUploadLimit() {
+        return (MAX_IMAGE_UPLOAD_BYTES / (1024 * 1024)) + " MB";
     }
 }

@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS shows (
 CREATE TABLE IF NOT EXISTS users (
     id       SERIAL PRIMARY KEY,
     email    VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL
+    password VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS play_ratings (
@@ -71,10 +71,13 @@ CREATE TABLE IF NOT EXISTS production_ratings (
 -- user_id and production_id are omitted: they are derivable via rating_id → production_ratings
 CREATE TABLE IF NOT EXISTS production_reviews (
     id                SERIAL PRIMARY KEY,
-    rating_id         INT NOT NULL UNIQUE REFERENCES production_ratings(id),
+    rating_id         INT UNIQUE REFERENCES production_ratings(id),
+    user_id           INT NOT NULL REFERENCES users(id),
+    production_id     INT NOT NULL REFERENCES productions(id),
     body              TEXT NOT NULL,
     contains_spoilers BOOLEAN NOT NULL DEFAULT FALSE,
-    created_at        TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at        TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE (user_id, production_id)
 );
 
 CREATE TABLE IF NOT EXISTS watchlist (

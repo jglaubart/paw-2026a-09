@@ -7,6 +7,7 @@ import ar.edu.itba.paw.interfaces.persistence.ProductionDao;
 import ar.edu.itba.paw.interfaces.services.ImageService;
 import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.PlayPetitionService;
+import ar.edu.itba.paw.interfaces.services.ShowService;
 import ar.edu.itba.paw.models.Genre;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Obra;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,12 +29,14 @@ public class PlayPetitionServiceImpl implements PlayPetitionService {
 
     private static final String DEFAULT_LANGUAGE = "Castellano";
     private static final String DEFAULT_IMAGE_CONTENT_TYPE = "image/jpeg";
+    private static final LocalTime DEFAULT_SHOW_TIME = LocalTime.of(20, 0);
 
     private final PlayPetitionDao playPetitionDao;
     private final GenreDao genreDao;
     private final ImageService imageService;
     private final ObraDao obraDao;
     private final ProductionDao productionDao;
+    private final ShowService showService;
     private final MailService mailService;
 
     @Autowired
@@ -41,12 +45,14 @@ public class PlayPetitionServiceImpl implements PlayPetitionService {
                                    final ImageService imageService,
                                    final ObraDao obraDao,
                                    final ProductionDao productionDao,
+                                   final ShowService showService,
                                    final MailService mailService) {
         this.playPetitionDao = playPetitionDao;
         this.genreDao = genreDao;
         this.imageService = imageService;
         this.obraDao = obraDao;
         this.productionDao = productionDao;
+        this.showService = showService;
         this.mailService = mailService;
     }
 
@@ -124,6 +130,12 @@ public class PlayPetitionServiceImpl implements PlayPetitionService {
                 petition.getCoverImageId() != null ? "/petition-images/" + petition.getCoverImageId() : null,
                 null,
                 petition.getTicketUrl()
+        );
+        showService.create(
+                production.getId(),
+                petition.getStartDate().isBefore(LocalDate.now()) ? LocalDate.now() : petition.getStartDate(),
+                DEFAULT_SHOW_TIME,
+                petition.getTheater()
         );
 
         playPetitionDao.updateStatus(petitionId, PetitionStatus.APPROVED, trimToNull(adminNotes));

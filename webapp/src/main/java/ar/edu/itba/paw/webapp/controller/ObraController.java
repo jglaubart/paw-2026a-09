@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.ObraService;
+import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.ProductionService;
 import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
@@ -30,6 +31,7 @@ public class ObraController {
     private final ProductionService productionService;
     private final RatingService ratingService;
     private final ReviewService reviewService;
+    private final MailService mailService;
     private final WatchlistService watchlistService;
     private final SeenService seenService;
 
@@ -38,19 +40,22 @@ public class ObraController {
                           final ProductionService productionService,
                           final RatingService ratingService,
                           final ReviewService reviewService,
+                          final MailService mailService,
                           final WatchlistService watchlistService,
                           final SeenService seenService) {
         this.obraService = obraService;
         this.productionService = productionService;
         this.ratingService = ratingService;
         this.reviewService = reviewService;
+        this.mailService = mailService;
         this.watchlistService = watchlistService;
         this.seenService = seenService;
     }
 
     @RequestMapping(value = "/obras/{id:\\d+}", method = RequestMethod.GET)
     public ModelAndView detail(@PathVariable("id") final long id,
-                               @RequestParam(value = "produccionId", required = false) final Long produccionId) {
+                               @RequestParam(value = "produccionId", required = false) final Long produccionId,
+                               @RequestParam(value = "reviewEmail", required = false) final String reviewEmail) {
         final Optional<Obra> obraOpt = obraService.findById(id);
         if (!obraOpt.isPresent()) {
             return new ModelAndView("redirect:/");
@@ -76,7 +81,8 @@ public class ObraController {
             mav.addObject("avgRating", avgRating);
             mav.addObject("avgStars", avgRating != null ? avgRating / 2.0d : null);
             mav.addObject("avgStarsPercent", avgRating != null ? Math.max(0d, Math.min(100d, avgRating * 10d)) : 0d);
-            mav.addObject("userReview", reviewService.findByUserAndProduction(HARDCODED_USER_ID, pid).orElse(null));
+            mav.addObject("userReview", reviewEmail != null ? reviewService.findByEmailAndProduction(reviewEmail, pid).orElse(null) : null);
+            mav.addObject("reviewEmail", reviewEmail);
         } else {
             mav.addObject("reviews", Collections.emptyList());
             mav.addObject("userScore", null);
@@ -85,6 +91,7 @@ public class ObraController {
             mav.addObject("avgStars", null);
             mav.addObject("avgStarsPercent", 0d);
             mav.addObject("userReview", null);
+            mav.addObject("reviewEmail", reviewEmail);
         }
 
         if (selectedProduction != null) {
@@ -96,6 +103,34 @@ public class ObraController {
         mav.addObject("hasSeen", seenService.hasSeen(HARDCODED_USER_ID, id));
 
         return mav;
+    }
+
+    @RequestMapping(value = "/obras/{id:\\d+}/share", method = RequestMethod.POST)
+    public ModelAndView share(@PathVariable("id") final long id,
+                              @RequestParam("recipientEmail") final String recipientEmail,
+                              @RequestParam("senderName") final String senderName,
+                              @RequestParam(value = "produccionId", required = false) final Long produccionId) {
+        if (recipientEmail == null || !recipientEmail.contains("@") || senderName == null || senderName.trim().isEmpty()) {
+            return new ModelAndView("redirect:/obras/" + id + (produccionId != null ? "?produccionId=" + produccionId + "&share=invalid" : "?share=invalid"));
+        }
+
+        final Optional<Obra> obraOpt = obraService.findById(id);
+        final Optional<Production> productionOpt = productionService.findSelectedByObraId(id, produccionId);
+        if (!obraOpt.isPresent() || !productionOpt.isPresent()) {
+            return new ModelAndView("redirect:/obras/" + id + (produccionId != null ? "?produccionId=" + produccionId + "&share=invalid" : "?share=invalid"));
+        }
+
+        final Production production = productionOpt.get();
+        final String detailUrl = "/obras/" + id + "?produccionId=" + production.getId();
+        mailService.sendSharedProduction(
+                recipientEmail.trim().toLowerCase(),
+                senderName.trim(),
+                obraOpt.get().getTitle(),
+                production.getName(),
+                production.getSynopsis(),
+                detailUrl
+        );
+        return new ModelAndView("redirect:/obras/" + id + "?produccionId=" + production.getId() + "&share=sent");
     }
 
     private Double mapScoreToStars(final Integer score) {

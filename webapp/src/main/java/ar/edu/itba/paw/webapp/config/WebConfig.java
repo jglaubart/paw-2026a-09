@@ -43,6 +43,8 @@ import java.util.Properties;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    public static final long MAX_UPLOAD_SIZE_BYTES = 5L * 1024 * 1024;
+
     static {
         loadDotEnvIntoSystemProperties();
     }
@@ -77,7 +79,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean(name = "multipartResolver")
     public CommonsMultipartResolver multipartResolver() {
         final CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-        resolver.setMaxUploadSize(10 * 1024 * 1024);
+        resolver.setMaxUploadSize(MAX_UPLOAD_SIZE_BYTES);
+        resolver.setMaxUploadSizePerFile(MAX_UPLOAD_SIZE_BYTES);
         resolver.setDefaultEncoding("UTF-8");
         return resolver;
     }
@@ -146,6 +149,7 @@ public class WebConfig implements WebMvcConfigurer {
 
             runScript(dataSource, "migration_backfill_shows_location_from_seed_theaters.sql");
             runScript(dataSource, "migration_play_petitions.sql");
+            runScript(dataSource, "migration_review_email_identity.sql");
         };
     }
 
