@@ -1,8 +1,12 @@
 package ar.edu.itba.paw.webapp.config;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -47,5 +51,31 @@ public class WebConfig implements WebMvcConfigurer {
         ds.setUsername("postgres");
         ds.setPassword("postgres");
         return ds;
+    }
+
+    @Bean
+    public InitializingBean databaseInitializer(final DataSource dataSource) {
+        return () -> {
+            runScript(dataSource, "schema.sql");
+            runScript(dataSource, "migration_add_shows_location_columns.sql");
+
+            final JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+            final Integer productionsCount = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM productions",
+                    Integer.class
+            );
+
+            if (productionsCount != null && productionsCount == 0) {
+                runScript(dataSource, "seed.sql");
+            }
+
+            runScript(dataSource, "migration_backfill_shows_location_from_seed_theaters.sql");
+        };
+    }
+
+    private void runScript(final DataSource dataSource, final String resourcePath) {
+        final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.addScript(new ClassPathResource(resourcePath));
+        populator.execute(dataSource);
     }
 }
