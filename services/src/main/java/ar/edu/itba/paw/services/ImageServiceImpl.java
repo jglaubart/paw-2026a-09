@@ -24,7 +24,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Image create(final byte[] content) {
-        return imageDao.create(content);
+    public Image create(final String contentType, final byte[] content) {
+        return imageDao.create(contentType, content);
     }
 }

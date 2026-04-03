@@ -25,3 +25,8 @@ Thumbs.db
 .settings/
 .project
 .classpath
+
+# Local environment secrets
+.env
+.env.*
+!.env.example

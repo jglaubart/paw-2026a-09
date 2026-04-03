@@ -21,7 +21,7 @@ public class ImageDaoImpl implements ImageDao {
     private final SimpleJdbcInsert jdbcInsert;
 
     private static final RowMapper<Image> IMAGE_MAPPER = (rs, rowNum) ->
-            new Image(rs.getLong("id"), rs.getBytes("content"));
+            new Image(rs.getLong("id"), rs.getString("content_type"), rs.getBytes("content"));
 
     @Autowired
     public ImageDaoImpl(final DataSource dataSource) {
@@ -34,7 +34,7 @@ public class ImageDaoImpl implements ImageDao {
     @Override
     public Optional<Image> findById(final long id) {
         final List<Image> results = jdbcTemplate.query(
-                "SELECT id, content FROM images WHERE id = ?",
+                "SELECT id, content_type, content FROM images WHERE id = ?",
                 new Object[]{ id },
                 IMAGE_MAPPER
         );
@@ -42,10 +42,11 @@ public class ImageDaoImpl implements ImageDao {
     }
 
     @Override
-    public Image create(final byte[] content) {
+    public Image create(final String contentType, final byte[] content) {
         final Map<String, Object> params = new HashMap<>();
+        params.put("content_type", contentType);
         params.put("content", content);
         final Number key = jdbcInsert.executeAndReturnKey(params);
-        return new Image(key.longValue(), content);
+        return new Image(key.longValue(), contentType, content);
     }
 }

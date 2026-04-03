@@ -1,0 +1,347 @@
+.petition-hero {
+    position: relative;
+    min-height: 24rem;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+}
+
+.petition-hero-backdrop {
+    position: absolute;
+    inset: 0;
+    background-position: center;
+    background-size: cover;
+}
+
+.petition-hero-content {
+    position: relative;
+    z-index: 1;
+    width: min(1120px, calc(100% - 3rem));
+    margin: 0 auto;
+    padding: 4.5rem 0 3rem;
+}
+
+.petition-hero-kicker,
+.petition-form-kicker {
+    margin: 0 0 0.75rem;
+    color: #f5a623;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.petition-hero-title {
+    max-width: 12ch;
+    margin: 0;
+    font-size: clamp(2.6rem, 5vw, 4.8rem);
+    line-height: 0.96;
+    text-transform: uppercase;
+}
+
+.petition-hero-copy {
+    max-width: 42rem;
+    margin: 1rem 0 1.5rem;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 1.05rem;
+    line-height: 1.6;
+}
+
+.petition-hero-pills {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.petition-hero-pill {
+    padding: 0.65rem 0.95rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.petition-form-page {
+    padding: 2rem 1.5rem 4rem;
+}
+
+.petition-form-shell {
+    max-width: 1120px;
+    margin: 0 auto;
+}
+
+.petition-form-layout {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.34fr) minmax(0, 0.66fr);
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.petition-form-sidebar,
+.petition-form-content {
+    display: grid;
+    gap: 1rem;
+}
+
+.petition-form-sidebar-card,
+.petition-form-card,
+.petition-form-step {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%),
+        rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 26px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.petition-form-sidebar-card {
+    padding: 1.4rem;
+}
+
+.petition-form-sidebar-card-accent {
+    border-color: rgba(124, 58, 237, 0.4);
+    background: linear-gradient(180deg, rgba(124, 58, 237, 0.18) 0%, rgba(124, 58, 237, 0.08) 100%);
+}
+
+.petition-form-sidebar-card h2,
+.petition-form-header h2 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.petition-form-sidebar-title {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.petition-form-sidebar-copy,
+.petition-form-lead,
+.petition-form-checklist {
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.petition-form-checklist {
+    margin: 1rem 0 0;
+    padding-left: 1.15rem;
+    display: grid;
+    gap: 0.75rem;
+    line-height: 1.55;
+}
+
+.petition-form-alert {
+    margin-bottom: 1rem;
+}
+
+.petition-form-card {
+    display: grid;
+    gap: 1.25rem;
+    padding: 1.25rem;
+}
+
+.petition-form-step {
+    padding: 1.5rem;
+}
+
+.petition-form-step-heading {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1.25rem;
+}
+
+.petition-form-step-heading h3 {
+    margin: 0 0 0.35rem;
+    font-size: 1.35rem;
+}
+
+.petition-form-step-heading p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.petition-form-step-number {
+    width: 2.3rem;
+    height: 2.3rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    box-shadow: 0 0 24px rgba(124, 58, 237, 0.35);
+}
+
+.petition-form-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.petition-form-grid-two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.petition-form-field {
+    display: grid;
+    gap: 0.45rem;
+}
+
+.petition-form-field-full {
+    grid-column: 1 / -1;
+}
+
+.petition-form-field label,
+.petition-form-label {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.petition-form-required {
+    color: #e50914;
+}
+
+.petition-form-field input,
+.petition-form-field textarea {
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    padding: 0.95rem 1rem;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.petition-form-field input::placeholder,
+.petition-form-field textarea::placeholder {
+    color: rgba(255, 255, 255, 0.38);
+}
+
+.petition-form-field input:focus,
+.petition-form-field textarea:focus {
+    outline: none;
+    border-color: rgba(124, 58, 237, 0.85);
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.petition-form-upload-field input[type="file"] {
+    padding: 0.85rem;
+    background: rgba(124, 58, 237, 0.08);
+}
+
+.petition-form-field textarea {
+    min-height: 8.5rem;
+    resize: vertical;
+}
+
+.petition-form-hint {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.56);
+    font-size: 0.88rem;
+}
+
+.petition-form-genre-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.petition-form-genre-option {
+    display: flex;
+    gap: 0.7rem;
+    align-items: center;
+    min-height: 3.35rem;
+    padding: 0.85rem 1rem;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.petition-form-genre-option:hover {
+    transform: translateY(-1px);
+    border-color: rgba(124, 58, 237, 0.35);
+    background: rgba(124, 58, 237, 0.08);
+}
+
+.petition-form-genre-option input {
+    width: auto;
+    margin: 0;
+}
+
+.petition-form-error {
+    color: #ff9298;
+    font-size: 0.88rem;
+}
+
+.petition-form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.25rem 0.25rem 0;
+}
+
+.petition-form-actions-copy {
+    max-width: 36rem;
+}
+
+.petition-form-actions-title {
+    margin: 0 0 0.3rem;
+    font-weight: 700;
+}
+
+.petition-form-actions-text {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.68);
+}
+
+.petition-form-submit {
+    min-width: 13rem;
+    border: none;
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+    cursor: pointer;
+}
+
+.petition-form-submit:hover {
+    background: linear-gradient(135deg, #8b49f5 0%, #7c3aed 100%);
+}
+
+@media (max-width: 960px) {
+    .petition-form-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .petition-form-sidebar {
+        order: 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .petition-hero-content,
+    .petition-form-page {
+        width: calc(100% - 2rem);
+        padding-inline: 0;
+    }
+
+    .petition-form-page {
+        margin: 0 auto;
+    }
+
+    .petition-form-grid-two,
+    .petition-form-genre-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .petition-form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .petition-form-submit {
+        width: 100%;
+    }
+}

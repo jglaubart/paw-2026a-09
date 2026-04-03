@@ -1,0 +1,155 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "PLATEA" [ref=e3] [cursor=pointer]:
+      - /url: /;jsessionid=node0ha8kavjcxx6oqn8jtofwxmdr0.node0
+    - navigation "Navegación principal" [ref=e4]:
+      - link "CARTELERA" [ref=e5] [cursor=pointer]:
+        - /url: /cartelera;jsessionid=node0ha8kavjcxx6oqn8jtofwxmdr0.node0
+      - link "WATCHLIST" [ref=e6] [cursor=pointer]:
+        - /url: /wishlist;jsessionid=node0ha8kavjcxx6oqn8jtofwxmdr0.node0
+      - link "HISTORIAL" [ref=e7] [cursor=pointer]:
+        - /url: /watchlist;jsessionid=node0ha8kavjcxx6oqn8jtofwxmdr0.node0
+    - generic [ref=e11]:
+      - generic [ref=e12]:
+        - button "Filtros 0" [ref=e13] [cursor=pointer]:
+          - img [ref=e15]
+          - generic [ref=e16]: Filtros
+          - generic [ref=e17]: "0"
+        - option "Todos los géneros" [selected]
+        - option "Circo"
+        - option "Comedia"
+        - option "Danza"
+        - option "Drama"
+        - option "Improvisación"
+        - option "Infantil"
+        - option "Musical"
+        - option "Revista"
+        - option "Stand up"
+        - option "Tango"
+        - option "Todas las salas" [selected]
+        - option "Auditorio AIC Abasto"
+        - option "Beckett Teatro"
+        - option "Centro Cultural de la Cooperación"
+        - option "Centro Municipal de Arte"
+        - option "Espacio Callejón"
+        - option "Fundación SAGAI"
+        - option "La Galera Encantada"
+        - option "La Sede Teatro"
+        - option "Paseo La Plaza"
+        - option "Sala del Café Artigas"
+        - option "Tadron Teatro"
+        - option "Teatro del Sur"
+        - option "Teatro El Deseo"
+        - option "Teatro El Desguace"
+        - option "Teatro El Extranjero"
+        - option "Teatro Maipú"
+        - option "Teatro Nacional Cervantes"
+        - option "The Cavern Buenos Aires"
+      - generic [ref=e18]:
+        - img [ref=e20]
+        - textbox [ref=e23]:
+          - /placeholder: Buscar obra, sala o productora
+      - button "Buscar" [ref=e24] [cursor=pointer]
+  - main [ref=e25]:
+    - generic [ref=e26]:
+      - generic [ref=e27]:
+        - paragraph [ref=e28]: Carga de contenido
+        - heading "Postulá tu obra para Platea" [level=1] [ref=e29]
+        - paragraph [ref=e30]: Completá lo esencial primero y después agregá los datos opcionales para que el equipo pueda revisar tu propuesta.
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - generic [ref=e34]: "1"
+            - generic [ref=e35]:
+              - heading "Lo esencial" [level=2] [ref=e36]
+              - paragraph [ref=e37]: La información mínima para poder evaluar y publicar la obra.
+          - generic [ref=e38]:
+            - generic [ref=e39]:
+              - generic [ref=e40]: Título de la obra
+              - textbox "Título de la obra" [ref=e41]
+            - generic [ref=e42]:
+              - generic [ref=e43]: Sinopsis
+              - textbox "Sinopsis" [ref=e44]
+            - generic [ref=e45]:
+              - generic [ref=e46]: Géneros
+              - generic [ref=e47]:
+                - generic [ref=e48]:
+                  - checkbox "Circo" [ref=e49]
+                  - generic [ref=e50]: Circo
+                - generic [ref=e51]:
+                  - checkbox "Comedia" [ref=e52]
+                  - generic [ref=e53]: Comedia
+                - generic [ref=e54]:
+                  - checkbox "Danza" [ref=e55]
+                  - generic [ref=e56]: Danza
+                - generic [ref=e57]:
+                  - checkbox "Drama" [ref=e58]
+                  - generic [ref=e59]: Drama
+                - generic [ref=e60]:
+                  - checkbox "Improvisacion" [ref=e61]
+                  - generic [ref=e62]: Improvisacion
+                - generic [ref=e63]:
+                  - checkbox "Infantil" [ref=e64]
+                  - generic [ref=e65]: Infantil
+                - generic [ref=e66]:
+                  - checkbox "Musical" [ref=e67]
+                  - generic [ref=e68]: Musical
+                - generic [ref=e69]:
+                  - checkbox "Revista" [ref=e70]
+                  - generic [ref=e71]: Revista
+                - generic [ref=e72]:
+                  - checkbox "Stand Up" [ref=e73]
+                  - generic [ref=e74]: Stand Up
+                - generic [ref=e75]:
+                  - checkbox "Tango" [ref=e76]
+                  - generic [ref=e77]: Tango
+                - generic [ref=e78]:
+                  - checkbox "Tragedia" [ref=e79]
+                  - generic [ref=e80]: Tragedia
+                - generic [ref=e81]:
+                  - checkbox "Unipersonal" [ref=e82]
+                  - generic [ref=e83]: Unipersonal
+            - generic [ref=e84]:
+              - generic [ref=e85]: Duración aproximada (minutos)
+              - spinbutton "Duración aproximada (minutos)" [ref=e86]
+            - generic [ref=e87]:
+              - generic [ref=e88]: Idioma
+              - textbox "Idioma" [ref=e89]:
+                - /placeholder: Castellano
+            - generic [ref=e90]:
+              - generic [ref=e91]: Teatro / sala
+              - textbox "Teatro / sala" [ref=e92]
+            - generic [ref=e93]:
+              - generic [ref=e94]: Dirección de la sala
+              - textbox "Dirección de la sala" [ref=e95]
+            - generic [ref=e96]:
+              - generic [ref=e97]: Inicio de temporada
+              - textbox "Inicio de temporada" [ref=e98]
+            - generic [ref=e99]:
+              - generic [ref=e100]: Dirección
+              - textbox "Dirección" [ref=e101]
+            - generic [ref=e102]:
+              - generic [ref=e103]: Imagen de portada
+              - button "Imagen de portada" [ref=e104]
+        - generic [ref=e105]:
+          - generic [ref=e106]:
+            - generic [ref=e107]: "2"
+            - generic [ref=e108]:
+              - heading "Completá tu ficha" [level=2] [ref=e109]
+              - paragraph [ref=e110]: Estos datos no son obligatorios, pero ayudan a publicar una ficha mucho más útil.
+          - generic [ref=e111]:
+            - generic [ref=e112]:
+              - generic [ref=e113]: Fin de temporada
+              - textbox "Fin de temporada" [ref=e114]
+            - generic [ref=e115]:
+              - generic [ref=e116]: Email de contacto
+              - textbox "Email de contacto" [ref=e117]
+            - generic [ref=e118]:
+              - generic [ref=e119]: Días y horarios de función
+              - textbox "Días y horarios de función" [ref=e120]:
+                - /placeholder: Viernes y sábados 21 hs
+            - generic [ref=e121]:
+              - generic [ref=e122]: Link de venta de entradas
+              - textbox "Link de venta de entradas" [ref=e123]:
+                - /placeholder: https://...
+        - button "Enviar petición" [ref=e125] [cursor=pointer]

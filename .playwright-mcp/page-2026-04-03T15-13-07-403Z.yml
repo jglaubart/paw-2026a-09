@@ -1,0 +1,47 @@
+- main [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - paragraph [ref=e6]: Developer only
+        - heading "Peticiones de alta de obras" [level=1] [ref=e7]
+      - generic [ref=e8]:
+        - generic [ref=e9]:
+          - text: Total
+          - strong [ref=e10]: "2"
+        - generic [ref=e11]:
+          - text: Pendientes
+          - strong [ref=e12]: "1"
+        - generic [ref=e13]:
+          - text: Aprobadas
+          - strong [ref=e14]: "1"
+        - generic [ref=e15]:
+          - text: Rechazadas
+          - strong [ref=e16]: "0"
+    - generic [ref=e17]:
+      - link "Todas" [ref=e18] [cursor=pointer]:
+        - /url: /internal/dev/play-petitions
+      - link "Pendientes" [ref=e19] [cursor=pointer]:
+        - /url: /internal/dev/play-petitions?status=PENDING
+      - link "Aprobadas" [ref=e20] [cursor=pointer]:
+        - /url: /internal/dev/play-petitions?status=APPROVED
+      - link "Rechazadas" [ref=e21] [cursor=pointer]:
+        - /url: /internal/dev/play-petitions?status=REJECTED
+    - generic [ref=e22]:
+      - article [ref=e23]:
+        - generic [ref=e24]:
+          - generic [ref=e25]:
+            - generic [ref=e26]: PENDING
+            - heading "Prueba Rechazo Playwright" [level=2] [ref=e27]
+            - paragraph [ref=e28]: playwright-reject@example.com · Sala QA
+          - paragraph [ref=e29]: Obra de prueba para validar rechazo desde el panel admin.
+        - link "Revisar" [ref=e30] [cursor=pointer]:
+          - /url: /internal/dev/play-petitions/4
+      - article [ref=e31]:
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - generic [ref=e34]: APPROVED
+            - heading "Prueba Playwright Final" [level=2] [ref=e35]
+            - paragraph [ref=e36]: playwright-final@example.com · Teatro Playwright
+          - paragraph [ref=e37]: Una obra de prueba creada para validar el flujo completo de peticiones.
+        - link "Revisar" [ref=e38] [cursor=pointer]:
+          - /url: /internal/dev/play-petitions/3

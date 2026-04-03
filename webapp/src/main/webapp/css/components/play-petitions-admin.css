@@ -1,0 +1,361 @@
+.petition-admin-hero {
+    position: relative;
+    min-height: 22rem;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+}
+
+.petition-admin-hero-backdrop {
+    position: absolute;
+    inset: 0;
+    background-position: center;
+    background-size: cover;
+}
+
+.petition-admin-hero-content {
+    position: relative;
+    z-index: 1;
+    width: min(1120px, calc(100% - 3rem));
+    margin: 0 auto;
+    padding: 4rem 0 2.5rem;
+}
+
+.petition-admin-kicker {
+    margin: 0 0 0.75rem;
+    color: #f5a623;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.petition-admin-hero-content h1 {
+    max-width: 11ch;
+    margin: 0;
+    font-size: clamp(2.4rem, 4.5vw, 4.4rem);
+    line-height: 0.96;
+    text-transform: uppercase;
+}
+
+.petition-admin-hero-copy {
+    max-width: 45rem;
+    margin: 1rem 0 1.4rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+}
+
+.petition-admin-page {
+    padding: 2rem 1.5rem 4rem;
+}
+
+.petition-admin-page-detail {
+    padding-top: 2.5rem;
+}
+
+.petition-admin-shell {
+    max-width: 1120px;
+    margin: 0 auto;
+}
+
+.petition-admin-toolbar {
+    margin-bottom: 1rem;
+}
+
+.petition-admin-toolbar-label {
+    margin: 0 0 0.6rem;
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+.petition-admin-stats,
+.petition-admin-filters,
+.petition-admin-actions,
+.petition-admin-card-facts,
+.petition-admin-card-head {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.petition-admin-stats-hero span {
+    padding: 0.7rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.petition-admin-filter,
+.petition-admin-back,
+.petition-admin-inline-link {
+    color: rgba(255, 255, 255, 0.86);
+    text-decoration: none;
+}
+
+.petition-admin-filter {
+    padding: 0.72rem 1rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid transparent;
+    transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.petition-admin-filter:hover,
+.petition-admin-filter-active {
+    background: rgba(124, 58, 237, 0.22);
+    border-color: rgba(124, 58, 237, 0.45);
+    color: #fff;
+}
+
+.petition-admin-list,
+.petition-admin-detail-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.petition-admin-card,
+.petition-admin-panel,
+.petition-admin-empty {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%),
+        rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 26px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.petition-admin-card,
+.petition-admin-panel,
+.petition-admin-empty {
+    padding: 1.5rem;
+}
+
+.petition-admin-alert {
+    margin-bottom: 1rem;
+}
+
+.petition-admin-card {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    align-items: stretch;
+}
+
+.petition-admin-card-main,
+.petition-admin-card-side {
+    display: grid;
+    gap: 0.9rem;
+}
+
+.petition-admin-card-main {
+    flex: 1 1 auto;
+}
+
+.petition-admin-card-side {
+    width: 14rem;
+    align-content: space-between;
+    justify-items: end;
+}
+
+.petition-admin-card-main h2,
+.petition-admin-detail-header h1 {
+    margin: 0;
+}
+
+.petition-admin-card-id {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.84rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.petition-admin-card-meta,
+.petition-admin-panel-copy,
+.petition-admin-card-copy {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.74);
+}
+
+.petition-admin-card-copy {
+    line-height: 1.6;
+}
+
+.petition-admin-card-facts {
+    justify-content: flex-end;
+}
+
+.petition-admin-card-facts span {
+    padding: 0.5rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.66);
+    font-size: 0.82rem;
+}
+
+.petition-admin-status {
+    display: inline-flex;
+    padding: 0.4rem 0.72rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.petition-admin-status-pending {
+    background: rgba(245, 166, 35, 0.18);
+    color: #f5a623;
+}
+
+.petition-admin-status-approved {
+    background: rgba(64, 199, 129, 0.18);
+    color: #40c781;
+}
+
+.petition-admin-status-rejected {
+    background: rgba(229, 9, 20, 0.18);
+    color: #ff7b84;
+}
+
+.petition-admin-panel-hero {
+    margin-bottom: 1rem;
+}
+
+.petition-admin-back {
+    display: inline-flex;
+    width: fit-content;
+    margin-bottom: 0.4rem;
+}
+
+.petition-admin-detail-grid {
+    grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.82fr);
+}
+
+.petition-admin-cover {
+    width: 100%;
+    border-radius: 18px;
+    display: block;
+    margin-bottom: 1.5rem;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+}
+
+.petition-admin-definition-list {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 0.85rem 1rem;
+    margin: 0;
+}
+
+.petition-admin-definition-list dt {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.petition-admin-definition-list dd {
+    margin: 0;
+    line-height: 1.55;
+}
+
+.petition-admin-decision-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.petition-admin-decision-form label {
+    font-weight: 700;
+}
+
+.petition-admin-decision-form textarea {
+    width: 100%;
+    min-height: 12rem;
+    border-radius: 18px;
+    padding: 1rem;
+    resize: vertical;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+}
+
+.petition-admin-decision-form textarea:focus {
+    outline: none;
+    border-color: rgba(124, 58, 237, 0.85);
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
+}
+
+.petition-admin-card-link,
+.petition-admin-approve,
+.petition-admin-reject {
+    border: none;
+    cursor: pointer;
+}
+
+.petition-admin-approve {
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+}
+
+.petition-admin-reject {
+    background: linear-gradient(135deg, #e50914 0%, #b91c1c 100%);
+}
+
+.petition-admin-resolution {
+    display: grid;
+    gap: 0.9rem;
+}
+
+.petition-admin-resolution-title {
+    margin: 0;
+    font-weight: 700;
+}
+
+.petition-admin-empty h2,
+.petition-admin-empty p {
+    margin: 0;
+}
+
+.petition-admin-empty p {
+    margin-top: 0.65rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+@media (max-width: 900px) {
+    .petition-admin-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .petition-admin-hero-content,
+    .petition-admin-page {
+        width: calc(100% - 2rem);
+        padding-inline: 0;
+    }
+
+    .petition-admin-page {
+        margin: 0 auto;
+    }
+
+    .petition-admin-card {
+        flex-direction: column;
+    }
+
+    .petition-admin-card-side {
+        width: 100%;
+        justify-items: stretch;
+    }
+
+    .petition-admin-card-facts {
+        justify-content: flex-start;
+    }
+
+    .petition-admin-definition-list {
+        grid-template-columns: 1fr;
+    }
+
+    .petition-admin-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

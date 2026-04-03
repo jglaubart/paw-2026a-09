@@ -5,5 +5,5 @@ import java.util.Optional;
 
 public interface ImageService {
     Optional<Image> findById(long id);
-    Image create(byte[] content);
+    Image create(String contentType, byte[] content);
 }
