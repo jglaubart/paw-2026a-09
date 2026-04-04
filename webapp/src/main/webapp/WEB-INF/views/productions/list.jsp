@@ -39,7 +39,7 @@
     </c:url>
 
     <main>
-        <paw:sectionRow title="${available ? 'Cartelera' : (genre != null ? genre : 'Catálogo')}" subtitle="${available ? 'Producciones con funciones disponibles' : 'Todas las producciones'}">
+        <paw:sectionRow title="${available ? 'Cartelera' : (genre != null ? genre : 'Catálogo')}" subtitle="${available ? 'Obras activas dentro de su periodo' : 'Todas las obras cargadas'}">
             <c:forEach var="p" items="${productions}">
                 <c:url var="detailUrl" value="/obras/${p.obraId}">
                     <c:param name="produccionId" value="${p.id}" />

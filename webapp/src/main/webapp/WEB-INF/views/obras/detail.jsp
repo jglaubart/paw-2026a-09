@@ -106,41 +106,63 @@
         </div>
     </c:if>
 
-    <%-- ═══════════════ ACCIONES (wishlist / ya la vi) ═══════════════ --%>
+    <%-- ═══════════════ ACCIONES ═══════════════ --%>
     <div class="obra-action-bar">
-        <%-- Wishlist button (per production) --%>
-        <c:if test="${selectedProduction != null}">
-            <c:url var="wishlistActionUrl" value="/productions/${selectedProduction.id}/wishlist" />
-            <form action="${wishlistActionUrl}"
-                  method="post" class="obra-action-form">
-                <input type="hidden" name="obraId"      value="${obra.id}" />
-                <input type="hidden" name="action"      value="${isInWishlist ? 'remove' : 'add'}" />
-                <button type="submit" class="obra-action-btn ${isInWishlist ? 'obra-action-btn-active' : ''}">
-                    <span aria-hidden="true">${isInWishlist ? '♥' : '♡'}</span>
-                    <c:out value="${isInWishlist ? 'En wishlist' : 'Agregar a wishlist'}" />
+        <div class="obra-action-bar-left">
+            <c:if test="${selectedProduction != null}">
+                <c:url var="wishlistActionUrl" value="/productions/${selectedProduction.id}/wishlist" />
+                <form action="${wishlistActionUrl}" method="post" class="obra-action-form">
+                    <input type="hidden" name="obraId" value="${obra.id}" />
+                    <input type="hidden" name="action" value="${isInWishlist ? 'remove' : 'add'}" />
+                    <button type="submit" class="obra-action-btn ${isInWishlist ? 'obra-action-btn-active' : ''}">
+                        <span aria-hidden="true">${isInWishlist ? '♥' : '♡'}</span>
+                        <c:out value="${isInWishlist ? 'En wishlist' : 'Agregar a wishlist'}" />
+                    </button>
+                </form>
+            </c:if>
+
+            <c:url var="seenActionUrl" value="/obras/${obra.id}/seen" />
+            <form action="${seenActionUrl}" method="post" class="obra-action-form">
+                <c:if test="${selectedProduction != null}">
+                    <input type="hidden" name="produccionId" value="${selectedProduction.id}" />
+                </c:if>
+                <input type="hidden" name="action" value="${hasSeen ? 'remove' : 'add'}" />
+                <button type="submit" class="obra-action-btn obra-action-btn-seen ${hasSeen ? 'obra-action-btn-active' : ''}">
+                    <span aria-hidden="true">${hasSeen ? '✓' : '○'}</span>
+                    <c:out value="${hasSeen ? 'Ya la vi' : 'Marcar como vista'}" />
                 </button>
             </form>
-        </c:if>
 
-        <%-- Seen button (per obra) --%>
-        <c:url var="seenActionUrl" value="/obras/${obra.id}/seen" />
-        <form action="${seenActionUrl}"
-              method="post" class="obra-action-form">
             <c:if test="${selectedProduction != null}">
-                <input type="hidden" name="produccionId" value="${selectedProduction.id}" />
+                <button type="button" class="obra-action-btn obra-action-btn-share" data-share-open>
+                    <span aria-hidden="true">↗</span>
+                    Compartir por mail
+                </button>
             </c:if>
-            <input type="hidden" name="action" value="${hasSeen ? 'remove' : 'add'}" />
-            <button type="submit" class="obra-action-btn obra-action-btn-seen ${hasSeen ? 'obra-action-btn-active' : ''}">
-                <span aria-hidden="true">${hasSeen ? '✓' : '○'}</span>
-                <c:out value="${hasSeen ? 'Ya la vi' : 'Marcar como vista'}" />
-            </button>
-        </form>
+        </div>
 
         <c:if test="${selectedProduction != null}">
-            <button type="button" class="obra-action-btn obra-action-btn-share" data-share-open>
-                <span aria-hidden="true">↗</span>
-                Compartir por mail
-            </button>
+            <div class="obra-action-bar-right">
+                <c:choose>
+                    <c:when test="${selectedProductionActive and not empty selectedProduction.website}">
+                        <a href="${selectedProductionWebsiteUrl}"
+                           class="obra-ticket-btn"
+                           target="_blank" rel="noopener noreferrer">
+                            Comprar entradas ↗
+                        </a>
+                    </c:when>
+                    <c:when test="${selectedProductionActive}">
+                        <button type="button" class="obra-ticket-btn obra-ticket-btn-disabled" data-ticket-status-message="Esta obra no tiene un link de entradas cargado.">
+                            Comprar entradas ↗
+                        </button>
+                    </c:when>
+                    <c:otherwise>
+                        <button type="button" class="obra-ticket-btn obra-ticket-btn-disabled" data-ticket-status-message="La obra no está activa en este momento.">
+                            Comprar entradas ↗
+                        </button>
+                    </c:otherwise>
+                </c:choose>
+            </div>
         </c:if>
     </div>
 
@@ -154,6 +176,9 @@
             <p class="obra-inline-feedback obra-inline-feedback-warning">Completá un nombre y un mail válidos para compartir.</p>
         </div>
     </c:if>
+    <div class="obra-action-feedback-wrap obra-action-feedback-wrap-hidden" data-ticket-feedback>
+        <p class="obra-inline-feedback obra-inline-feedback-warning" data-ticket-feedback-text></p>
+    </div>
 
     <c:if test="${selectedProduction != null}">
         <dialog class="obra-share-dialog" data-share-dialog>
@@ -224,13 +249,6 @@
             <section class="obra-section">
                 <div class="obra-section-head">
                     <h2 class="obra-heading">Sinopsis</h2>
-                    <c:if test="${selectedProduction != null && not empty selectedProduction.website}">
-                        <a href="${selectedProductionWebsiteUrl}"
-                           class="btn btn-primary btn-md"
-                           target="_blank" rel="noopener noreferrer">
-                            Comprar Entradas (Sitio Externo) ↗
-                        </a>
-                    </c:if>
                 </div>
 
                 <c:choose>
@@ -256,8 +274,8 @@
                                 <span class="obra-meta-inline-label">Funciones</span>
                                 <p class="obra-meta-inline-value">
                                     <c:out value="${selectedProduction.startDate}" />
-                                    <c:if test="${selectedProduction.endDate != null}">
-                                        — <c:out value="${selectedProduction.endDate}" />
+                                    <c:if test="${lastShowDate != null}">
+                                        — <c:out value="${lastShowDate}" />
                                     </c:if>
                                 </p>
                             </div>
@@ -277,6 +295,17 @@
                             </div>
                         </c:if>
                     </div>
+
+                    <c:if test="${not empty showDates}">
+                        <details class="obra-show-dates">
+                            <summary class="obra-show-dates-summary">Ver todas las fechas</summary>
+                            <div class="obra-show-dates-list">
+                                <c:forEach var="showDate" items="${showDates}">
+                                    <span class="obra-show-date-pill"><c:out value="${showDate}" /></span>
+                                </c:forEach>
+                            </div>
+                        </details>
+                    </c:if>
                 </c:if>
             </section>
 
@@ -288,11 +317,11 @@
                         <c:if test="${avgStars != null}">
                             <span class="obra-avg-rating">
                                 <span class="obra-avg-stars" aria-hidden="true">
-                                    <span class="obra-avg-stars-base">★★★★★</span>
-                                    <span class="obra-avg-stars-fill" style="width: ${avgStarsPercent}%;">★★★★★</span>
+                                    <span class="obra-avg-stars-base">★★★★★★★★★★</span>
+                                    <span class="obra-avg-stars-fill" style="width: ${avgStarsPercent}%;">★★★★★★★★★★</span>
                                 </span>
                                 <span class="obra-avg-rating-value">
-                                    <fmt:formatNumber value="${avgStars}" maxFractionDigits="1" /> / 5
+                                    <fmt:formatNumber value="${avgStars}" maxFractionDigits="1" /> / 10
                                 </span>
                                 <span class="obra-avg-rating-meta">
                                     <c:out value="${fn:length(reviews)}" /> reseña${fn:length(reviews) == 1 ? '' : 's'}
@@ -310,6 +339,9 @@
                                     <div class="obra-review-header">
                                         <span class="obra-review-avatar">${fn:toUpperCase(fn:substring(r.userEmail, 0, 1))}</span>
                                         <span class="obra-review-author"><c:out value="${r.userEmail}" /></span>
+                                        <c:if test="${r.score != null}">
+                                            <span class="obra-review-score"><c:out value="${r.score}" />/10</span>
+                                        </c:if>
                                     </div>
                                     <p class="obra-review-body">"<c:out value="${r.body}" />"</p>
                                 </div>
@@ -318,7 +350,7 @@
                     </c:when>
                     <c:otherwise>
                         <div class="obra-reviews-empty">
-                            Todavía no hay reseñas publicadas para esta versión.
+                            Todavía no hay reseñas publicadas para esta obra.
                         </div>
                     </c:otherwise>
                 </c:choose>
@@ -328,64 +360,37 @@
                     <div class="obra-interact-panel">
                         <div class="obra-participation-rating">
                             <div class="obra-interact-head">
-                                <h3 class="obra-interact-title">Tu calificación</h3>
+                                <h3 class="obra-interact-title">Tu reseña y puntuación</h3>
                                 <span class="obra-rating-value">
                                     <c:choose>
                                         <c:when test="${userStars != null}">
-                                            <fmt:formatNumber value="${userStars}" maxFractionDigits="1" />/5
+                                            <fmt:formatNumber value="${userStars}" maxFractionDigits="1" />/10
                                         </c:when>
                                         <c:otherwise>
-                                            --/5
+                                            --/10
                                         </c:otherwise>
                                     </c:choose>
                                 </span>
                             </div>
 
-                            <c:if test="${param.rating == 'saved'}">
+                            <c:if test="${param.feedback == 'saved'}">
                                 <p class="obra-inline-feedback obra-inline-feedback-success">
-                                    Guardada.
+                                    Puntuación y reseña guardadas.
                                 </p>
                             </c:if>
 
-                            <c:url var="rateActionUrl" value="/productions/${selectedProduction.id}/rate" />
-                            <form action="${rateActionUrl}"
+                            <c:if test="${param.error == 'invalid_feedback'}">
+                                <p class="obra-inline-feedback obra-inline-feedback-warning">
+                                    Completá un mail válido y elegí un puntaje.
+                                </p>
+                            </c:if>
+
+                            <c:url var="feedbackActionUrl" value="/obras/${obra.id}/feedback" />
+                            <form action="${feedbackActionUrl}"
                                   method="post"
                                   accept-charset="UTF-8"
                                   class="obra-rate-form-inner">
-                                <input type="hidden" name="obraId" value="${obra.id}" />
-                                <paw:starRating
-                                    name="score"
-                                    currentValue="${userStars}"
-                                    max="5"
-                                    groupLabel="Tu calificación"
-                                    promptText="Sin calificar"
-                                    autosubmit="true" />
-                            </form>
-                        </div>
-
-                        <div class="obra-participation-review" data-review-module>
-                            <div class="obra-interact-head">
-                                <h3 class="obra-interact-title">Tu reseña</h3>
-                            </div>
-
-                            <c:if test="${param.error == 'invalid_review'}">
-                                <p class="obra-inline-feedback obra-inline-feedback-warning">
-                                    Completá un mail válido y escribí una reseña.
-                                </p>
-                            </c:if>
-
-                            <c:if test="${param.review == 'saved'}">
-                                <p class="obra-inline-feedback obra-inline-feedback-success">
-                                    Reseña guardada.
-                                </p>
-                            </c:if>
-
-                            <c:url var="reviewActionUrl" value="/productions/${selectedProduction.id}/review" />
-                            <form action="${reviewActionUrl}"
-                                  method="post"
-                                  accept-charset="UTF-8"
-                                  class="obra-review-form">
-                                <input type="hidden" name="obraId" value="${obra.id}" />
+                                <input type="hidden" name="produccionId" value="${selectedProduction.id}" />
                                 <input type="email"
                                        name="email"
                                        class="obra-review-email"
@@ -393,16 +398,21 @@
                                        value="${fn:escapeXml(reviewEmail)}"
                                        maxlength="255"
                                        required />
+                                <paw:starRating
+                                    name="score"
+                                    currentValue="${userStars}"
+                                    max="10"
+                                    groupLabel="Tu puntuación"
+                                    promptText="Sin calificar"
+                                    autosubmit="false" />
                                 <textarea name="body"
                                           rows="4"
                                           class="obra-review-textarea"
-                                          placeholder="¿Qué te dejó esta obra?"
-                                          required><c:out value="${userReview != null ? userReview.body : ''}" /></textarea>
+                                          placeholder="¿Qué te dejó esta obra? (opcional)"><c:out value="${userReview != null ? userReview.body : ''}" /></textarea>
                                 <div class="obra-review-actions">
-                                    <span class="obra-review-help">Una reseña por mail. Si ya existe, la actualizamos.</span>
-                                    <button type="submit"
-                                            class="btn btn-primary btn-md obra-review-submit">
-                                        ${userReview != null ? 'Actualizar reseña' : 'Publicar reseña'}
+                                    <span class="obra-review-help">La puntuación es obligatoria. La reseña es opcional y, si la dejás vacía, se elimina la anterior.</span>
+                                    <button type="submit" class="btn btn-primary btn-md obra-review-submit">
+                                        ${userReview != null || userStars != null ? 'Actualizar participación' : 'Guardar participación'}
                                     </button>
                                 </div>
                             </form>

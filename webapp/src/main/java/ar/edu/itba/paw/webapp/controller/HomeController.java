@@ -56,7 +56,7 @@ public class HomeController {
         mav.addObject("availableProductions", available);
         mav.addObject("allProductions", all);
         mav.addObject("productionRatings", ratingService.getProductionRatingLabels(collectProductionIds(today, available, all)));
-        mav.addObject("heroSlides", buildHeroSlides(available, all));
+        mav.addObject("heroSlides", buildHeroSlides(available));
         mav.addObject("featuredProduction", available.isEmpty() ? null : available.get(0));
         return mav;
     }

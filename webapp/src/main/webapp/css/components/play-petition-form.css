@@ -243,6 +243,36 @@
     font-size: 0.88rem;
 }
 
+.petition-form-extra-dates-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.petition-form-add-date {
+    border: 1px solid rgba(124, 58, 237, 0.34);
+    border-radius: 999px;
+    background: rgba(124, 58, 237, 0.12);
+    color: #e8ddff;
+    padding: 0.55rem 0.9rem;
+    cursor: pointer;
+}
+
+.petition-form-extra-dates {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.petition-form-extra-date-input {
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    padding: 0.95rem 1rem;
+}
+
 .petition-form-genre-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));

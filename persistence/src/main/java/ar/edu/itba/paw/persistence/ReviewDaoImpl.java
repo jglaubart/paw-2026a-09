@@ -28,21 +28,22 @@ public class ReviewDaoImpl implements ReviewDao {
                     rs.getLong("production_id"),
                     rs.getLong("obra_id"),
                     rs.getString("body"),
-                    rs.getObject("rating_id") != null ? rs.getLong("rating_id") : null
+                    rs.getObject("rating_id") != null ? rs.getLong("rating_id") : null,
+                    rs.getObject("score") != null ? rs.getInt("score") : null
             );
 
     private static final String SELECT_WITH_JOIN =
-            "SELECT r.id, r.body, r.rating_id, r.user_id, r.production_id, p.obra_id, u.email AS user_email " +
+            "SELECT r.id, r.body, r.rating_id, r.user_id, r.production_id, r.obra_id, u.email AS user_email, pr.score " +
             "FROM production_reviews r " +
             "JOIN users u ON r.user_id = u.id " +
-            "JOIN productions p ON r.production_id = p.id ";
+            "LEFT JOIN play_ratings pr ON pr.user_id = r.user_id AND pr.obra_id = r.obra_id ";
 
     @Autowired
     public ReviewDaoImpl(final DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName("production_reviews")
-                .usingColumns("user_id", "production_id", "body")
+                .usingColumns("user_id", "production_id", "obra_id", "body")
                 .usingGeneratedKeyColumns("id");
     }
 
@@ -66,6 +67,25 @@ public class ReviewDaoImpl implements ReviewDao {
     }
 
     @Override
+    public Optional<Review> findByUserAndObra(final long userId, final long obraId) {
+        final List<Review> results = jdbcTemplate.query(
+                SELECT_WITH_JOIN + "WHERE r.user_id = ? AND r.obra_id = ?",
+                new Object[]{ userId, obraId },
+                REVIEW_MAPPER
+        );
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
+    }
+
+    @Override
+    public List<Review> findByObra(final long obraId) {
+        return jdbcTemplate.query(
+                SELECT_WITH_JOIN + "WHERE r.obra_id = ? ORDER BY r.created_at DESC",
+                new Object[]{ obraId },
+                REVIEW_MAPPER
+        );
+    }
+
+    @Override
     public List<Review> findByUser(final long userId) {
         return jdbcTemplate.query(
                 SELECT_WITH_JOIN + "WHERE r.user_id = ? ORDER BY r.created_at DESC",
@@ -79,9 +99,21 @@ public class ReviewDaoImpl implements ReviewDao {
         final Map<String, Object> params = new HashMap<>();
         params.put("user_id", userId);
         params.put("production_id", productionId);
+        params.put("obra_id", jdbcTemplate.queryForObject("SELECT obra_id FROM productions WHERE id = ?", new Object[]{ productionId }, Long.class));
         params.put("body", body);
         final Number key = jdbcInsert.executeAndReturnKey(params);
         return findByUserAndProduction(userId, productionId).orElseThrow();
+    }
+
+    @Override
+    public Review createForObra(final long userId, final long obraId, final long productionId, final String body) {
+        final Map<String, Object> params = new HashMap<>();
+        params.put("user_id", userId);
+        params.put("production_id", productionId);
+        params.put("obra_id", obraId);
+        params.put("body", body);
+        jdbcInsert.executeAndReturnKey(params);
+        return findByUserAndObra(userId, obraId).orElseThrow();
     }
 
     @Override
@@ -91,5 +123,22 @@ public class ReviewDaoImpl implements ReviewDao {
                 body, userId, productionId
         );
         return findByUserAndProduction(userId, productionId).orElseThrow();
+    }
+
+    @Override
+    public Review updateForObra(final long userId, final long obraId, final long productionId, final String body) {
+        jdbcTemplate.update(
+                "UPDATE production_reviews SET body = ?, production_id = ?, created_at = NOW() WHERE user_id = ? AND obra_id = ?",
+                body, productionId, userId, obraId
+        );
+        return findByUserAndObra(userId, obraId).orElseThrow();
+    }
+
+    @Override
+    public void deleteByUserAndObra(final long userId, final long obraId) {
+        jdbcTemplate.update(
+                "DELETE FROM production_reviews WHERE user_id = ? AND obra_id = ?",
+                userId, obraId
+        );
     }
 }

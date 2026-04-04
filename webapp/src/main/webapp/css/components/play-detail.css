@@ -436,6 +436,10 @@
     color: #ffdfaf;
 }
 
+.obra-action-feedback-wrap-hidden {
+    display: none;
+}
+
 .obra-review-email,
 .obra-share-input {
     display: block;
@@ -507,6 +511,16 @@
     font-size: 0.78rem;
 }
 
+.obra-review-score {
+    margin-left: auto;
+    padding: 0.25rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(245, 166, 35, 0.14);
+    color: #ffd48d;
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
 .obra-review-form-locked {
     opacity: 0.9;
 }
@@ -560,6 +574,8 @@
     color: #fff;
     padding: 0;
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+    inset: 0;
+    margin: auto;
 }
 
 .obra-share-dialog::backdrop {
@@ -845,10 +861,20 @@
 
 .obra-action-bar {
     display: flex;
-    gap: 0.75rem;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
     padding: 1rem 2rem;
     background: rgba(0,0,0,0.4);
     border-bottom: 1px solid rgba(255,255,255,0.06);
+    flex-wrap: wrap;
+}
+
+.obra-action-bar-left,
+.obra-action-bar-right {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
     flex-wrap: wrap;
 }
 
@@ -897,6 +923,70 @@
 .obra-action-btn-share {
     border-color: rgba(124, 58, 237, 0.34);
     color: #d8c9ff;
+}
+
+.obra-ticket-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.65rem;
+    padding: 0.55rem 1.2rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #cc9108 0%, #f5a623 100%);
+    color: #141414;
+    font-size: 0.88rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    box-shadow: 0 16px 34px rgba(204, 145, 8, 0.24);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.obra-ticket-btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.03);
+    box-shadow: 0 18px 38px rgba(204, 145, 8, 0.3);
+}
+
+.obra-ticket-btn-disabled {
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.72);
+    box-shadow: none;
+}
+
+.obra-ticket-btn-disabled:hover {
+    transform: none;
+    filter: none;
+    box-shadow: none;
+}
+
+.obra-show-dates {
+    margin-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 1rem;
+}
+
+.obra-show-dates-summary {
+    cursor: pointer;
+    color: #d8c9ff;
+    font-weight: 700;
+}
+
+.obra-show-dates-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-top: 0.9rem;
+}
+
+.obra-show-date-pill {
+    padding: 0.45rem 0.75rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.84rem;
 }
 
 /* ── SIDEBAR extra links ── */

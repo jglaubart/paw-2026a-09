@@ -56,7 +56,8 @@ public class PlayPetitionController {
         final List<Long> genreIds = parseGenreIds(form.getGenreIds(), errors);
         final Integer durationMinutes = parseDuration(form.getDurationMinutes(), errors);
         final LocalDate startDate = parseDate("startDate", form.getStartDate(), true, errors);
-        final LocalDate endDate = parseDate("endDate", form.getEndDate(), false, errors);
+        final LocalDate endDate = parseDate("endDate", form.getEndDate(), true, errors);
+        final List<LocalDate> additionalShowDates = parseAdditionalDates(form.getAdditionalShowDates(), errors);
         final MultipartFile coverImage = form.getCoverImage();
 
         if (startDate != null && endDate != null && endDate.isBefore(startDate)) {
@@ -79,6 +80,7 @@ public class PlayPetitionController {
                     endDate,
                     coverImage.getContentType(),
                     coverImage.getBytes(),
+                    additionalShowDates,
                     form.getDirector(),
                     form.getPetitionerEmail(),
                     form.getSchedule(),
@@ -112,6 +114,7 @@ public class PlayPetitionController {
         requireText(form.getTheater(), "theater", "Ingresá el teatro o sala.", errors);
         requireText(form.getTheaterAddress(), "theaterAddress", "Ingresá la dirección de la sala.", errors);
         requireText(form.getStartDate(), "startDate", "Ingresá la fecha de inicio de temporada.", errors);
+        requireText(form.getEndDate(), "endDate", "Ingresá la última fecha de la producción.", errors);
         requireText(form.getDirector(), "director", "Ingresá la dirección de la obra.", errors);
         requireText(form.getPetitionerEmail(), "petitionerEmail", "Ingresá un email de contacto.", errors);
 
@@ -165,6 +168,25 @@ public class PlayPetitionController {
             errors.put("durationMinutes", "Ingresá la duración en minutos.");
             return null;
         }
+    }
+
+    private List<LocalDate> parseAdditionalDates(final List<String> rawDates, final Map<String, String> errors) {
+        final List<LocalDate> parsed = new ArrayList<>();
+        if (rawDates == null) {
+            return parsed;
+        }
+        for (final String rawDate : rawDates) {
+            if (!hasText(rawDate)) {
+                continue;
+            }
+            try {
+                parsed.add(LocalDate.parse(rawDate.trim()));
+            } catch (final DateTimeParseException e) {
+                errors.put("additionalShowDates", "Ingresá fechas adicionales válidas.");
+                return new ArrayList<>();
+            }
+        }
+        return parsed;
     }
 
     private LocalDate parseDate(final String field, final String value, final boolean required, final Map<String, String> errors) {

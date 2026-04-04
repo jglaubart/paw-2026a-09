@@ -172,8 +172,8 @@
             return false;
         }
 
-        if (Math.abs(previousSelected - buttonValue) < 0.001) {
-            nextValue = Math.max(0.5, buttonValue - 0.5);
+        if (typeof form.reportValidity === "function" && !form.reportValidity()) {
+            return true;
         }
 
         setSelected(component, nextValue);

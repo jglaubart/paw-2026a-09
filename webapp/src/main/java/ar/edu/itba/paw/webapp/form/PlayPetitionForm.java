@@ -15,6 +15,7 @@ public class PlayPetitionForm {
     private String theaterAddress;
     private String startDate;
     private String endDate;
+    private List<String> additionalShowDates = new ArrayList<>();
     private MultipartFile coverImage;
     private String director;
     private String petitionerEmail;
@@ -38,6 +39,8 @@ public class PlayPetitionForm {
     public void setStartDate(final String startDate) { this.startDate = startDate; }
     public String getEndDate() { return endDate; }
     public void setEndDate(final String endDate) { this.endDate = endDate; }
+    public List<String> getAdditionalShowDates() { return additionalShowDates; }
+    public void setAdditionalShowDates(final List<String> additionalShowDates) { this.additionalShowDates = additionalShowDates; }
     public MultipartFile getCoverImage() { return coverImage; }
     public void setCoverImage(final MultipartFile coverImage) { this.coverImage = coverImage; }
     public String getDirector() { return director; }

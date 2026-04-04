@@ -67,6 +67,14 @@
                         <dt>Fin de temporada</dt>
                         <dd><c:out value="${petition.endDate}" /></dd>
                     </c:if>
+                    <c:if test="${not empty petition.additionalShowDates}">
+                        <dt>Fechas adicionales</dt>
+                        <dd>
+                            <c:forEach var="showDate" items="${petition.additionalShowDates}" varStatus="status">
+                                <c:out value="${showDate}" /><c:if test="${not status.last}">, </c:if>
+                            </c:forEach>
+                        </dd>
+                    </c:if>
                     <c:if test="${not empty petition.schedule}">
                         <dt>Horarios</dt>
                         <dd><c:out value="${petition.schedule}" /></dd>

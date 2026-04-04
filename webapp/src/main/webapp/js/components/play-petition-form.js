@@ -6,6 +6,8 @@
 
     var imageInput = form.querySelector('#coverImage');
     var sizeError = form.querySelector('[data-cover-image-size-error]');
+    var addDateButton = form.querySelector('[data-add-date-button]');
+    var additionalDatesContainer = form.querySelector('[data-additional-dates]');
     if (!imageInput || !sizeError) {
         return;
     }
@@ -24,6 +26,16 @@
     }
 
     imageInput.addEventListener('change', syncErrorState);
+    if (addDateButton && additionalDatesContainer) {
+        addDateButton.addEventListener('click', function () {
+            var input = document.createElement('input');
+            input.type = 'date';
+            input.name = 'additionalShowDates';
+            input.className = 'petition-form-extra-date-input';
+            additionalDatesContainer.appendChild(input);
+            input.focus();
+        });
+    }
     form.addEventListener('submit', function (event) {
         if (syncErrorState()) {
             event.preventDefault();

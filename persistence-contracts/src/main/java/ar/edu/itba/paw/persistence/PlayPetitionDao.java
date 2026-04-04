@@ -16,6 +16,10 @@ public interface PlayPetitionDao {
 
     void addGenres(long petitionId, List<Long> genreIds);
 
+    void addShowDates(long petitionId, List<LocalDate> dates);
+
+    List<LocalDate> findShowDates(long petitionId);
+
     Optional<PlayPetition> findById(long id);
 
     List<PlayPetition> findAll(int page, int pageSize);

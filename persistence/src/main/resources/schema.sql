@@ -74,10 +74,11 @@ CREATE TABLE IF NOT EXISTS production_reviews (
     rating_id         INT UNIQUE REFERENCES production_ratings(id),
     user_id           INT NOT NULL REFERENCES users(id),
     production_id     INT NOT NULL REFERENCES productions(id),
+    obra_id           INT NOT NULL REFERENCES obras(id),
     body              TEXT NOT NULL,
     contains_spoilers BOOLEAN NOT NULL DEFAULT FALSE,
     created_at        TIMESTAMP NOT NULL DEFAULT NOW(),
-    UNIQUE (user_id, production_id)
+    UNIQUE (user_id, obra_id)
 );
 
 CREATE TABLE IF NOT EXISTS watchlist (

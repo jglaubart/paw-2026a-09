@@ -75,9 +75,8 @@ public class ProductionDaoImpl implements ProductionDao {
     @Override
     public List<Production> findAvailable(final int page, final int pageSize) {
         return jdbcTemplate.query(
-                "SELECT * FROM productions p WHERE EXISTS (" +
-                "  SELECT 1 FROM shows s WHERE s.production_id = p.id AND s.show_date >= CURRENT_DATE" +
-                ") ORDER BY p.name LIMIT ? OFFSET ?",
+                "SELECT * FROM productions p WHERE p.start_date IS NOT NULL AND p.start_date <= CURRENT_DATE " +
+                "AND (p.end_date IS NULL OR p.end_date >= CURRENT_DATE) ORDER BY p.name LIMIT ? OFFSET ?",
                 new Object[]{ pageSize, (long) page * pageSize },
                 PRODUCTION_MAPPER
         );
@@ -152,10 +151,8 @@ public class ProductionDaoImpl implements ProductionDao {
 
         if (criteria.isAvailableOnly()) {
             sql.append(
-                    " AND EXISTS (" +
-                    "  SELECT 1 FROM shows s_available " +
-                    "  WHERE s_available.production_id = p.id AND s_available.show_date >= CURRENT_DATE" +
-                    " )"
+                    " AND p.start_date IS NOT NULL AND p.start_date <= CURRENT_DATE" +
+                    " AND (p.end_date IS NULL OR p.end_date >= CURRENT_DATE)"
             );
         }
 

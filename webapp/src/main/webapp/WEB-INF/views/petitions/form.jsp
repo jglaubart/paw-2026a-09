@@ -170,13 +170,13 @@
                         <span class="petition-form-step-number">2</span>
                         <div>
                             <h3>Completá tu ficha</h3>
-                            <p>Estos datos son opcionales, pero ayudan a publicar una ficha mucho más útil.</p>
+                            <p>La última fecha es obligatoria; el resto suma contexto para publicar una ficha mucho más útil.</p>
                         </div>
                     </div>
 
                     <div class="petition-form-grid petition-form-grid-two">
                         <div class="petition-form-field">
-                            <label for="endDate">Fin de temporada</label>
+                            <label for="endDate">Última fecha de la producción <span class="petition-form-required">*</span></label>
                             <input id="endDate" name="endDate" type="date" value="${fn:escapeXml(form.endDate)}" />
                             <c:if test="${not empty errors['endDate']}"><span class="petition-form-error"><c:out value="${errors['endDate']}" /></span></c:if>
                         </div>
@@ -190,6 +190,27 @@
                             <label for="ticketUrl">Link de venta de entradas</label>
                             <input id="ticketUrl" name="ticketUrl" type="url" value="${fn:escapeXml(form.ticketUrl)}" placeholder="https://alternativateatral.com/..." />
                             <c:if test="${not empty errors['ticketUrl']}"><span class="petition-form-error"><c:out value="${errors['ticketUrl']}" /></span></c:if>
+                        </div>
+
+                        <div class="petition-form-field petition-form-field-full">
+                            <div class="petition-form-extra-dates-head">
+                                <label>Fechas adicionales de función</label>
+                                <button type="button" class="petition-form-add-date" data-add-date-button>Agregar fecha</button>
+                            </div>
+                            <div class="petition-form-extra-dates" data-additional-dates>
+                                <c:choose>
+                                    <c:when test="${not empty form.additionalShowDates}">
+                                        <c:forEach var="extraDate" items="${form.additionalShowDates}">
+                                            <input type="date" name="additionalShowDates" value="${fn:escapeXml(extraDate)}" class="petition-form-extra-date-input" />
+                                        </c:forEach>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <input type="date" name="additionalShowDates" value="" class="petition-form-extra-date-input" />
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                            <p class="petition-form-hint">Podés sumar fechas puntuales extra además del inicio y del cierre de la producción.</p>
+                            <c:if test="${not empty errors['additionalShowDates']}"><span class="petition-form-error"><c:out value="${errors['additionalShowDates']}" /></span></c:if>
                         </div>
                     </div>
                 </section>

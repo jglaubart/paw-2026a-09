@@ -6,6 +6,7 @@ import ar.edu.itba.paw.interfaces.services.ProductionService;
 import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
 import ar.edu.itba.paw.interfaces.services.SeenService;
+import ar.edu.itba.paw.interfaces.services.ShowService;
 import ar.edu.itba.paw.interfaces.services.WatchlistService;
 import ar.edu.itba.paw.models.Obra;
 import ar.edu.itba.paw.models.Production;
@@ -19,19 +20,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.time.LocalDate;
 
 @Controller
 public class ObraController {
 
     private static final long HARDCODED_USER_ID = 1L;
 
+    // Demo flow still uses a fixed user for wishlist/seen/rating until auth exists.
+
     private final ObraService obraService;
     private final ProductionService productionService;
     private final RatingService ratingService;
     private final ReviewService reviewService;
     private final MailService mailService;
+    private final ShowService showService;
     private final WatchlistService watchlistService;
     private final SeenService seenService;
 
@@ -41,6 +48,7 @@ public class ObraController {
                           final RatingService ratingService,
                           final ReviewService reviewService,
                           final MailService mailService,
+                          final ShowService showService,
                           final WatchlistService watchlistService,
                           final SeenService seenService) {
         this.obraService = obraService;
@@ -48,6 +56,7 @@ public class ObraController {
         this.ratingService = ratingService;
         this.reviewService = reviewService;
         this.mailService = mailService;
+        this.showService = showService;
         this.watchlistService = watchlistService;
         this.seenService = seenService;
     }
@@ -55,7 +64,7 @@ public class ObraController {
     @RequestMapping(value = "/obras/{id:\\d+}", method = RequestMethod.GET)
     public ModelAndView detail(@PathVariable("id") final long id,
                                @RequestParam(value = "produccionId", required = false) final Long produccionId,
-                               @RequestParam(value = "reviewEmail", required = false) final String reviewEmail) {
+                               @RequestParam(value = "email", required = false) final String email) {
         final Optional<Obra> obraOpt = obraService.findById(id);
         if (!obraOpt.isPresent()) {
             return new ModelAndView("redirect:/");
@@ -72,17 +81,22 @@ public class ObraController {
 
         if (selectedProduction != null) {
             final long pid = selectedProduction.getId();
-            mav.addObject("reviews", reviewService.findByProduction(pid));
-            final Integer userScore = ratingService.getProductionRating(HARDCODED_USER_ID, pid)
-                    .map(r -> r.getScore()).orElse(null);
-            final Double avgRating = ratingService.getProductionAverageRating(pid).orElse(null);
+            mav.addObject("reviews", reviewService.findByObra(id));
+            final Integer userScore = email != null
+                    ? ratingService.getObraRatingByEmail(email, id).map(r -> r.getScore()).orElse(null)
+                    : null;
+            final Double avgRating = ratingService.getObraAverageRating(id).orElse(null);
             mav.addObject("userScore", userScore);
             mav.addObject("userStars", mapScoreToStars(userScore));
             mav.addObject("avgRating", avgRating);
-            mav.addObject("avgStars", avgRating != null ? avgRating / 2.0d : null);
+            mav.addObject("avgStars", avgRating);
             mav.addObject("avgStarsPercent", avgRating != null ? Math.max(0d, Math.min(100d, avgRating * 10d)) : 0d);
-            mav.addObject("userReview", reviewEmail != null ? reviewService.findByEmailAndProduction(reviewEmail, pid).orElse(null) : null);
-            mav.addObject("reviewEmail", reviewEmail);
+            mav.addObject("userReview", email != null ? reviewService.findByEmailAndObra(email, id).orElse(null) : null);
+            mav.addObject("reviewEmail", email);
+            final List<LocalDate> showDates = collectUniqueShowDates(pid);
+            mav.addObject("showDates", showDates);
+            mav.addObject("lastShowDate", showDates.isEmpty() ? selectedProduction.getEndDate() : showDates.get(showDates.size() - 1));
+            mav.addObject("selectedProductionActive", isProductionActive(selectedProduction));
         } else {
             mav.addObject("reviews", Collections.emptyList());
             mav.addObject("userScore", null);
@@ -91,7 +105,10 @@ public class ObraController {
             mav.addObject("avgStars", null);
             mav.addObject("avgStarsPercent", 0d);
             mav.addObject("userReview", null);
-            mav.addObject("reviewEmail", reviewEmail);
+            mav.addObject("reviewEmail", email);
+            mav.addObject("showDates", Collections.emptyList());
+            mav.addObject("lastShowDate", null);
+            mav.addObject("selectedProductionActive", false);
         }
 
         if (selectedProduction != null) {
@@ -138,6 +155,21 @@ public class ObraController {
             return null;
         }
 
-        return Math.max(0.5d, Math.min(5d, score / 2.0d));
+        return Math.max(1d, Math.min(10d, score.doubleValue()));
+    }
+
+    private List<LocalDate> collectUniqueShowDates(final long productionId) {
+        final Set<LocalDate> uniqueDates = new LinkedHashSet<>();
+        showService.findByProductionId(productionId).forEach(show -> uniqueDates.add(show.getShowDate()));
+        return new java.util.ArrayList<>(uniqueDates);
+    }
+
+    private boolean isProductionActive(final Production production) {
+        if (production.getStartDate() == null) {
+            return false;
+        }
+        final LocalDate today = LocalDate.now();
+        return !production.getStartDate().isAfter(today)
+                && (production.getEndDate() == null || !production.getEndDate().isBefore(today));
     }
 }

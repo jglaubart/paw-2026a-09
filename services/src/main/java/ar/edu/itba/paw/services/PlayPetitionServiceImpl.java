@@ -20,9 +20,11 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class PlayPetitionServiceImpl implements PlayPetitionService {
@@ -60,7 +62,8 @@ public class PlayPetitionServiceImpl implements PlayPetitionService {
     public PlayPetition create(final String title, final String synopsis, final int durationMinutes,
                                final List<Long> genreIds, final String theater, final String theaterAddress,
                                final LocalDate startDate, final LocalDate endDate, final String coverImageContentType,
-                               final byte[] coverImage, final String director, final String petitionerEmail,
+                               final byte[] coverImage, final List<LocalDate> additionalShowDates,
+                               final String director, final String petitionerEmail,
                                final String schedule, final String ticketUrl, final String language) {
         validateCreateRequest(title, synopsis, durationMinutes, genreIds, theater, theaterAddress,
                 startDate, endDate, coverImage, director, petitionerEmail);
@@ -93,7 +96,9 @@ public class PlayPetitionServiceImpl implements PlayPetitionService {
         );
 
         playPetitionDao.addGenres(created.getId(), normalizedGenreIds);
-        final PlayPetition petitionWithGenres = withGenres(created, genres);
+        final List<LocalDate> normalizedShowDates = normalizeAdditionalShowDates(startDate, endDate, additionalShowDates);
+        playPetitionDao.addShowDates(created.getId(), normalizedShowDates);
+        final PlayPetition petitionWithGenres = withGenresAndDates(created, genres, normalizedShowDates);
         mailService.sendPetitionConfirmation(petitionWithGenres);
         return petitionWithGenres;
     }
@@ -131,12 +136,14 @@ public class PlayPetitionServiceImpl implements PlayPetitionService {
                 null,
                 petition.getTicketUrl()
         );
-        showService.create(
-                production.getId(),
-                petition.getStartDate().isBefore(LocalDate.now()) ? LocalDate.now() : petition.getStartDate(),
-                DEFAULT_SHOW_TIME,
-                petition.getTheater()
-        );
+        for (final LocalDate showDate : buildShowDates(petition)) {
+            showService.create(
+                    production.getId(),
+                    showDate,
+                    DEFAULT_SHOW_TIME,
+                    petition.getTheater()
+            );
+        }
 
         playPetitionDao.updateStatus(petitionId, PetitionStatus.APPROVED, trimToNull(adminNotes));
         playPetitionDao.setCreatedEntities(petitionId, obra.getId(), production.getId());
@@ -167,7 +174,7 @@ public class PlayPetitionServiceImpl implements PlayPetitionService {
                                        final LocalDate startDate, final LocalDate endDate, final byte[] coverImage,
                                        final String director, final String petitionerEmail) {
         if (!hasText(title) || !hasText(synopsis) || durationMinutes <= 0 || !hasText(theater)
-                || !hasText(theaterAddress) || startDate == null || !hasText(director)
+                || !hasText(theaterAddress) || startDate == null || endDate == null || !hasText(director)
                 || !hasText(petitionerEmail) || genreIds == null || genreIds.isEmpty()
                 || coverImage == null || coverImage.length == 0) {
             throw new IllegalArgumentException("Missing required petition fields");
@@ -195,10 +202,15 @@ public class PlayPetitionServiceImpl implements PlayPetitionService {
     }
 
     private PlayPetition loadGenres(final PlayPetition petition) {
-        return withGenres(petition, genreDao.findByPetitionId(petition.getId()));
+        return withGenresAndDates(
+                petition,
+                genreDao.findByPetitionId(petition.getId()),
+                playPetitionDao.findShowDates(petition.getId())
+        );
     }
 
-    private PlayPetition withGenres(final PlayPetition petition, final List<Genre> genres) {
+    private PlayPetition withGenresAndDates(final PlayPetition petition, final List<Genre> genres,
+                                            final List<LocalDate> additionalShowDates) {
         return new PlayPetition(
                 petition.getId(),
                 petition.getTitle(),
@@ -220,8 +232,40 @@ public class PlayPetitionServiceImpl implements PlayPetitionService {
                 petition.getResolvedAt(),
                 petition.getCreatedObraId(),
                 petition.getCreatedProductionId(),
+                Collections.unmodifiableList(new ArrayList<>(additionalShowDates)),
                 Collections.unmodifiableList(new ArrayList<>(genres))
         );
+    }
+
+    private List<LocalDate> normalizeAdditionalShowDates(final LocalDate startDate, final LocalDate endDate,
+                                                         final List<LocalDate> additionalShowDates) {
+        final Set<LocalDate> dates = new LinkedHashSet<>();
+        if (additionalShowDates != null) {
+            for (final LocalDate additionalShowDate : additionalShowDates) {
+                if (additionalShowDate != null && !additionalShowDate.equals(startDate) && !additionalShowDate.equals(endDate)) {
+                    dates.add(additionalShowDate);
+                }
+            }
+        }
+        return new ArrayList<>(dates);
+    }
+
+    private List<LocalDate> buildShowDates(final PlayPetition petition) {
+        final Set<LocalDate> dates = new LinkedHashSet<>();
+        dates.add(petition.getStartDate());
+        dates.add(petition.getEndDate());
+        if (petition.getAdditionalShowDates() != null) {
+            dates.addAll(petition.getAdditionalShowDates());
+        }
+
+        final List<LocalDate> normalized = new ArrayList<>();
+        for (final LocalDate date : dates) {
+            if (date != null) {
+                normalized.add(date);
+            }
+        }
+        Collections.sort(normalized);
+        return normalized;
     }
 
     private String joinGenres(final List<Genre> genres) {

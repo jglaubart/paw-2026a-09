@@ -45,6 +45,12 @@ CREATE TABLE IF NOT EXISTS petition_genres (
     PRIMARY KEY (petition_id, genre_id)
 );
 
+CREATE TABLE IF NOT EXISTS petition_show_dates (
+    petition_id INT NOT NULL REFERENCES play_petitions(id),
+    show_date   DATE NOT NULL,
+    PRIMARY KEY (petition_id, show_date)
+);
+
 -- Seed predefined genres
 INSERT INTO genres (name) VALUES
     ('Drama'),

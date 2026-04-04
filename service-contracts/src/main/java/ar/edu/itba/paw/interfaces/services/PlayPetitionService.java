@@ -11,7 +11,7 @@ public interface PlayPetitionService {
     PlayPetition create(String title, String synopsis, int durationMinutes,
                         List<Long> genreIds, String theater, String theaterAddress,
                         LocalDate startDate, LocalDate endDate, String coverImageContentType, byte[] coverImage,
-                        String director, String petitionerEmail, String schedule,
+                        List<LocalDate> additionalShowDates, String director, String petitionerEmail, String schedule,
                         String ticketUrl, String language);
 
     Optional<PlayPetition> findById(long id);

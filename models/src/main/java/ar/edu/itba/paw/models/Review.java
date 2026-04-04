@@ -11,12 +11,13 @@ public class Review implements Serializable {
     private long obraId;
     private String body;
     private Long ratingId;
+    private Integer score;
 
     public Review() {}
 
     public Review(final long id, final long userId, final String userEmail,
                   final long productionId, final long obraId,
-                  final String body, final Long ratingId) {
+                  final String body, final Long ratingId, final Integer score) {
         this.id = id;
         this.userId = userId;
         this.userEmail = userEmail;
@@ -24,6 +25,7 @@ public class Review implements Serializable {
         this.obraId = obraId;
         this.body = body;
         this.ratingId = ratingId;
+        this.score = score;
     }
 
     public long getId() { return id; }
@@ -33,4 +35,5 @@ public class Review implements Serializable {
     public long getObraId() { return obraId; }
     public String getBody() { return body; }
     public Long getRatingId() { return ratingId; }
+    public Integer getScore() { return score; }
 }

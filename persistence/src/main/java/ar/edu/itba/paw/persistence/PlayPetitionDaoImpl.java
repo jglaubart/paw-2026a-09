@@ -53,6 +53,7 @@ public class PlayPetitionDaoImpl implements PlayPetitionDao {
                 resolvedAtTs != null ? resolvedAtTs.toLocalDateTime() : null,
                 createdObraId,
                 createdProductionId,
+                Collections.emptyList(),
                 Collections.emptyList()
         );
     };
@@ -95,7 +96,7 @@ public class PlayPetitionDaoImpl implements PlayPetitionDao {
                 key.longValue(), title, synopsis, durationMinutes, theater, theaterAddress,
                 startDate, endDate, coverImageId, director, petitionerEmail, schedule,
                 ticketUrl, language, PetitionStatus.PENDING, null,
-                LocalDateTime.now(), null, null, null, Collections.emptyList()
+                LocalDateTime.now(), null, null, null, Collections.emptyList(), Collections.emptyList()
         );
     }
 
@@ -110,6 +111,33 @@ public class PlayPetitionDaoImpl implements PlayPetitionDao {
             batchArgs.add(new Object[]{ petitionId, genreId });
         }
         jdbcTemplate.batchUpdate(sql, batchArgs);
+    }
+
+    @Override
+    public void addShowDates(final long petitionId, final List<LocalDate> dates) {
+        if (dates == null || dates.isEmpty()) {
+            return;
+        }
+        final String sql = "INSERT INTO petition_show_dates (petition_id, show_date) VALUES (?, ?) ON CONFLICT DO NOTHING";
+        final List<Object[]> batchArgs = new ArrayList<>();
+        for (final LocalDate date : dates) {
+            batchArgs.add(new Object[]{ petitionId, Date.valueOf(date) });
+        }
+        jdbcTemplate.batchUpdate(sql, batchArgs);
+    }
+
+    @Override
+    public List<LocalDate> findShowDates(final long petitionId) {
+        final List<Date> dates = jdbcTemplate.queryForList(
+                "SELECT show_date FROM petition_show_dates WHERE petition_id = ? ORDER BY show_date",
+                new Object[]{ petitionId },
+                Date.class
+        );
+        final List<LocalDate> mapped = new ArrayList<>();
+        for (final Date date : dates) {
+            mapped.add(date.toLocalDate());
+        }
+        return mapped;
     }
 
     @Override

@@ -1,4 +1,16 @@
 (function () {
+    var disabledTicketButtons = document.querySelectorAll('[data-ticket-status-message]');
+    var ticketFeedbackWrap = document.querySelector('[data-ticket-feedback]');
+    var ticketFeedbackText = document.querySelector('[data-ticket-feedback-text]');
+    if (ticketFeedbackWrap && ticketFeedbackText && disabledTicketButtons.length) {
+        Array.prototype.slice.call(disabledTicketButtons).forEach(function (button) {
+            button.addEventListener('click', function () {
+                ticketFeedbackText.textContent = button.getAttribute('data-ticket-status-message');
+                ticketFeedbackWrap.classList.remove('obra-action-feedback-wrap-hidden');
+            });
+        });
+    }
+
     var dialog = document.querySelector('[data-share-dialog]');
     var openButton = document.querySelector('[data-share-open]');
 

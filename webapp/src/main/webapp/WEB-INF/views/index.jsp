@@ -67,7 +67,7 @@
         </c:if>
 
         <c:if test="${not empty availableProductions}">
-            <paw:sectionRow title="En Cartelera" subtitle="Producciones con funciones disponibles">
+            <paw:sectionRow title="En Cartelera" subtitle="Obras activas dentro de su periodo">
                 <c:forEach var="p" items="${availableProductions}">
                     <c:url var="detailUrl" value="/obras/${p.obraId}">
                         <c:param name="produccionId" value="${p.id}" />
@@ -84,7 +84,7 @@
         </c:if>
 
         <c:if test="${not empty allProductions}">
-            <paw:sectionRow title="Catálogo" subtitle="Todas las producciones">
+            <paw:sectionRow title="Catálogo" subtitle="Todas las obras cargadas, activas o no">
                 <c:forEach var="p" items="${allProductions}">
                     <c:url var="detailUrl" value="/obras/${p.obraId}">
                         <c:param name="produccionId" value="${p.id}" />

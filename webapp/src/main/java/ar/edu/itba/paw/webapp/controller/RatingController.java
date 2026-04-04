@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Controller
 public class RatingController {
@@ -47,6 +49,35 @@ public class RatingController {
             return new ModelAndView("redirect:/obras/" + obraId + "?produccionId=" + productionId + "&rating=saved");
         }
         return new ModelAndView("redirect:/productions/" + productionId + "?rating=saved");
+    }
+
+    @RequestMapping(value = "/obras/{id:\\d+}/rate", method = RequestMethod.POST)
+    public Object rateObra(@PathVariable("id") final long obraId,
+                           @RequestParam("email") final String email,
+                           @RequestParam("score") final String score,
+                           @RequestParam(value = "produccionId", required = false) final Long produccionId,
+                           final HttpServletRequest request) {
+        final Integer normalizedScore = normalizeScore(score);
+        final String normalizedEmail = email != null ? email.trim().toLowerCase() : null;
+
+        if (normalizedScore != null && normalizedEmail != null && normalizedEmail.contains("@")) {
+            ratingService.rateObraByEmail(normalizedEmail, obraId, normalizedScore);
+        }
+
+        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+            if (normalizedScore == null || normalizedEmail == null || !normalizedEmail.contains("@")) {
+                return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+            }
+            return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+        }
+
+        final String encodedEmail = normalizedEmail != null ? URLEncoder.encode(normalizedEmail, StandardCharsets.UTF_8) : "";
+        final String redirectBase = "/obras/" + obraId + (produccionId != null ? "?produccionId=" + produccionId : "?");
+        final String separator = redirectBase.contains("?") && !redirectBase.endsWith("?") ? "&" : "";
+        if (normalizedScore == null || normalizedEmail == null || !normalizedEmail.contains("@")) {
+            return new ModelAndView("redirect:" + redirectBase + separator + "error=invalid_rating");
+        }
+        return new ModelAndView("redirect:" + redirectBase + separator + "rating=saved&email=" + encodedEmail);
     }
 
     private Integer normalizeScore(final String rawScore) {

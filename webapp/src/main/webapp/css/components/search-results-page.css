@@ -64,6 +64,12 @@
     color: rgba(255, 255, 255, 0.5);
 }
 
+.search-results-page .section-row {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding-inline: 2rem;
+}
+
 .search-results-pagination {
     display: flex;
     justify-content: center;
@@ -78,5 +84,9 @@
 @media (max-width: 768px) {
     .search-results-filters {
         padding: 0 1rem;
+    }
+
+    .search-results-page .section-row {
+        padding-inline: 1rem;
     }
 }

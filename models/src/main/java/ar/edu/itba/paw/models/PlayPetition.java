@@ -27,6 +27,7 @@ public class PlayPetition implements Serializable {
     private LocalDateTime resolvedAt;
     private Long createdObraId;
     private Long createdProductionId;
+    private List<LocalDate> additionalShowDates;
     private List<Genre> genres;
 
     public PlayPetition() {}
@@ -52,6 +53,7 @@ public class PlayPetition implements Serializable {
             final LocalDateTime resolvedAt,
             final Long createdObraId,
             final Long createdProductionId,
+            final List<LocalDate> additionalShowDates,
             final List<Genre> genres) {
         this.id = id;
         this.title = title;
@@ -73,6 +75,7 @@ public class PlayPetition implements Serializable {
         this.resolvedAt = resolvedAt;
         this.createdObraId = createdObraId;
         this.createdProductionId = createdProductionId;
+        this.additionalShowDates = additionalShowDates;
         this.genres = genres;
     }
 
@@ -96,5 +99,6 @@ public class PlayPetition implements Serializable {
     public LocalDateTime getResolvedAt() { return resolvedAt; }
     public Long getCreatedObraId() { return createdObraId; }
     public Long getCreatedProductionId() { return createdProductionId; }
+    public List<LocalDate> getAdditionalShowDates() { return additionalShowDates; }
     public List<Genre> getGenres() { return genres; }
 }
