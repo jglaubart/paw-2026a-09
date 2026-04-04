@@ -1,0 +1,80 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "PLATEA" [ref=e3] [cursor=pointer]:
+      - /url: /;jsessionid=node0jb1e4vc6cmv289vl2abrfnnv1.node0
+    - navigation "Navegación principal" [ref=e4]:
+      - link "CARTELERA" [ref=e5] [cursor=pointer]:
+        - /url: /cartelera;jsessionid=node0jb1e4vc6cmv289vl2abrfnnv1.node0
+      - link "WATCHLIST" [ref=e6] [cursor=pointer]:
+        - /url: /wishlist;jsessionid=node0jb1e4vc6cmv289vl2abrfnnv1.node0
+      - link "HISTORIAL" [ref=e7] [cursor=pointer]:
+        - /url: /watchlist;jsessionid=node0jb1e4vc6cmv289vl2abrfnnv1.node0
+    - generic [ref=e11]:
+      - button "Filtros 0" [ref=e13] [cursor=pointer]:
+        - img [ref=e15]
+        - generic [ref=e16]: Filtros
+        - generic [ref=e17]: "0"
+      - generic [ref=e18]:
+        - img [ref=e20]
+        - textbox [ref=e23]:
+          - /placeholder: Buscar obra, sala o productora
+      - button "Buscar" [ref=e24] [cursor=pointer]
+  - main [ref=e25]:
+    - generic [ref=e26]:
+      - img [ref=e27]
+      - generic [ref=e28]:
+        - generic [ref=e29]:
+          - generic [ref=e30]: Circo
+          - generic [ref=e31]:
+            - generic [ref=e32]: ★
+            - text: "8"
+        - heading "Circo Transatlántico" [level=1] [ref=e34]
+    - generic [ref=e35]:
+      - generic [ref=e36]:
+        - img [ref=e37]
+        - text: Teatro El Extranjero
+      - generic [ref=e40]:
+        - img [ref=e41]
+        - text: 2026-03-01 — 2026-05-30
+    - generic [ref=e43]:
+      - generic [ref=e44]:
+        - button "Agregar a wishlist" [ref=e46] [cursor=pointer]:
+          - generic [ref=e47]: ♡
+          - text: Agregar a wishlist
+        - button "Marcar como vista" [ref=e49] [cursor=pointer]:
+          - generic [ref=e50]: ○
+          - text: Marcar como vista
+        - button "Compartir por mail" [ref=e51] [cursor=pointer]:
+          - generic [ref=e52]: ↗
+          - text: Compartir por mail
+      - button "Comprar entradas ↗" [ref=e54] [cursor=pointer]
+    - generic [ref=e55]:
+      - generic [ref=e56]:
+        - generic [ref=e57]:
+          - heading "Sinopsis" [level=2] [ref=e59]
+          - paragraph [ref=e60]: Espectaculo circense que cruza el Atlantico con acrobacia, humor y poesia.
+          - generic [ref=e61]:
+            - generic [ref=e62]
+            - generic [ref=e65]
+            - generic [ref=e68]
+          - group [ref=e71]:
+            - generic "Ver todas las fechas" [ref=e72] [cursor=pointer]
+        - generic [ref=e73]:
+          - generic [ref=e75]:
+            - heading "Qué dice la gente" [level=2] [ref=e76]
+            - generic [ref=e77]
+          - generic [ref=e83]:
+            - generic [ref=e84]
+            - generic [ref=e90]
+          - generic [ref=e97]:
+            - generic [ref=e98]
+            - generic [ref=e101]
+      - complementary [ref=e130]:
+        - generic [ref=e131]:
+          - heading "EXPLORÁ MÁS" [level=3] [ref=e132]
+          - link "VER TODA LA CARTELERA" [ref=e133] [cursor=pointer]:
+            - /url: /cartelera;jsessionid=node0jb1e4vc6cmv289vl2abrfnnv1.node0
+          - link "MI WISHLIST" [ref=e134] [cursor=pointer]:
+            - /url: /wishlist;jsessionid=node0jb1e4vc6cmv289vl2abrfnnv1.node0
+          - link "YA LAS VI" [ref=e135] [cursor=pointer]:
+            - /url: /watchlist;jsessionid=node0jb1e4vc6cmv289vl2abrfnnv1.node0

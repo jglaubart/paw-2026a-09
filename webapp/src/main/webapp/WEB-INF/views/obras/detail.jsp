@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/alert.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/user-lists.css" />
     <script src="${pageContext.request.contextPath}/js/components/star-rating.js" defer></script>
+    <script src="${pageContext.request.contextPath}/js/components/obra-feedback.js" defer></script>
     <script src="${pageContext.request.contextPath}/js/components/share-dialog.js" defer></script>
 </head>
 <body>
@@ -315,15 +316,15 @@
                     <div class="obra-reviews-head">
                         <h2 class="obra-reviews-section-title">Qué dice la gente</h2>
                         <c:if test="${avgStars != null}">
-                            <span class="obra-avg-rating">
+                            <span class="obra-avg-rating" data-feedback-avg-block>
                                 <span class="obra-avg-stars" aria-hidden="true">
                                     <span class="obra-avg-stars-base">★★★★★★★★★★</span>
-                                    <span class="obra-avg-stars-fill" style="width: ${avgStarsPercent}%;">★★★★★★★★★★</span>
+                                    <span class="obra-avg-stars-fill" data-feedback-avg-stars-fill style="width: ${avgStarsPercent}%;">★★★★★★★★★★</span>
                                 </span>
-                                <span class="obra-avg-rating-value">
+                                <span class="obra-avg-rating-value" data-feedback-avg-value>
                                     <fmt:formatNumber value="${avgStars}" maxFractionDigits="1" /> / 10
                                 </span>
-                                <span class="obra-avg-rating-meta">
+                                <span class="obra-avg-rating-meta" data-feedback-review-count>
                                     <c:out value="${fn:length(reviews)}" /> reseña${fn:length(reviews) == 1 ? '' : 's'}
                                 </span>
                             </span>
@@ -333,9 +334,9 @@
 
                 <c:choose>
                     <c:when test="${not empty reviews}">
-                        <div class="obra-reviews-grid">
+                        <div class="obra-reviews-grid" data-feedback-reviews-grid>
                             <c:forEach var="r" items="${reviews}">
-                                <div class="obra-review-card">
+                                <div class="obra-review-card" data-review-card data-review-email="${fn:escapeXml(fn:toLowerCase(r.userEmail))}">
                                     <div class="obra-review-header">
                                         <span class="obra-review-avatar">${fn:toUpperCase(fn:substring(r.userEmail, 0, 1))}</span>
                                         <span class="obra-review-author"><c:out value="${r.userEmail}" /></span>
@@ -349,7 +350,7 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <div class="obra-reviews-empty">
+                        <div class="obra-reviews-empty" data-feedback-reviews-empty>
                             Todavía no hay reseñas publicadas para esta obra.
                         </div>
                     </c:otherwise>
@@ -364,10 +365,10 @@
                                 <span class="obra-rating-value">
                                     <c:choose>
                                         <c:when test="${userStars != null}">
-                                            <fmt:formatNumber value="${userStars}" maxFractionDigits="1" />/10
+                                            <span data-feedback-user-score><fmt:formatNumber value="${userStars}" maxFractionDigits="1" />/10</span>
                                         </c:when>
                                         <c:otherwise>
-                                            --/10
+                                            <span data-feedback-user-score>--/10</span>
                                         </c:otherwise>
                                     </c:choose>
                                 </span>
@@ -385,11 +386,20 @@
                                 </p>
                             </c:if>
 
+                            <c:if test="${param.error == 'missing_score'}">
+                                <p class="obra-inline-feedback obra-inline-feedback-warning">
+                                    Elegí una calificación antes de guardar tu participación.
+                                </p>
+                            </c:if>
+
+                            <p class="obra-inline-feedback obra-action-feedback-wrap-hidden" data-feedback-inline-message></p>
+
                             <c:url var="feedbackActionUrl" value="/obras/${obra.id}/feedback" />
                             <form action="${feedbackActionUrl}"
                                   method="post"
                                   accept-charset="UTF-8"
-                                  class="obra-rate-form-inner">
+                                  class="obra-rate-form-inner"
+                                  data-obra-feedback-form>
                                 <input type="hidden" name="produccionId" value="${selectedProduction.id}" />
                                 <input type="email"
                                        name="email"
@@ -411,7 +421,7 @@
                                           placeholder="¿Qué te dejó esta obra? (opcional)"><c:out value="${userReview != null ? userReview.body : ''}" /></textarea>
                                 <div class="obra-review-actions">
                                     <span class="obra-review-help">La puntuación es obligatoria. La reseña es opcional y, si la dejás vacía, se elimina la anterior.</span>
-                                    <button type="submit" class="btn btn-primary btn-md obra-review-submit">
+                                    <button type="submit" class="btn btn-primary btn-md obra-review-submit" data-feedback-submit>
                                         ${userReview != null || userStars != null ? 'Actualizar participación' : 'Guardar participación'}
                                     </button>
                                 </div>

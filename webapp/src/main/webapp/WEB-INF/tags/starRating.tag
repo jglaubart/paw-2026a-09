@@ -22,9 +22,15 @@
      data-success-text="Guardada"
      data-error-text="No se pudo guardar. Reintentá."
      data-autosubmit="${autoSubmitEnabled}">
+    <c:if test="${not autoSubmitEnabled}">
+        <input type="hidden"
+               name="${ratingName}"
+               value="${selectedValue > 0 ? selectedValue : ''}"
+               data-star-rating-hidden-input />
+    </c:if>
     <div class="star-rating-control" role="group" aria-label="${ratingGroupLabel}">
         <c:forEach var="i" begin="1" end="${ratingMax}">
-            <button type="submit"
+            <button type="${autoSubmitEnabled ? 'submit' : 'button'}"
                     class="star-rating-star ${selectedValue >= i ? 'star-rating-star-active' : ''} ${selectedValue < i and selectedValue + 0.5 >= i ? 'star-rating-star-half' : ''}"
                     name="${ratingName}"
                     value="${i}"

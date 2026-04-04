@@ -1,0 +1,26 @@
+- generic [active] [ref=e1]:
+  - heading [level=2] [ref=e2]
+  - table [ref=e3]:
+    - rowgroup [ref=e4]:
+      - 'row "URI: /cartelera" [ref=e5]':
+        - rowheader "URI:" [ref=e6]
+        - cell "/cartelera" [ref=e7]
+      - 'row "STATUS: 500" [ref=e8]':
+        - rowheader "STATUS:" [ref=e9]
+        - cell "500" [ref=e10]
+      - row [ref=e11]:
+        - rowheader "MESSAGE:" [ref=e12]
+        - cell [ref=e13]
+      - 'row "SERVLET: dispatcher" [ref=e14]':
+        - rowheader "SERVLET:" [ref=e15]
+        - cell "dispatcher" [ref=e16]
+      - row [ref=e17]:
+        - rowheader "CAUSED BY:" [ref=e18]
+        - cell [ref=e19]
+      - row [ref=e20]:
+        - rowheader "CAUSED BY:" [ref=e21]
+        - cell [ref=e22]
+  - separator [ref=e23]
+  - link "Powered by Jetty:// 9.4.58.v20250814" [ref=e24] [cursor=pointer]:
+    - /url: https://jetty.org/
+  - separator [ref=e25]

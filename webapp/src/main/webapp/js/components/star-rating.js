@@ -49,8 +49,23 @@
         return parseValue(component.getAttribute("data-max")) || 5;
     }
 
+    function isAutoSubmit(component) {
+        return component.getAttribute("data-autosubmit") === "true";
+    }
+
+    function syncHiddenInput(component, value) {
+        var hiddenInput = component.querySelector("[data-star-rating-hidden-input]");
+
+        if (!hiddenInput) {
+            return;
+        }
+
+        hiddenInput.value = value > 0 ? String(value) : "";
+    }
+
     function setSelected(component, value) {
         component.setAttribute("data-selected", value);
+        syncHiddenInput(component, value);
     }
 
     function setPreview(component, value) {
@@ -168,7 +183,7 @@
         var errorText = component.getAttribute("data-error-text") || "No se pudo guardar. Reintenta.";
         var requestBody;
 
-        if (!form || typeof window.fetch !== "function" || component.getAttribute("data-autosubmit") !== "true") {
+        if (!form || typeof window.fetch !== "function" || !isAutoSubmit(component)) {
             return false;
         }
 
@@ -244,6 +259,7 @@
             return;
         }
 
+        syncHiddenInput(component, getSelected(component));
         updateButtons(component);
 
         buttons.forEach(function (button) {
@@ -269,7 +285,17 @@
             button.addEventListener("click", function (event) {
                 if (submitRating(component, button)) {
                     event.preventDefault();
+                    return;
                 }
+
+                if (isAutoSubmit(component)) {
+                    return;
+                }
+
+                event.preventDefault();
+                setSelected(component, parseValue(button.getAttribute("data-rating-value")));
+                setPreview(component, 0);
+                updateButtons(component);
             });
 
             button.addEventListener("keydown", function (event) {
