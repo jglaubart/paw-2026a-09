@@ -85,174 +85,168 @@
         });
     }
 
-    function attachLocationCombobox(form) {
-        var combobox = form.querySelector("[data-location-combobox]");
-        var input;
-        var dropdown;
-        var optionButtons;
-        var emptyState;
-        var activeIndex = -1;
+    function attachFilterComboboxes(form) {
+        var comboboxes = toArray(form.querySelectorAll("[data-filter-combobox]"));
 
-        if (!combobox) {
-            return;
-        }
+        comboboxes.forEach(function (combobox) {
+            var input = combobox.querySelector("[data-filter-input]");
+            var dropdown = combobox.querySelector("[data-filter-dropdown]");
+            var optionButtons = toArray(combobox.querySelectorAll("[data-filter-option]"));
+            var emptyState = combobox.querySelector("[data-filter-empty]");
+            var activeIndex = -1;
 
-        input = combobox.querySelector("[data-location-input]");
-        dropdown = combobox.querySelector("[data-location-dropdown]");
-        optionButtons = toArray(combobox.querySelectorAll("[data-location-option]"));
-        emptyState = combobox.querySelector("[data-location-empty]");
+            if (!input || !dropdown) {
+                return;
+            }
 
-        if (!input || !dropdown) {
-            return;
-        }
+            function visibleOptions() {
+                return optionButtons.filter(function (button) {
+                    return !button.parentElement.hidden;
+                });
+            }
 
-        function visibleOptions() {
-            return optionButtons.filter(function (button) {
-                return !button.parentElement.hidden;
-            });
-        }
-
-        function closeDropdown() {
-            dropdown.hidden = true;
-            input.setAttribute("aria-expanded", "false");
-            activeIndex = -1;
-            optionButtons.forEach(function (button) {
-                button.classList.remove("is-active");
-            });
-        }
-
-        function openDropdown() {
-            dropdown.hidden = false;
-            input.setAttribute("aria-expanded", "true");
-        }
-
-        function applyActive(index) {
-            var visible = visibleOptions();
-            activeIndex = index;
-
-            visible.forEach(function (button, buttonIndex) {
-                if (buttonIndex === activeIndex) {
-                    button.classList.add("is-active");
-                    button.scrollIntoView({ block: "nearest" });
-                } else {
+            function closeDropdown() {
+                dropdown.hidden = true;
+                input.setAttribute("aria-expanded", "false");
+                activeIndex = -1;
+                optionButtons.forEach(function (button) {
                     button.classList.remove("is-active");
-                }
-            });
-        }
+                });
+            }
 
-        function filterOptions() {
-            var queryTokens = getWordTokens(input.value);
-            var visibleCount = 0;
+            function openDropdown() {
+                dropdown.hidden = false;
+                input.setAttribute("aria-expanded", "true");
+            }
 
-            optionButtons.forEach(function (button) {
-                var optionTokens = getWordTokens(button.getAttribute("data-location-value"));
-                var matches = true;
+            function applyActive(index) {
+                var visible = visibleOptions();
+                activeIndex = index;
 
-                if (queryTokens.length) {
-                    matches = queryTokens.every(function (queryToken) {
-                        return optionTokens.some(function (optionToken) {
-                            return optionToken.indexOf(queryToken) === 0;
+                visible.forEach(function (button, buttonIndex) {
+                    if (buttonIndex === activeIndex) {
+                        button.classList.add("is-active");
+                        button.scrollIntoView({ block: "nearest" });
+                    } else {
+                        button.classList.remove("is-active");
+                    }
+                });
+            }
+
+            function filterOptions() {
+                var queryTokens = getWordTokens(input.value);
+                var visibleCount = 0;
+
+                optionButtons.forEach(function (button) {
+                    var optionTokens = getWordTokens(button.getAttribute("data-filter-value"));
+                    var matches = true;
+
+                    if (queryTokens.length) {
+                        matches = queryTokens.every(function (queryToken) {
+                            return optionTokens.some(function (optionToken) {
+                                return optionToken.indexOf(queryToken) === 0;
+                            });
                         });
-                    });
+                    }
+
+                    button.parentElement.hidden = !matches;
+
+                    if (matches) {
+                        visibleCount += 1;
+                    }
+                });
+
+                if (emptyState) {
+                    emptyState.hidden = visibleCount > 0;
                 }
 
-                button.parentElement.hidden = !matches;
-
-                if (matches) {
-                    visibleCount += 1;
-                }
-            });
-
-            if (emptyState) {
-                emptyState.hidden = visibleCount > 0;
+                activeIndex = -1;
+                optionButtons.forEach(function (button) {
+                    button.classList.remove("is-active");
+                });
             }
 
-            activeIndex = -1;
-            optionButtons.forEach(function (button) {
-                button.classList.remove("is-active");
-            });
-        }
-
-        function selectOption(button) {
-            input.value = button.getAttribute("data-location-value") || "";
-            renderChips(form);
-            closeDropdown();
-        }
-
-        optionButtons.forEach(function (button) {
-            button.addEventListener("click", function () {
-                selectOption(button);
-            });
-        });
-
-        input.addEventListener("focus", function () {
-            filterOptions();
-            openDropdown();
-        });
-
-        input.addEventListener("click", function () {
-            filterOptions();
-            openDropdown();
-        });
-
-        input.addEventListener("input", function () {
-            filterOptions();
-            openDropdown();
-            renderChips(form);
-        });
-
-        input.addEventListener("keydown", function (event) {
-            var visible;
-
-            if (event.key === "Escape") {
-                closeDropdown();
-                return;
-            }
-
-            visible = visibleOptions();
-
-            if (!visible.length) {
-                return;
-            }
-
-            if (event.key === "ArrowDown") {
-                event.preventDefault();
-                if (dropdown.hidden) {
-                    openDropdown();
-                }
-                applyActive((activeIndex + 1) % visible.length);
-                return;
-            }
-
-            if (event.key === "ArrowUp") {
-                event.preventDefault();
-                if (dropdown.hidden) {
-                    openDropdown();
-                }
-                applyActive(activeIndex <= 0 ? visible.length - 1 : activeIndex - 1);
-                return;
-            }
-
-            if (event.key === "Enter" && !dropdown.hidden && activeIndex >= 0) {
-                event.preventDefault();
-                selectOption(visible[activeIndex]);
-            }
-        });
-
-        document.addEventListener("click", function (event) {
-            if (!combobox.contains(event.target)) {
+            function selectOption(button) {
+                input.value = button.getAttribute("data-filter-value") || "";
+                renderChips(form);
                 closeDropdown();
             }
-        });
 
-        form.addEventListener("reset", function () {
-            closeDropdown();
-            if (emptyState) {
-                emptyState.hidden = true;
-            }
             optionButtons.forEach(function (button) {
-                button.parentElement.hidden = false;
-                button.classList.remove("is-active");
+                button.addEventListener("click", function () {
+                    selectOption(button);
+                });
+            });
+
+            input.addEventListener("focus", function () {
+                filterOptions();
+                openDropdown();
+            });
+
+            input.addEventListener("click", function () {
+                filterOptions();
+                openDropdown();
+            });
+
+            input.addEventListener("input", function () {
+                filterOptions();
+                openDropdown();
+                renderChips(form);
+            });
+
+            input.addEventListener("keydown", function (event) {
+                var visible;
+
+                if (event.key === "Escape") {
+                    closeDropdown();
+                    return;
+                }
+
+                visible = visibleOptions();
+
+                if (!visible.length) {
+                    return;
+                }
+
+                if (event.key === "ArrowDown") {
+                    event.preventDefault();
+                    if (dropdown.hidden) {
+                        openDropdown();
+                    }
+                    applyActive((activeIndex + 1) % visible.length);
+                    return;
+                }
+
+                if (event.key === "ArrowUp") {
+                    event.preventDefault();
+                    if (dropdown.hidden) {
+                        openDropdown();
+                    }
+                    applyActive(activeIndex <= 0 ? visible.length - 1 : activeIndex - 1);
+                    return;
+                }
+
+                if (event.key === "Enter" && !dropdown.hidden && activeIndex >= 0) {
+                    event.preventDefault();
+                    selectOption(visible[activeIndex]);
+                }
+            });
+
+            document.addEventListener("click", function (event) {
+                if (!combobox.contains(event.target)) {
+                    closeDropdown();
+                }
+            });
+
+            form.addEventListener("reset", function () {
+                closeDropdown();
+                if (emptyState) {
+                    emptyState.hidden = true;
+                }
+                optionButtons.forEach(function (button) {
+                    button.parentElement.hidden = false;
+                    button.classList.remove("is-active");
+                });
             });
         });
     }
@@ -517,7 +511,7 @@
             });
         }
 
-        attachLocationCombobox(form);
+        attachFilterComboboxes(form);
     }
 
     toArray(forms).forEach(bindForm);

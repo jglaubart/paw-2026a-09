@@ -63,26 +63,98 @@
                             <div class="search-form-grid search-form-grid-navbar">
                                 <div class="search-form-field">
                                     <label class="search-form-label" for="navbar-search-genre">Género</label>
-                                    <select id="navbar-search-genre" name="genre" class="search-form-select">
-                                        <option value="">Todos los géneros</option>
-                                        <c:forEach var="searchGenre" items="${searchGenres}">
-                                            <option value="${fn:escapeXml(searchGenre)}" ${param.genre == searchGenre ? 'selected' : ''}>
-                                                <c:out value="${searchGenre}" />
-                                            </option>
-                                        </c:forEach>
-                                    </select>
+                                    <div class="search-form-combobox" data-filter-combobox>
+                                        <label class="search-form-query search-form-query-panel" for="navbar-search-genre">
+                                            <span class="search-form-icon" aria-hidden="true">
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                                     stroke="currentColor" stroke-width="2.05"
+                                                     stroke-linecap="round" stroke-linejoin="round">
+                                                    <circle cx="11" cy="11" r="7"/>
+                                                    <line x1="16.5" y1="16.5" x2="21" y2="21"/>
+                                                </svg>
+                                            </span>
+                                            <input id="navbar-search-genre"
+                                                   type="text"
+                                                   name="genre"
+                                                   value="${fn:escapeXml(param.genre)}"
+                                                   placeholder="Buscar genero"
+                                                   autocomplete="off"
+                                                   class="search-form-input search-form-input-query"
+                                                   data-filter-input
+                                                   aria-expanded="false"
+                                                   aria-controls="navbar-search-genre-list" />
+                                        </label>
+
+                                        <div id="navbar-search-genre-list"
+                                             class="search-form-combobox-dropdown"
+                                             data-filter-dropdown
+                                             role="listbox">
+                                            <ul class="search-form-combobox-options" data-filter-options>
+                                                <c:forEach var="searchGenre" items="${searchGenres}">
+                                                    <li class="search-form-combobox-item" data-filter-item>
+                                                        <button type="button"
+                                                                class="search-form-combobox-option"
+                                                                data-filter-option
+                                                                data-filter-value="${fn:escapeXml(searchGenre)}"
+                                                                role="option">
+                                                            <c:out value="${searchGenre}" />
+                                                        </button>
+                                                    </li>
+                                                </c:forEach>
+                                            </ul>
+                                            <p class="search-form-combobox-empty" data-filter-empty hidden>
+                                                No encontramos generos para esa busqueda.
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="search-form-field">
                                     <label class="search-form-label" for="navbar-search-theater">Sala</label>
-                                    <select id="navbar-search-theater" name="theater" class="search-form-select">
-                                        <option value="">Todas las salas</option>
-                                        <c:forEach var="searchTheater" items="${searchTheaters}">
-                                            <option value="${fn:escapeXml(searchTheater)}" ${param.theater == searchTheater ? 'selected' : ''}>
-                                                <c:out value="${searchTheater}" />
-                                            </option>
-                                        </c:forEach>
-                                    </select>
+                                    <div class="search-form-combobox" data-filter-combobox>
+                                        <label class="search-form-query search-form-query-panel" for="navbar-search-theater">
+                                            <span class="search-form-icon" aria-hidden="true">
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                                     stroke="currentColor" stroke-width="2.05"
+                                                     stroke-linecap="round" stroke-linejoin="round">
+                                                    <circle cx="11" cy="11" r="7"/>
+                                                    <line x1="16.5" y1="16.5" x2="21" y2="21"/>
+                                                </svg>
+                                            </span>
+                                            <input id="navbar-search-theater"
+                                                   type="text"
+                                                   name="theater"
+                                                   value="${fn:escapeXml(param.theater)}"
+                                                   placeholder="Buscar sala"
+                                                   autocomplete="off"
+                                                   class="search-form-input search-form-input-query"
+                                                   data-filter-input
+                                                   aria-expanded="false"
+                                                   aria-controls="navbar-search-theater-list" />
+                                        </label>
+
+                                        <div id="navbar-search-theater-list"
+                                             class="search-form-combobox-dropdown"
+                                             data-filter-dropdown
+                                             role="listbox">
+                                            <ul class="search-form-combobox-options" data-filter-options>
+                                                <c:forEach var="searchTheater" items="${searchTheaters}">
+                                                    <li class="search-form-combobox-item" data-filter-item>
+                                                        <button type="button"
+                                                                class="search-form-combobox-option"
+                                                                data-filter-option
+                                                                data-filter-value="${fn:escapeXml(searchTheater)}"
+                                                                role="option">
+                                                            <c:out value="${searchTheater}" />
+                                                        </button>
+                                                    </li>
+                                                </c:forEach>
+                                            </ul>
+                                            <p class="search-form-combobox-empty" data-filter-empty hidden>
+                                                No encontramos salas para esa busqueda.
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="search-form-field">
@@ -105,7 +177,7 @@
 
                                 <div class="search-form-field search-form-location-field">
                                     <label class="search-form-label" for="navbar-search-location">Zona</label>
-                                    <div class="search-form-combobox" data-location-combobox>
+                                    <div class="search-form-combobox" data-filter-combobox>
                                         <label class="search-form-query search-form-query-panel" for="navbar-search-location">
                                             <span class="search-form-icon" aria-hidden="true">
                                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
@@ -122,29 +194,29 @@
                                                    placeholder="Buscar zona"
                                                    autocomplete="off"
                                                    class="search-form-input search-form-input-query"
-                                                   data-location-input
+                                                   data-filter-input
                                                    aria-expanded="false"
                                                    aria-controls="navbar-search-location-list" />
                                         </label>
 
                                         <div id="navbar-search-location-list"
-                                             class="search-form-location-dropdown"
-                                             data-location-dropdown
+                                             class="search-form-combobox-dropdown"
+                                             data-filter-dropdown
                                              role="listbox">
-                                            <ul class="search-form-location-options" data-location-options>
+                                            <ul class="search-form-combobox-options" data-filter-options>
                                                 <c:forEach var="searchLocation" items="${searchLocations}">
-                                                    <li class="search-form-location-item" data-location-item>
+                                                    <li class="search-form-combobox-item" data-filter-item>
                                                         <button type="button"
-                                                                class="search-form-location-option"
-                                                                data-location-option
-                                                                data-location-value="${fn:escapeXml(searchLocation)}"
+                                                                class="search-form-combobox-option"
+                                                                data-filter-option
+                                                                data-filter-value="${fn:escapeXml(searchLocation)}"
                                                                 role="option">
                                                             <c:out value="${searchLocation}" />
                                                         </button>
                                                     </li>
                                                 </c:forEach>
                                             </ul>
-                                            <p class="search-form-location-empty" data-location-empty hidden>
+                                            <p class="search-form-combobox-empty" data-filter-empty hidden>
                                                 No encontramos zonas para esa busqueda.
                                             </p>
                                         </div>
