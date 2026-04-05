@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Wishlist — Platea</title>
+    <title>Mi Watchlist — Platea</title>
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/favicon.png" />
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/main.css" />
@@ -28,13 +28,13 @@
     <main class="user-list-page">
 
         <header class="user-list-header">
-            <h1 class="user-list-title">Mi Wishlist</h1>
+            <h1 class="user-list-title">Mi Watchlist</h1>
             <p class="user-list-subtitle">Producciones que querés ver</p>
         </header>
 
         <c:choose>
             <c:when test="${not empty wishlist}">
-                <paw:sectionRow title="En tu wishlist" subtitle="${fn:length(wishlist)} produccion${fn:length(wishlist) != 1 ? 'es' : ''}">
+                <paw:sectionRow title="En tu watchlist" subtitle="${fn:length(wishlist)} produccion${fn:length(wishlist) != 1 ? 'es' : ''}">
                     <c:forEach var="p" items="${wishlist}">
                         <c:url var="detailUrl" value="/obras/${p.obraId}">
                             <c:param name="produccionId" value="${p.id}" />
@@ -52,7 +52,7 @@
             <c:otherwise>
                 <div class="user-list-empty">
                     <span class="user-list-empty-icon" aria-hidden="true">♡</span>
-                    <p class="user-list-empty-text">Tu wishlist está vacía.</p>
+                    <p class="user-list-empty-text">Tu watchlist está vacía.</p>
                     <p class="user-list-empty-hint">Explorá la cartelera y agregá producciones que te interesen.</p>
                     <a href="${carteleraUrl}" class="btn btn-primary btn-md">
                         Ver cartelera

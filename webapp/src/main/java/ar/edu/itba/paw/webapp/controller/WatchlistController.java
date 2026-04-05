@@ -28,8 +28,8 @@ public class WatchlistController {
         this.ratingService = ratingService;
     }
 
-    @RequestMapping(value = "/wishlist", method = RequestMethod.GET)
-    public ModelAndView wishlist() {
+    @RequestMapping(value = "/watchlist", method = RequestMethod.GET)
+    public ModelAndView watchlist() {
         final ModelAndView mav = new ModelAndView("wishlist/index");
         final List<Production> productions = watchlistService.findByUser(HARDCODED_USER_ID);
         mav.addObject("wishlist", productions);
@@ -37,7 +37,7 @@ public class WatchlistController {
         return mav;
     }
 
-    @RequestMapping(value = "/productions/{id:\\d+}/wishlist", method = RequestMethod.POST)
+    @RequestMapping(value = "/productions/{id:\\d+}/watchlist", method = RequestMethod.POST)
     public ModelAndView toggle(@PathVariable("id") final long productionId,
                                @RequestParam("action") final String action,
                                @RequestParam("obraId") final long obraId) {

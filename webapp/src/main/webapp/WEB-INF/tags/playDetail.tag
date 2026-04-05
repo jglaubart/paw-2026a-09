@@ -106,7 +106,7 @@
                 <a href="${resolvedTicketUrl}" class="btn btn-md play-detail-ticket-link">Ver entradas</a>
             </c:if>
             <paw:button text="Calificar obra vista" size="md" cssClass="play-detail-rate-button" />
-            <paw:button text="${playInWishlist ? 'Eliminar de la wishlist' : 'Agregar a wishlist'}" size="md" cssClass="play-detail-wishlist-button" />
+            <paw:button text="${playInWishlist ? 'Eliminar de la watchlist' : 'Agregar a watchlist'}" size="md" cssClass="play-detail-wishlist-button" />
         </div>
     </div>
 

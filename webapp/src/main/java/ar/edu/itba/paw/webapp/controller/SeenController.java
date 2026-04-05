@@ -24,8 +24,8 @@ public class SeenController {
         this.seenService = seenService;
     }
 
-    @RequestMapping(value = "/watchlist", method = RequestMethod.GET)
-    public ModelAndView watchlist() {
+    @RequestMapping(value = "/historial", method = RequestMethod.GET)
+    public ModelAndView historial() {
         final ModelAndView mav = new ModelAndView("watchlist/index");
         final List<Obra> obras = seenService.findByUser(HARDCODED_USER_ID);
         mav.addObject("seenObras", obras);

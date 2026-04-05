@@ -35,8 +35,8 @@
     <c:url var="selectedProductionWebsiteUrl" value="${selectedProduction.website}" />
 </c:if>
 <c:url var="carteleraUrl" value="/cartelera" />
-<c:url var="wishlistUrl" value="/wishlist" />
 <c:url var="watchlistUrl" value="/watchlist" />
+<c:url var="historialUrl" value="/historial" />
 
 <main class="obra-detail-page">
 
@@ -111,13 +111,13 @@
     <div class="obra-action-bar">
         <div class="obra-action-bar-left">
             <c:if test="${selectedProduction != null}">
-                <c:url var="wishlistActionUrl" value="/productions/${selectedProduction.id}/wishlist" />
-                <form action="${wishlistActionUrl}" method="post" class="obra-action-form">
+                <c:url var="watchlistActionUrl" value="/productions/${selectedProduction.id}/watchlist" />
+                <form action="${watchlistActionUrl}" method="post" class="obra-action-form">
                     <input type="hidden" name="obraId" value="${obra.id}" />
                     <input type="hidden" name="action" value="${isInWishlist ? 'remove' : 'add'}" />
                     <button type="submit" class="obra-action-btn ${isInWishlist ? 'obra-action-btn-active' : ''}">
                         <span aria-hidden="true">${isInWishlist ? '♥' : '♡'}</span>
-                        <c:out value="${isInWishlist ? 'En wishlist' : 'Agregar a wishlist'}" />
+                        <c:out value="${isInWishlist ? 'En watchlist' : 'Agregar a watchlist'}" />
                     </button>
                 </form>
             </c:if>
@@ -440,11 +440,11 @@
                 <a href="${carteleraUrl}" class="btn btn-outline btn-md obra-sidebar-cta">
                     VER TODA LA CARTELERA
                 </a>
-                <a href="${wishlistUrl}" class="btn btn-outline btn-md obra-sidebar-cta">
-                    MI WISHLIST
-                </a>
                 <a href="${watchlistUrl}" class="btn btn-outline btn-md obra-sidebar-cta">
-                    YA LAS VI
+                    MI WATCHLIST
+                </a>
+                <a href="${historialUrl}" class="btn btn-outline btn-md obra-sidebar-cta">
+                    YA LA VI
                 </a>
             </div>
         </aside>
