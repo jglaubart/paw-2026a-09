@@ -444,7 +444,7 @@
                     MI WATCHLIST
                 </a>
                 <a href="${historialUrl}" class="btn btn-outline btn-md obra-sidebar-cta">
-                    YA LA VI
+                    ✓ VISTA
                 </a>
             </div>
         </aside>
