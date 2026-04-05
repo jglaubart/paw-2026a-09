@@ -1,3 +1,11 @@
+.home-page-main {
+    padding: 2rem 2rem 2rem 4rem;
+}
+
+.home-section-row {
+    padding-inline: 0;
+}
+
 .home-page-empty {
     padding: 4rem 2rem;
     text-align: center;
@@ -5,4 +13,10 @@
 
 .home-page-empty-text {
     color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 768px) {
+    .home-page-main {
+        padding: 1.25rem 1rem 2rem;
+    }
 }

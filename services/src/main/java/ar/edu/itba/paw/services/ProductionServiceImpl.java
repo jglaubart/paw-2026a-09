@@ -28,8 +28,18 @@ public class ProductionServiceImpl implements ProductionService {
     }
 
     @Override
+    public List<Production> findAll() {
+        return productionDao.findAll();
+    }
+
+    @Override
     public List<Production> findAll(final int page, final int pageSize) {
         return productionDao.findAll(page, pageSize);
+    }
+
+    @Override
+    public List<Production> findAvailable() {
+        return productionDao.findAvailable();
     }
 
     @Override

@@ -80,3 +80,115 @@
     background: rgba(255, 255, 255, 0.14);
     border-radius: 999px;
 }
+
+.section-row-rail .section-row-cards {
+    padding-right: 0.75rem;
+    -ms-overflow-style: none;
+    overflow-y: hidden;
+    scrollbar-width: none !important;
+    scrollbar-color: transparent transparent !important;
+}
+
+.section-row-rail .section-row-cards::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+}
+
+.section-row-rail .section-row-cards::-webkit-scrollbar-track,
+.section-row-rail .section-row-cards::-webkit-scrollbar-thumb {
+    display: none !important;
+    background: transparent !important;
+}
+
+.section-row-rail .section-row-rail-shell {
+    position: relative;
+}
+
+.section-row-rail .section-row-rail-shell::after {
+    content: none;
+}
+
+.section-row-rail.horizontal-rail-has-right .section-row-rail-shell::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 3.3rem;
+    width: 7.5rem;
+    pointer-events: none;
+    z-index: 2;
+    background: linear-gradient(90deg, rgba(20, 20, 20, 0) 0%, rgba(20, 20, 20, 0.08) 18%, rgba(20, 20, 20, 0.3) 38%, rgba(17, 17, 17, 0.64) 62%, rgba(13, 13, 13, 0.9) 82%, #141414 100%);
+}
+
+.section-row-rail-btn {
+    position: absolute;
+    top: 9rem;
+    z-index: 4;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    margin-top: 1.65rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    background: rgba(17, 17, 17, 0.52);
+    color: rgba(255, 244, 223, 0.92);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.32);
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: transform 0.2s ease, opacity 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.section-row-rail-btn:hover,
+.section-row-rail-btn:focus-visible {
+    transform: translateY(-50%) scale(1.03);
+    border-color: rgba(245, 166, 35, 0.34);
+    background: rgba(25, 25, 25, 0.72);
+}
+
+.section-row-rail-btn:disabled {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.section-row-rail-btn-prev {
+    left: 0.35rem;
+    transform: translateY(-50%);
+}
+
+.section-row-rail-btn-next {
+    right: 1rem;
+    transform: translateY(-50%);
+    width: 3.3rem;
+    height: 3.3rem;
+    border-color: rgba(245, 166, 35, 0.28);
+    background: rgba(10, 10, 10, 0.72);
+    box-shadow: 0 22px 44px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(245, 166, 35, 0.08);
+}
+
+.section-row-rail:not(.horizontal-rail-has-left) .section-row-rail-btn-prev,
+.section-row-rail:not(.horizontal-rail-has-right) .section-row-rail-btn-next {
+    opacity: 0;
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+    .section-row-rail .section-row-cards {
+        padding-right: 0.35rem;
+    }
+
+    .section-row-rail.horizontal-rail-has-right .section-row-rail-shell::after {
+        width: 5.2rem;
+        bottom: 3rem;
+    }
+
+    .section-row-rail-btn {
+        display: none;
+    }
+}

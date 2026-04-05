@@ -9,7 +9,9 @@ import java.util.Optional;
 
 public interface ProductionService {
     Optional<Production> findById(long id);
+    List<Production> findAll();
     List<Production> findAll(int page, int pageSize);
+    List<Production> findAvailable();
     List<Production> findAvailable(int page, int pageSize);
     List<Production> findByObraId(long obraId);
     Optional<Production> findSelectedByObraId(long obraId, Long preferredProductionId);

@@ -34,23 +34,25 @@
                 </div>
             </div>
 
-            <div class="section-row-cards production-list-row-cards">
+            <div class="production-list-row-shell">
                 <button type="button" class="production-list-rail-btn production-list-rail-btn-prev" data-rail-prev aria-label="Mostrar funciones anteriores">
                     <span aria-hidden="true">←</span>
                 </button>
 
-                <c:forEach var="p" items="${productions}">
-                    <c:url var="detailUrl" value="/obras/${p.obraId}">
-                        <c:param name="produccionId" value="${p.id}" />
-                    </c:url>
-                    <paw:productionCard
-                        title="${fn:escapeXml(p.name)}"
-                        imageUrl="${not empty p.imageUrl ? p.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
-                        venue="${fn:escapeXml(p.theater)}"
-                        rating="${productionRatings[p.id]}"
-                        detailUrl="${detailUrl}"
-                    />
-                </c:forEach>
+                <div class="section-row-cards production-list-row-cards">
+                    <c:forEach var="p" items="${productions}">
+                        <c:url var="detailUrl" value="/obras/${p.obraId}">
+                            <c:param name="produccionId" value="${p.id}" />
+                        </c:url>
+                        <paw:productionCard
+                            title="${fn:escapeXml(p.name)}"
+                            imageUrl="${not empty p.imageUrl ? p.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
+                            venue="${fn:escapeXml(p.theater)}"
+                            rating="${productionRatings[p.id]}"
+                            detailUrl="${detailUrl}"
+                        />
+                    </c:forEach>
+                </div>
 
                 <button type="button" class="production-list-rail-btn production-list-rail-btn-next" data-rail-next aria-label="Mostrar más funciones">
                     <span aria-hidden="true">→</span>

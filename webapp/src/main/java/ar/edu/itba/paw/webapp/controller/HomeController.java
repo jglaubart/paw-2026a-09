@@ -21,8 +21,6 @@ import java.util.Map;
 @Controller
 public class HomeController {
 
-    private static final int PAGE_SIZE = 8;
-    private static final int TODAY_CANDIDATE_POOL_SIZE = PAGE_SIZE * 4;
     private static final int HERO_SLIDE_COUNT = 4;
     private static final List<String> HERO_SLIDE_SELECTION = Arrays.asList(
             "A navegar, Piratas!",
@@ -47,11 +45,9 @@ public class HomeController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView index() {
         final ModelAndView mav = new ModelAndView("index");
-        final List<Production> available = productionService.findAvailable(0, PAGE_SIZE);
-        final List<Production> today = findTodayProductions(
-                productionService.findAvailable(0, TODAY_CANDIDATE_POOL_SIZE)
-        );
-        final List<Production> all = productionService.findAll(0, PAGE_SIZE);
+        final List<Production> available = productionService.findAvailable();
+        final List<Production> today = findTodayProductions(available);
+        final List<Production> all = productionService.findAll();
         mav.addObject("todayProductions", today);
         mav.addObject("availableProductions", available);
         mav.addObject("allProductions", all);
@@ -107,9 +103,6 @@ public class HomeController {
                 }
             }
 
-            if (todayProductions.size() >= PAGE_SIZE) {
-                break;
-            }
         }
 
         return todayProductions;

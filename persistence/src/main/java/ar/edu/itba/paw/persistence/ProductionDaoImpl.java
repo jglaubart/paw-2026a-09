@@ -65,10 +65,27 @@ public class ProductionDaoImpl implements ProductionDao {
     }
 
     @Override
+    public List<Production> findAll() {
+        return jdbcTemplate.query(
+                "SELECT * FROM productions ORDER BY name",
+                PRODUCTION_MAPPER
+        );
+    }
+
+    @Override
     public List<Production> findAll(final int page, final int pageSize) {
         return jdbcTemplate.query(
                 "SELECT * FROM productions ORDER BY name LIMIT ? OFFSET ?",
                 new Object[]{ pageSize, (long) page * pageSize },
+                PRODUCTION_MAPPER
+        );
+    }
+
+    @Override
+    public List<Production> findAvailable() {
+        return jdbcTemplate.query(
+                "SELECT * FROM productions p WHERE p.start_date IS NOT NULL AND p.start_date <= CURRENT_DATE " +
+                "AND (p.end_date IS NULL OR p.end_date >= CURRENT_DATE) ORDER BY p.name",
                 PRODUCTION_MAPPER
         );
     }

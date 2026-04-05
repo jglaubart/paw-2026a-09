@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/home-page.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/production-card.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/section-row.css" />
+    <c:url var="productionListScriptUrl" value="/js/components/production-list-navigation.js" />
 </head>
 <body>
 
@@ -47,9 +48,9 @@
         </c:otherwise>
     </c:choose>
 
-    <main>
+    <main class="home-page-main">
         <c:if test="${not empty todayProductions}">
-            <paw:sectionRow title="Para Hoy" subtitle="Obras con función hoy">
+            <paw:sectionRow title="Para Hoy" subtitle="Obras con función hoy" cssClass="home-section-row" railNavigation="true">
                 <c:forEach var="p" items="${todayProductions}">
                     <c:url var="detailUrl" value="/obras/${p.obraId}">
                         <c:param name="produccionId" value="${p.id}" />
@@ -67,7 +68,7 @@
         </c:if>
 
         <c:if test="${not empty availableProductions}">
-            <paw:sectionRow title="En Cartelera" subtitle="Obras activas dentro de su periodo">
+            <paw:sectionRow title="En Cartelera" subtitle="Obras activas dentro de su periodo" cssClass="home-section-row" railNavigation="true">
                 <c:forEach var="p" items="${availableProductions}">
                     <c:url var="detailUrl" value="/obras/${p.obraId}">
                         <c:param name="produccionId" value="${p.id}" />
@@ -84,7 +85,7 @@
         </c:if>
 
         <c:if test="${not empty allProductions}">
-            <paw:sectionRow title="Catálogo" subtitle="Todas las obras cargadas, activas o no">
+            <paw:sectionRow title="Catálogo" subtitle="Todas las obras cargadas, activas o no" cssClass="home-section-row" railNavigation="true">
                 <c:forEach var="p" items="${allProductions}">
                     <c:url var="detailUrl" value="/obras/${p.obraId}">
                         <c:param name="produccionId" value="${p.id}" />
@@ -108,5 +109,6 @@
         </c:if>
     </main>
 
+    <script src="${productionListScriptUrl}" defer></script>
 </body>
 </html>

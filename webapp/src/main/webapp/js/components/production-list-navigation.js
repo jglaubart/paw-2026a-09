@@ -1,5 +1,5 @@
 (function () {
-    var rails = document.querySelectorAll("[data-production-rail]");
+    var rails = document.querySelectorAll("[data-production-rail='true'], [data-production-rail]:not([data-production-rail='false'])");
 
     if (!rails.length) {
         return;
@@ -25,10 +25,14 @@
         function updateButtons() {
             var maxScrollLeft = cards.scrollWidth - cards.clientWidth;
             var hasOverflow = maxScrollLeft > 8;
+            var hasLeft = hasOverflow && cards.scrollLeft > 8;
+            var hasRight = hasOverflow && cards.scrollLeft < maxScrollLeft - 8;
 
-            rail.classList.toggle("production-list-shell-scrollable", hasOverflow);
-            prevButton.disabled = !hasOverflow || cards.scrollLeft <= 8;
-            nextButton.disabled = !hasOverflow || cards.scrollLeft >= maxScrollLeft - 8;
+            rail.classList.toggle("horizontal-rail-scrollable", hasOverflow);
+            rail.classList.toggle("horizontal-rail-has-left", hasLeft);
+            rail.classList.toggle("horizontal-rail-has-right", hasRight);
+            prevButton.disabled = !hasLeft;
+            nextButton.disabled = !hasRight;
         }
 
         prevButton.addEventListener("click", function () {
