@@ -55,6 +55,87 @@
     font-size: 0.95rem;
 }
 
+.search-results-nearby {
+    margin-top: 1.5rem;
+    padding: 1.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1.25rem;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.search-results-nearby-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+
+.search-results-nearby-kicker {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #f5a623;
+}
+
+.search-results-nearby-copy {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.64);
+    font-size: 0.92rem;
+}
+
+.search-results-nearby-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.search-results-nearby-option {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-height: 4.75rem;
+    padding: 0.85rem 0.95rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.search-results-nearby-option-link {
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.search-results-nearby-option-link:hover,
+.search-results-nearby-option-link:focus-visible {
+    border-color: rgba(124, 58, 237, 0.42);
+    background: rgba(124, 58, 237, 0.12);
+    transform: translateY(-1px);
+}
+
+.search-results-nearby-option-selected {
+    border-color: rgba(245, 166, 35, 0.5);
+    background: rgba(245, 166, 35, 0.12);
+}
+
+.search-results-nearby-option-disabled {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.search-results-nearby-date {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.search-results-nearby-count {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.68);
+}
+
 .search-results-empty {
     padding: 4rem 2rem;
     text-align: center;
@@ -84,6 +165,14 @@
 @media (max-width: 768px) {
     .search-results-filters {
         padding: 0 1rem;
+    }
+
+    .search-results-nearby {
+        padding: 1rem;
+    }
+
+    .search-results-nearby-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .search-results-page .section-row {

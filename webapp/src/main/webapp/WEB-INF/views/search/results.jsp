@@ -36,11 +36,8 @@
         <c:if test="${not empty location}">
             <c:param name="location" value="${location}" />
         </c:if>
-        <c:if test="${not empty dateFrom}">
-            <c:param name="dateFrom" value="${dateFrom}" />
-        </c:if>
-        <c:if test="${not empty dateTo}">
-            <c:param name="dateTo" value="${dateTo}" />
+        <c:if test="${not empty date}">
+            <c:param name="date" value="${date}" />
         </c:if>
         <c:if test="${available}">
             <c:param name="available" value="true" />
@@ -60,11 +57,8 @@
         <c:if test="${not empty location}">
             <c:param name="location" value="${location}" />
         </c:if>
-        <c:if test="${not empty dateFrom}">
-            <c:param name="dateFrom" value="${dateFrom}" />
-        </c:if>
-        <c:if test="${not empty dateTo}">
-            <c:param name="dateTo" value="${dateTo}" />
+        <c:if test="${not empty date}">
+            <c:param name="date" value="${date}" />
         </c:if>
         <c:if test="${available}">
             <c:param name="available" value="true" />
@@ -91,19 +85,65 @@
                 <c:if test="${not empty location}">
                     <span class="search-results-chip">Zona: <c:out value="${location}" /></span>
                 </c:if>
-                <c:if test="${not empty dateFrom}">
-                    <span class="search-results-chip">Desde: <c:out value="${dateFrom}" /></span>
-                </c:if>
-                <c:if test="${not empty dateTo}">
-                    <span class="search-results-chip">Hasta: <c:out value="${dateTo}" /></span>
+                <c:if test="${not empty date}">
+                    <span class="search-results-chip">Fecha: <c:out value="${date}" /></span>
                 </c:if>
                 <c:if test="${available}">
                     <span class="search-results-chip">Solo disponibles</span>
                 </c:if>
             </div>
 
-            <c:if test="${not empty dateRangeError}">
-                <p class="search-results-error"><c:out value="${dateRangeError}" /></p>
+            <c:if test="${not empty date}">
+                <section class="search-results-nearby" aria-label="Fechas cercanas">
+                    <div class="search-results-nearby-head">
+                        <p class="search-results-nearby-kicker">Fechas cercanas</p>
+                        <p class="search-results-nearby-copy">Mostramos tu fecha elegida y opciones hasta 3 días antes o después.</p>
+                    </div>
+
+                    <div class="search-results-nearby-list">
+                        <c:forEach var="dateOption" items="${nearbyDates}">
+                            <c:url var="nearbyDateUrl" value="/search">
+                                <c:if test="${not empty query}">
+                                    <c:param name="q" value="${query}" />
+                                </c:if>
+                                <c:if test="${not empty genre}">
+                                    <c:param name="genre" value="${genre}" />
+                                </c:if>
+                                <c:if test="${not empty theater}">
+                                    <c:param name="theater" value="${theater}" />
+                                </c:if>
+                                <c:if test="${not empty location}">
+                                    <c:param name="location" value="${location}" />
+                                </c:if>
+                                <c:if test="${available}">
+                                    <c:param name="available" value="true" />
+                                </c:if>
+                                <c:param name="date" value="${dateOption.date}" />
+                            </c:url>
+
+                            <c:choose>
+                                <c:when test="${dateOption.date eq date}">
+                                    <span class="search-results-nearby-option search-results-nearby-option-selected">
+                                        <span class="search-results-nearby-date"><c:out value="${dateOption.date}" /></span>
+                                        <span class="search-results-nearby-count"><c:out value="${dateOption.productionCount}" /> producciones</span>
+                                    </span>
+                                </c:when>
+                                <c:when test="${dateOption.productionCount > 0}">
+                                    <a href="${nearbyDateUrl}" class="search-results-nearby-option search-results-nearby-option-link">
+                                        <span class="search-results-nearby-date"><c:out value="${dateOption.date}" /></span>
+                                        <span class="search-results-nearby-count"><c:out value="${dateOption.productionCount}" /> producciones</span>
+                                    </a>
+                                </c:when>
+                                <c:otherwise>
+                                    <span class="search-results-nearby-option search-results-nearby-option-disabled">
+                                        <span class="search-results-nearby-date"><c:out value="${dateOption.date}" /></span>
+                                        <span class="search-results-nearby-count">Sin funciones</span>
+                                    </span>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:forEach>
+                    </div>
+                </section>
             </c:if>
         </section>
 
@@ -124,16 +164,18 @@
                     </c:forEach>
                 </paw:sectionRow>
             </c:when>
-            <c:when test="${not empty dateRangeError}">
-                <section class="search-results-empty">
-                    <h2>Corregí el rango de fechas</h2>
-                    <p class="search-results-empty-text">Ajustá las fechas para poder ver resultados.</p>
-                </section>
-            </c:when>
             <c:otherwise>
                 <section class="search-results-empty">
-                    <h2>No se encontraron resultados</h2>
-                    <p class="search-results-empty-text">Intentá con otra búsqueda o cambiá los filtros.</p>
+                    <c:choose>
+                        <c:when test="${not empty date}">
+                            <h2>No encontramos funciones para esa fecha</h2>
+                            <p class="search-results-empty-text">Probá con una fecha cercana o cambiá los demás filtros.</p>
+                        </c:when>
+                        <c:otherwise>
+                            <h2>No se encontraron resultados</h2>
+                            <p class="search-results-empty-text">Intentá con otra búsqueda o cambiá los filtros.</p>
+                        </c:otherwise>
+                    </c:choose>
                 </section>
             </c:otherwise>
         </c:choose>

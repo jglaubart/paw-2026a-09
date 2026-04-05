@@ -8,23 +8,20 @@ public class ProductionSearchCriteria {
     private final String genre;
     private final String theater;
     private final String location;
-    private final LocalDate dateFrom;
-    private final LocalDate dateTo;
+    private final LocalDate date;
     private final boolean availableOnly;
 
     public ProductionSearchCriteria(final String query,
                                     final String genre,
                                     final String theater,
                                     final String location,
-                                    final LocalDate dateFrom,
-                                    final LocalDate dateTo,
+                                    final LocalDate date,
                                     final boolean availableOnly) {
         this.query = query;
         this.genre = genre;
         this.theater = theater;
         this.location = location;
-        this.dateFrom = dateFrom;
-        this.dateTo = dateTo;
+        this.date = date;
         this.availableOnly = availableOnly;
     }
 
@@ -44,12 +41,8 @@ public class ProductionSearchCriteria {
         return location;
     }
 
-    public LocalDate getDateFrom() {
-        return dateFrom;
-    }
-
-    public LocalDate getDateTo() {
-        return dateTo;
+    public LocalDate getDate() {
+        return date;
     }
 
     public boolean isAvailableOnly() {

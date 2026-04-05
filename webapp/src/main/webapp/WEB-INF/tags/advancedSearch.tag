@@ -5,9 +5,9 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <c:url var="searchUrl" value="/search" />
-<c:set var="hasActiveFilters" value="${not empty param.genre or not empty param.theater or not empty param.location or not empty param.dateFrom or not empty param.dateTo or param.available == 'true'}" />
-<c:set var="activeFilterCount" value="${(not empty param.genre ? 1 : 0) + (not empty param.theater ? 1 : 0) + (not empty param.location ? 1 : 0) + (not empty param.dateFrom ? 1 : 0) + (not empty param.dateTo ? 1 : 0) + (param.available == 'true' ? 1 : 0)}" />
-<c:set var="searchFeedback" value="${not empty error ? error : dateRangeError}" />
+<c:set var="hasActiveFilters" value="${not empty param.genre or not empty param.theater or not empty param.location or not empty param.date or param.available == 'true'}" />
+<c:set var="activeFilterCount" value="${(not empty param.genre ? 1 : 0) + (not empty param.theater ? 1 : 0) + (not empty param.location ? 1 : 0) + (not empty param.date ? 1 : 0) + (param.available == 'true' ? 1 : 0)}" />
+<c:set var="searchFeedback" value="${error}" />
 
 <form action="${searchUrl}" method="get" class="search-form search-form-${variant} ${hasActiveFilters ? 'search-form-has-active-filters' : ''}" data-navbar-search>
     <c:choose>
@@ -158,20 +158,11 @@
                                 </div>
 
                                 <div class="search-form-field">
-                                    <label class="search-form-label" for="navbar-search-date-from">Fecha desde</label>
-                                    <input id="navbar-search-date-from"
+                                    <label class="search-form-label" for="navbar-search-date">Fecha</label>
+                                    <input id="navbar-search-date"
                                            type="date"
-                                           name="dateFrom"
-                                           value="${fn:escapeXml(param.dateFrom)}"
-                                           class="search-form-input search-form-input-date" />
-                                </div>
-
-                                <div class="search-form-field">
-                                    <label class="search-form-label" for="navbar-search-date-to">Fecha hasta</label>
-                                    <input id="navbar-search-date-to"
-                                           type="date"
-                                           name="dateTo"
-                                           value="${fn:escapeXml(param.dateTo)}"
+                                           name="date"
+                                           value="${fn:escapeXml(param.date)}"
                                            class="search-form-input search-form-input-date" />
                                 </div>
 

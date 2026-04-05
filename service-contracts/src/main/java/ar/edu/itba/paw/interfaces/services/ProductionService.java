@@ -2,6 +2,7 @@ package ar.edu.itba.paw.interfaces.services;
 
 import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.ProductionSearchCriteria;
+import ar.edu.itba.paw.models.SearchDateOption;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +16,7 @@ public interface ProductionService {
     List<Production> findByProductoraId(long productoraId);
     List<Production> search(String query, int page, int pageSize);
     List<Production> search(ProductionSearchCriteria criteria, int page, int pageSize);
+    List<SearchDateOption> findNearbyDates(ProductionSearchCriteria criteria, LocalDate selectedDate, int windowDays);
     List<Production> findByGenre(String genre, int page, int pageSize);
     List<String> findAvailableGenres();
     List<String> findAvailableTheaters();

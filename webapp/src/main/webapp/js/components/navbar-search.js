@@ -1,6 +1,6 @@
 (function () {
     var forms = document.querySelectorAll("[data-navbar-search]");
-    var filterNames = ["genre", "theater", "location", "dateFrom", "dateTo", "available"];
+    var filterNames = ["genre", "theater", "location", "date", "available"];
 
     if (!forms.length) {
         return;
@@ -256,8 +256,7 @@
         var genre = form.querySelector('[name="genre"]');
         var theater = form.querySelector('[name="theater"]');
         var location = form.querySelector('[name="location"]');
-        var dateFrom = form.querySelector('[name="dateFrom"]');
-        var dateTo = form.querySelector('[name="dateTo"]');
+        var date = form.querySelector('[name="date"]');
         var available = form.querySelector('[name="available"]');
         var availableLabel = form.querySelector(".search-form-check-title");
 
@@ -282,17 +281,10 @@
             });
         }
 
-        if (dateFrom && dateFrom.value) {
+        if (date && date.value) {
             state.push({
-                label: getFieldLabel(form, "navbar-search-date-from", "Desde"),
-                value: formatDate(dateFrom.value)
-            });
-        }
-
-        if (dateTo && dateTo.value) {
-            state.push({
-                label: getFieldLabel(form, "navbar-search-date-to", "Hasta"),
-                value: formatDate(dateTo.value)
+                label: getFieldLabel(form, "navbar-search-date", "Fecha"),
+                value: formatDate(date.value)
             });
         }
 

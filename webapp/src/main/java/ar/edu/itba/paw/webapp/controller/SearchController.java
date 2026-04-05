@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.services.ProductionService;
 import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.ProductionSearchCriteria;
+import ar.edu.itba.paw.models.SearchDateOption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,13 +14,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDate;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class SearchController {
 
     private static final int PAGE_SIZE = 12;
+    private static final int NEARBY_DATE_WINDOW_DAYS = 3;
 
     private final ProductionService productionService;
     private final RatingService ratingService;
@@ -38,9 +42,7 @@ public class SearchController {
             @RequestParam(value = "theater", required = false) final String theater,
             @RequestParam(value = "location", required = false) final String location,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            @RequestParam(value = "dateFrom", required = false) final LocalDate dateFrom,
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            @RequestParam(value = "dateTo", required = false) final LocalDate dateTo,
+            @RequestParam(value = "date", required = false) final LocalDate date,
             @RequestParam(value = "available", required = false) final Boolean available,
             @RequestParam(value = "page", defaultValue = "0") final int page) {
         final ModelAndView mav = new ModelAndView("search/results");
@@ -55,29 +57,27 @@ public class SearchController {
         mav.addObject("genre", normalizedGenre);
         mav.addObject("theater", normalizedTheater);
         mav.addObject("location", normalizedLocation);
-        mav.addObject("dateFrom", dateFrom);
-        mav.addObject("dateTo", dateTo);
+        mav.addObject("date", date);
         mav.addObject("available", availableOnly);
         mav.addObject("page", normalizedPage);
 
-        final List<Production> results;
-        if (dateFrom != null && dateTo != null && dateFrom.isAfter(dateTo)) {
-            results = Collections.emptyList();
-            mav.addObject("page", 0);
-            mav.addObject("dateRangeError", "La fecha desde no puede ser posterior a la fecha hasta.");
-        } else {
-            results = productionService.search(
-                    new ProductionSearchCriteria(
-                            normalizedQuery,
-                            normalizedGenre,
-                            normalizedTheater,
-                            normalizedLocation,
-                            dateFrom,
-                            dateTo,
-                            availableOnly
-                    ),
-                    normalizedPage,
-                    PAGE_SIZE
+        final ProductionSearchCriteria criteria = new ProductionSearchCriteria(
+                normalizedQuery,
+                normalizedGenre,
+                normalizedTheater,
+                normalizedLocation,
+                date,
+                availableOnly
+        );
+
+        final List<Production> results = productionService.search(criteria, normalizedPage, PAGE_SIZE);
+        if (date != null) {
+            mav.addObject(
+                    "nearbyDates",
+                    buildNearbyDateOptions(
+                            date,
+                            productionService.findNearbyDates(criteria, date, NEARBY_DATE_WINDOW_DAYS)
+                    )
             );
         }
         mav.addObject("results", results);
@@ -86,11 +86,28 @@ public class SearchController {
     }
 
     private List<Long> collectProductionIds(final List<Production> productions) {
-        final List<Long> productionIds = new java.util.ArrayList<>();
+        final List<Long> productionIds = new ArrayList<>();
         for (final Production production : productions) {
             productionIds.add(production.getId());
         }
         return productionIds;
+    }
+
+    private List<SearchDateOption> buildNearbyDateOptions(final LocalDate selectedDate,
+                                                          final List<SearchDateOption> nearbyDates) {
+        final Map<LocalDate, Integer> countsByDate = new HashMap<>();
+        final List<SearchDateOption> options = new ArrayList<>();
+
+        for (final SearchDateOption nearbyDate : nearbyDates) {
+            countsByDate.put(nearbyDate.getDate(), nearbyDate.getProductionCount());
+        }
+
+        for (int dayOffset = -NEARBY_DATE_WINDOW_DAYS; dayOffset <= NEARBY_DATE_WINDOW_DAYS; dayOffset++) {
+            final LocalDate candidateDate = selectedDate.plusDays(dayOffset);
+            options.add(new SearchDateOption(candidateDate, countsByDate.getOrDefault(candidateDate, 0)));
+        }
+
+        return options;
     }
 
     private String trimToNull(final String value) {

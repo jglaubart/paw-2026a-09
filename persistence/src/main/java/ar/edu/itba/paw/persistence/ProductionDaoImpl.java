@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistence.ProductionDao;
 import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.ProductionSearchCriteria;
+import ar.edu.itba.paw.models.SearchDateOption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -102,7 +103,7 @@ public class ProductionDaoImpl implements ProductionDao {
 
     @Override
     public List<Production> search(final String query, final int page, final int pageSize) {
-        return search(new ProductionSearchCriteria(query, null, null, null, null, null, false), page, pageSize);
+        return search(new ProductionSearchCriteria(query, null, null, null, null, false), page, pageSize);
     }
 
     @Override
@@ -115,6 +116,66 @@ public class ProductionDaoImpl implements ProductionDao {
         );
         final List<Object> params = new ArrayList<>();
 
+        appendSharedSearchFilters(sql, params, criteria);
+
+        if (criteria.getDate() != null) {
+            sql.append(
+                    " AND EXISTS (" +
+                    "  SELECT 1 FROM shows s_date " +
+                    "  WHERE s_date.production_id = p.id"
+            );
+            sql.append(" AND s_date.show_date = ?");
+            params.add(Date.valueOf(criteria.getDate()));
+            sql.append(" )");
+        }
+
+        sql.append(" ORDER BY p.name LIMIT ? OFFSET ?");
+        params.add(pageSize);
+        params.add((long) page * pageSize);
+
+        return jdbcTemplate.query(sql.toString(), params.toArray(), PRODUCTION_MAPPER);
+    }
+
+    @Override
+    public List<SearchDateOption> findNearbyDates(final ProductionSearchCriteria criteria,
+                                                  final LocalDate selectedDate,
+                                                  final int windowDays) {
+        if (selectedDate == null || windowDays < 0) {
+            return java.util.Collections.emptyList();
+        }
+
+        final StringBuilder sql = new StringBuilder(
+                "SELECT s.show_date, COUNT(DISTINCT p.id) AS production_count FROM productions p " +
+                "JOIN obras o ON p.obra_id = o.id " +
+                "LEFT JOIN productoras pr ON p.productora_id = pr.id " +
+                "JOIN shows s ON s.production_id = p.id " +
+                "WHERE 1 = 1"
+        );
+        final List<Object> params = new ArrayList<>();
+
+        appendSharedSearchFilters(sql, params, criteria);
+
+        sql.append(" AND s.show_date BETWEEN ? AND ?");
+        params.add(Date.valueOf(selectedDate.minusDays(windowDays)));
+        params.add(Date.valueOf(selectedDate.plusDays(windowDays)));
+
+        sql.append(" GROUP BY s.show_date ORDER BY s.show_date");
+
+        return jdbcTemplate.query(
+                sql.toString(),
+                params.toArray(),
+                (rs, rowNum) -> new SearchDateOption(rs.getDate("show_date").toLocalDate(), rs.getInt("production_count"))
+        );
+    }
+
+    @Override
+    public List<Production> findByGenre(final String genre, final int page, final int pageSize) {
+        return search(new ProductionSearchCriteria(null, genre, null, null, null, false), page, pageSize);
+    }
+
+    private void appendSharedSearchFilters(final StringBuilder sql,
+                                           final List<Object> params,
+                                           final ProductionSearchCriteria criteria) {
         if (criteria.getQuery() != null) {
             final String pattern = "%" + criteria.getQuery().toLowerCase() + "%";
             sql.append(" AND (LOWER(p.name) LIKE ? OR LOWER(o.title) LIKE ? OR LOWER(pr.name) LIKE ? OR LOWER(p.theater) LIKE ?)");
@@ -155,34 +216,6 @@ public class ProductionDaoImpl implements ProductionDao {
                     " AND (p.end_date IS NULL OR p.end_date >= CURRENT_DATE)"
             );
         }
-
-        if (criteria.getDateFrom() != null || criteria.getDateTo() != null) {
-            sql.append(
-                    " AND EXISTS (" +
-                    "  SELECT 1 FROM shows s_date " +
-                    "  WHERE s_date.production_id = p.id"
-            );
-            if (criteria.getDateFrom() != null) {
-                sql.append(" AND s_date.show_date >= ?");
-                params.add(Date.valueOf(criteria.getDateFrom()));
-            }
-            if (criteria.getDateTo() != null) {
-                sql.append(" AND s_date.show_date <= ?");
-                params.add(Date.valueOf(criteria.getDateTo()));
-            }
-            sql.append(" )");
-        }
-
-        sql.append(" ORDER BY p.name LIMIT ? OFFSET ?");
-        params.add(pageSize);
-        params.add((long) page * pageSize);
-
-        return jdbcTemplate.query(sql.toString(), params.toArray(), PRODUCTION_MAPPER);
-    }
-
-    @Override
-    public List<Production> findByGenre(final String genre, final int page, final int pageSize) {
-        return search(new ProductionSearchCriteria(null, genre, null, null, null, null, false), page, pageSize);
     }
 
     @Override

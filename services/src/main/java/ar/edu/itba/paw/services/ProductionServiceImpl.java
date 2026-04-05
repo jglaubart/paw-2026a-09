@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.persistence.ProductionDao;
 import ar.edu.itba.paw.interfaces.services.ProductionService;
 import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.ProductionSearchCriteria;
+import ar.edu.itba.paw.models.SearchDateOption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -70,6 +71,13 @@ public class ProductionServiceImpl implements ProductionService {
     @Override
     public List<Production> search(final ProductionSearchCriteria criteria, final int page, final int pageSize) {
         return productionDao.search(criteria, page, pageSize);
+    }
+
+    @Override
+    public List<SearchDateOption> findNearbyDates(final ProductionSearchCriteria criteria,
+                                                  final LocalDate selectedDate,
+                                                  final int windowDays) {
+        return productionDao.findNearbyDates(criteria, selectedDate, windowDays);
     }
 
     @Override
