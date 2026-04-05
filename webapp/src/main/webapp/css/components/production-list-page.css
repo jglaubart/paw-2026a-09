@@ -1,15 +1,133 @@
+.production-list-page {
+    padding: 1.2rem 2rem 3rem 4rem;
+}
+
+.production-list-row {
+    padding-inline: 0;
+}
+
+.production-list-row-cards {
+    position: relative;
+    scroll-behavior: smooth;
+    padding-bottom: 1rem;
+    padding-right: 0.75rem;
+    -ms-overflow-style: none;
+    scrollbar-width: none !important;
+    scrollbar-color: transparent transparent !important;
+}
+
+.production-list-row-cards::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
+    background: transparent;
+}
+
+.production-list-row-cards::-webkit-scrollbar-track {
+    display: none !important;
+    background: transparent;
+}
+
+.production-list-row-cards::-webkit-scrollbar-thumb {
+    display: none !important;
+    background: transparent;
+}
+
+.production-list-row-cards::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 3.3rem;
+    width: 7.5rem;
+    pointer-events: none;
+    z-index: 2;
+    background: linear-gradient(90deg, rgba(20, 20, 20, 0) 0%, rgba(20, 20, 20, 0.08) 18%, rgba(20, 20, 20, 0.3) 38%, rgba(17, 17, 17, 0.64) 62%, rgba(13, 13, 13, 0.9) 82%, #141414 100%);
+}
+
+.production-list-row .production-card {
+    width: 220px;
+}
+
+.production-list-row .production-card-media {
+    aspect-ratio: 9 / 13;
+}
+
+.production-list-row:not(.production-list-shell-scrollable) .production-list-rail-btn {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.production-list-rail-btn {
+    position: absolute;
+    top: 9rem;
+    z-index: 4;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    margin-top: 1.65rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    background: rgba(17, 17, 17, 0.52);
+    color: rgba(255, 244, 223, 0.92);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.32);
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.production-list-rail-btn:hover,
+.production-list-rail-btn:focus-visible {
+    transform: translateY(-50%) scale(1.03);
+    border-color: rgba(245, 166, 35, 0.34);
+    background: rgba(25, 25, 25, 0.72);
+}
+
+.production-list-rail-btn:disabled {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.production-list-rail-btn-prev {
+    left: 0.35rem;
+    transform: translateY(-50%);
+}
+
+.production-list-rail-btn-next {
+    right: 1rem;
+    transform: translateY(-50%);
+    width: 3.3rem;
+    height: 3.3rem;
+    border-color: rgba(245, 166, 35, 0.28);
+    background: rgba(10, 10, 10, 0.72);
+    box-shadow: 0 22px 44px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(245, 166, 35, 0.08);
+}
+
 .production-list-empty {
     padding: 4rem 2rem;
     text-align: center;
 }
 
-.production-list-pagination {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    padding: 2rem;
-}
+@media (max-width: 768px) {
+    .production-list-page {
+        padding-inline: 1rem;
+        padding-top: 0.8rem;
+    }
 
-.production-list-pagination-link {
-    text-decoration: none;
+    .production-list-row-cards {
+        padding-right: 0.35rem;
+    }
+
+    .production-list-row-cards::after {
+        width: 5.2rem;
+        bottom: 3rem;
+    }
+
+    .production-list-rail-btn {
+        display: none;
+    }
+
 }

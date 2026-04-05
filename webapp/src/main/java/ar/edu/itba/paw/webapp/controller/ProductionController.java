@@ -17,8 +17,7 @@ import java.util.Optional;
 @Controller
 public class ProductionController {
 
-    private static final long HARDCODED_USER_ID = 1L;
-    private static final int PAGE_SIZE = 8;
+    private static final int PRODUCTION_PAGE_SIZE = 8;
 
     private final ProductionService productionService;
     private final RatingService ratingService;
@@ -55,11 +54,11 @@ public class ProductionController {
         final ModelAndView mav = new ModelAndView("productions/list");
         final List<Production> productions;
         if (genre != null && !genre.isEmpty()) {
-            productions = productionService.findByGenre(genre, page, PAGE_SIZE);
+            productions = productionService.findByGenre(genre, page, PRODUCTION_PAGE_SIZE);
         } else if (available) {
-            productions = productionService.findAvailable(page, PAGE_SIZE);
+            productions = productionService.findAvailable(page, PRODUCTION_PAGE_SIZE);
         } else {
-            productions = productionService.findAll(page, PAGE_SIZE);
+            productions = productionService.findAll(page, PRODUCTION_PAGE_SIZE);
         }
         mav.addObject("productions", productions);
         mav.addObject("productionRatings", ratingService.getProductionRatingLabels(collectProductionIds(productions)));
