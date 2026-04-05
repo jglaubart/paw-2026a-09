@@ -378,7 +378,6 @@
 
     function setPopoverState(form, nextState, restoreFocus) {
         var details = getDetails(form);
-        var focusTarget;
 
         if (!details) {
             return;
@@ -387,15 +386,6 @@
         if (nextState) {
             details.classList.add("search-form-details-open");
             updatePanelOffset(form);
-            focusTarget = form.querySelector('[name="genre"]') || form.querySelector('[name="theater"]') || form.querySelector('[name="location"]');
-
-            if (focusTarget) {
-                window.setTimeout(function () {
-                    if (isPopoverOpen(form)) {
-                        focusTarget.focus();
-                    }
-                }, 40);
-            }
         } else {
             details.classList.remove("search-form-details-open");
         }

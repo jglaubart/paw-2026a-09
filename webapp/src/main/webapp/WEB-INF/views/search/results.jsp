@@ -93,11 +93,11 @@
                 </c:if>
             </div>
 
-            <c:if test="${not empty date}">
+            <c:if test="${empty results and not empty nearbyDates}">
                 <section class="search-results-nearby" aria-label="Fechas cercanas">
                     <div class="search-results-nearby-head">
-                        <p class="search-results-nearby-kicker">Fechas cercanas</p>
-                        <p class="search-results-nearby-copy">Mostramos tu fecha elegida y opciones hasta 3 días antes o después.</p>
+                        <p class="search-results-nearby-kicker">Otras fechas</p>
+                        <p class="search-results-nearby-copy">No hay funciones ese día, pero estas fechas cercanas sí tienen opciones.</p>
                     </div>
 
                     <div class="search-results-nearby-list">
@@ -121,26 +121,10 @@
                                 <c:param name="date" value="${dateOption.date}" />
                             </c:url>
 
-                            <c:choose>
-                                <c:when test="${dateOption.date eq date}">
-                                    <span class="search-results-nearby-option search-results-nearby-option-selected">
-                                        <span class="search-results-nearby-date"><c:out value="${dateOption.date}" /></span>
-                                        <span class="search-results-nearby-count"><c:out value="${dateOption.productionCount}" /> producciones</span>
-                                    </span>
-                                </c:when>
-                                <c:when test="${dateOption.productionCount > 0}">
-                                    <a href="${nearbyDateUrl}" class="search-results-nearby-option search-results-nearby-option-link">
-                                        <span class="search-results-nearby-date"><c:out value="${dateOption.date}" /></span>
-                                        <span class="search-results-nearby-count"><c:out value="${dateOption.productionCount}" /> producciones</span>
-                                    </a>
-                                </c:when>
-                                <c:otherwise>
-                                    <span class="search-results-nearby-option search-results-nearby-option-disabled">
-                                        <span class="search-results-nearby-date"><c:out value="${dateOption.date}" /></span>
-                                        <span class="search-results-nearby-count">Sin funciones</span>
-                                    </span>
-                                </c:otherwise>
-                            </c:choose>
+                            <a href="${nearbyDateUrl}" class="search-results-nearby-option search-results-nearby-option-link">
+                                <span class="search-results-nearby-date"><c:out value="${dateOption.date}" /></span>
+                                <span class="search-results-nearby-count"><c:out value="${dateOption.productionCount}" /> producciones</span>
+                            </a>
                         </c:forEach>
                     </div>
                 </section>
@@ -169,7 +153,14 @@
                     <c:choose>
                         <c:when test="${not empty date}">
                             <h2>No encontramos funciones para esa fecha</h2>
-                            <p class="search-results-empty-text">Probá con una fecha cercana o cambiá los demás filtros.</p>
+                            <c:choose>
+                                <c:when test="${not empty nearbyDates}">
+                                    <p class="search-results-empty-text">Probá con una de las fechas cercanas que sí tienen funciones.</p>
+                                </c:when>
+                                <c:otherwise>
+                                    <p class="search-results-empty-text">Intentá con otra fecha o cambiá los demás filtros.</p>
+                                </c:otherwise>
+                            </c:choose>
                         </c:when>
                         <c:otherwise>
                             <h2>No se encontraron resultados</h2>

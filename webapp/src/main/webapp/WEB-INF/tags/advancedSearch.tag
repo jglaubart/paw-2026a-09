@@ -88,6 +88,7 @@
                                         <div id="navbar-search-genre-list"
                                              class="search-form-combobox-dropdown"
                                              data-filter-dropdown
+                                             hidden
                                              role="listbox">
                                             <ul class="search-form-combobox-options" data-filter-options>
                                                 <c:forEach var="searchGenre" items="${searchGenres}">
@@ -136,6 +137,7 @@
                                         <div id="navbar-search-theater-list"
                                              class="search-form-combobox-dropdown"
                                              data-filter-dropdown
+                                             hidden
                                              role="listbox">
                                             <ul class="search-form-combobox-options" data-filter-options>
                                                 <c:forEach var="searchTheater" items="${searchTheaters}">
@@ -193,6 +195,7 @@
                                         <div id="navbar-search-location-list"
                                              class="search-form-combobox-dropdown"
                                              data-filter-dropdown
+                                             hidden
                                              role="listbox">
                                             <ul class="search-form-combobox-options" data-filter-options>
                                                 <c:forEach var="searchLocation" items="${searchLocations}">

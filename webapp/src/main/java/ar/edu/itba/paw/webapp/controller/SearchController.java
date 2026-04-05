@@ -15,9 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 public class SearchController {
@@ -71,10 +69,10 @@ public class SearchController {
         );
 
         final List<Production> results = productionService.search(criteria, normalizedPage, PAGE_SIZE);
-        if (date != null) {
+        if (date != null && results.isEmpty()) {
             mav.addObject(
                     "nearbyDates",
-                    buildNearbyDateOptions(
+                    buildAlternativeDateOptions(
                             date,
                             productionService.findNearbyDates(criteria, date, NEARBY_DATE_WINDOW_DAYS)
                     )
@@ -93,18 +91,14 @@ public class SearchController {
         return productionIds;
     }
 
-    private List<SearchDateOption> buildNearbyDateOptions(final LocalDate selectedDate,
-                                                          final List<SearchDateOption> nearbyDates) {
-        final Map<LocalDate, Integer> countsByDate = new HashMap<>();
+    private List<SearchDateOption> buildAlternativeDateOptions(final LocalDate selectedDate,
+                                                               final List<SearchDateOption> nearbyDates) {
         final List<SearchDateOption> options = new ArrayList<>();
 
         for (final SearchDateOption nearbyDate : nearbyDates) {
-            countsByDate.put(nearbyDate.getDate(), nearbyDate.getProductionCount());
-        }
-
-        for (int dayOffset = -NEARBY_DATE_WINDOW_DAYS; dayOffset <= NEARBY_DATE_WINDOW_DAYS; dayOffset++) {
-            final LocalDate candidateDate = selectedDate.plusDays(dayOffset);
-            options.add(new SearchDateOption(candidateDate, countsByDate.getOrDefault(candidateDate, 0)));
+            if (!nearbyDate.getDate().equals(selectedDate)) {
+                options.add(nearbyDate);
+            }
         }
 
         return options;
