@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+/*
 import ar.edu.itba.paw.interfaces.services.SeenService;
 import ar.edu.itba.paw.models.Obra;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +47,11 @@ public class SeenController {
             redirect.append("?produccionId=").append(produccionId);
         }
         return new ModelAndView(redirect.toString());
+    }
+}
+*/
+
+final class SeenControllerDisabled {
+    private SeenControllerDisabled() {
     }
 }

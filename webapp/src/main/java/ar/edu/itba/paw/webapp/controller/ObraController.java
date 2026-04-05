@@ -5,7 +5,6 @@ import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.ProductionService;
 import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
-import ar.edu.itba.paw.interfaces.services.SeenService;
 import ar.edu.itba.paw.interfaces.services.ShowService;
 import ar.edu.itba.paw.models.Obra;
 import ar.edu.itba.paw.models.Production;
@@ -30,7 +29,7 @@ public class ObraController {
 
     private static final long HARDCODED_USER_ID = 1L;
 
-    // Demo flow still uses a fixed user for seen/rating until auth exists.
+    // Demo flow still uses a fixed user for rating until auth exists.
 
     private final ObraService obraService;
     private final ProductionService productionService;
@@ -38,7 +37,6 @@ public class ObraController {
     private final ReviewService reviewService;
     private final MailService mailService;
     private final ShowService showService;
-    private final SeenService seenService;
 
     @Autowired
     public ObraController(final ObraService obraService,
@@ -46,9 +44,9 @@ public class ObraController {
                           final RatingService ratingService,
                           final ReviewService reviewService,
                           final MailService mailService,
-                          final ShowService showService,
-                          /* final WatchlistService watchlistService, */
-                          final SeenService seenService) {
+                          final ShowService showService
+                          /*, final WatchlistService watchlistService, */
+                          /*, final SeenService seenService */) {
         this.obraService = obraService;
         this.productionService = productionService;
         this.ratingService = ratingService;
@@ -56,7 +54,7 @@ public class ObraController {
         this.mailService = mailService;
         this.showService = showService;
         /* this.watchlistService = watchlistService; */
-        this.seenService = seenService;
+        /* this.seenService = seenService; */
     }
 
     @RequestMapping(value = "/obras/{id:\\d+}", method = RequestMethod.GET)
@@ -118,7 +116,8 @@ public class ObraController {
         }
         */
         mav.addObject("isInWishlist", false);
-        mav.addObject("hasSeen", seenService.hasSeen(HARDCODED_USER_ID, id));
+        /* mav.addObject("hasSeen", seenService.hasSeen(HARDCODED_USER_ID, id)); */
+        mav.addObject("hasSeen", false);
 
         return mav;
     }

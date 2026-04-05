@@ -9,7 +9,7 @@
 <%@ attribute name="ticketUrl" required="false" %>
 <%@ attribute name="reviewsUrl" required="false" %>
 <%@ attribute name="otherEditions" required="false" %>
-<%@ attribute name="seen" required="false" type="java.lang.Boolean" %>
+<%-- <%@ attribute name="seen" required="false" type="java.lang.Boolean" %> --%>
 <%-- <%@ attribute name="inWishlist" required="false" type="java.lang.Boolean" %> --%>
 <%@ attribute name="currentlyRunning" required="false" type="java.lang.Boolean" %>
 <%@ attribute name="expiringSoon" required="false" type="java.lang.Boolean" %>
@@ -17,7 +17,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="paw" tagdir="/WEB-INF/tags" %>
 
-<c:set var="playSeen" value="${seen ne null ? seen : false}" />
+<%-- <c:set var="playSeen" value="${seen ne null ? seen : false}" /> --%>
 <%-- <c:set var="playInWishlist" value="${inWishlist ne null ? inWishlist : false}" /> --%>
 <c:set var="playCurrentlyRunning" value="${currentlyRunning ne null ? currentlyRunning : false}" />
 <c:set var="playExpiringSoon" value="${expiringSoon ne null ? expiringSoon : false}" />
@@ -78,10 +78,12 @@
             </div>
 
             <div class="play-detail-statuses">
+                <%--
                 <span class="play-detail-status play-detail-status-seen ${playSeen ? 'play-detail-status-active' : 'play-detail-status-inactive'}">
                     <span class="play-detail-status-icon" aria-hidden="true">✓</span>
                     <span>Vista</span>
                 </span>
+                --%>
                 <%--
                 <span class="play-detail-status play-detail-status-wishlist ${playInWishlist ? 'play-detail-status-active' : 'play-detail-status-inactive'}">
                     <span class="play-detail-status-icon" aria-hidden="true">★</span>

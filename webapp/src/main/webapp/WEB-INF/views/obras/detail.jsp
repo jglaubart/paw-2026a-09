@@ -36,7 +36,7 @@
 </c:if>
 <c:url var="carteleraUrl" value="/cartelera" />
 <%-- <c:url var="watchlistUrl" value="/watchlist" /> --%>
-<c:url var="historialUrl" value="/historial" />
+<%-- <c:url var="historialUrl" value="/historial" /> --%>
 
 <main class="obra-detail-page">
 
@@ -124,6 +124,7 @@
             </c:if>
             --%>
 
+            <%--
             <c:url var="seenActionUrl" value="/obras/${obra.id}/seen" />
             <form action="${seenActionUrl}" method="post" class="obra-action-form">
                 <c:if test="${selectedProduction != null}">
@@ -135,6 +136,7 @@
                     <c:out value="${hasSeen ? 'Ya la vi' : 'Marcar como vista'}" />
                 </button>
             </form>
+            --%>
 
             <c:if test="${selectedProduction != null}">
                 <button type="button" class="obra-action-btn obra-action-btn-share" data-share-open>
@@ -447,9 +449,11 @@
                     MI WATCHLIST
                 </a>
                 --%>
+                <%--
                 <a href="${historialUrl}" class="btn btn-outline btn-md obra-sidebar-cta">
                     ✓ VISTA
                 </a>
+                --%>
             </div>
         </aside>
 
