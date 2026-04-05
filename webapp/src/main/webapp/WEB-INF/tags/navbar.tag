@@ -6,6 +6,7 @@
 
 <c:url var="homeUrl"         value="/" />
 <c:url var="carteleraUrl"    value="/cartelera" />
+<c:url var="subirObraUrl"    value="/subir-obra" />
 <%-- <c:url var="watchlistUrl" value="/watchlist" /> --%>
 <%-- <c:url var="historialUrl" value="/historial" /> --%>
 <c:url var="navbarSearchScriptUrl" value="/js/components/navbar-search.js" />
@@ -40,6 +41,7 @@
 
     <div class="navbar-actions">
         <paw:advancedSearch variant="navbar" />
+        <paw:button text="Subir obra" size="md" cssClass="btn-primary navbar-submit-button" href="${subirObraUrl}" />
     </div>
 </header>
 <script src="${navbarSearchScriptUrl}" defer></script>
