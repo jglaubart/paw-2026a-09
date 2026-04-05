@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
-import ar.edu.itba.paw.interfaces.services.WatchlistService;
-import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.Review;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,30 +15,31 @@ public class UserController {
 
     private static final long HARDCODED_USER_ID = 1L;
 
-    private final WatchlistService watchlistService;
     private final ReviewService reviewService;
-    private final RatingService ratingService;
 
     @Autowired
-    public UserController(final WatchlistService watchlistService,
-                          final ReviewService reviewService,
-                          final RatingService ratingService) {
-        this.watchlistService = watchlistService;
+    public UserController(/* final WatchlistService watchlistService, */
+                          final ReviewService reviewService
+                          /*, final RatingService ratingService */) {
+        /* this.watchlistService = watchlistService; */
         this.reviewService = reviewService;
-        this.ratingService = ratingService;
+        /* this.ratingService = ratingService; */
     }
 
     @RequestMapping(value = "/users/me", method = RequestMethod.GET)
     public ModelAndView profile() {
         final ModelAndView mav = new ModelAndView("users/profile");
+        /*
         final List<Production> watchlist = watchlistService.findByUser(HARDCODED_USER_ID);
-        final List<Review> reviews = reviewService.findByUser(HARDCODED_USER_ID);
         mav.addObject("watchlist", watchlist);
         mav.addObject("productionRatings", ratingService.getProductionRatingLabels(collectProductionIds(watchlist)));
+        */
+        final List<Review> reviews = reviewService.findByUser(HARDCODED_USER_ID);
         mav.addObject("reviews", reviews);
         return mav;
     }
 
+    /*
     private List<Long> collectProductionIds(final List<Production> productions) {
         final List<Long> productionIds = new java.util.ArrayList<>();
         for (final Production production : productions) {
@@ -49,4 +47,5 @@ public class UserController {
         }
         return productionIds;
     }
+    */
 }

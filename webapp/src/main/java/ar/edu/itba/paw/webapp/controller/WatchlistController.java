@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+/*
 import ar.edu.itba.paw.interfaces.services.WatchlistService;
 import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.models.Production;
@@ -55,5 +56,11 @@ public class WatchlistController {
             productionIds.add(production.getId());
         }
         return productionIds;
+    }
+}
+*/
+
+final class WatchlistControllerDisabled {
+    private WatchlistControllerDisabled() {
     }
 }

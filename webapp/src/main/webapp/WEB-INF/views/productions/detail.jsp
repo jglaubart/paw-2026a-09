@@ -30,7 +30,7 @@
     <c:if test="${productora != null}">
         <c:url var="productoraUrl" value="/productoras/${productora.id}" />
     </c:if>
-    <c:url var="watchlistActionUrl" value="/productions/${production.id}/watchlist" />
+    <%-- <c:url var="watchlistActionUrl" value="/productions/${production.id}/watchlist" /> --%>
     <c:url var="rateActionUrl" value="/productions/${production.id}/rate" />
     <c:if test="${production.website != null}">
         <c:url var="productionWebsiteUrl" value="${production.website}" />
@@ -111,6 +111,7 @@
                 </div>
 
                 <div class="play-detail-sidebar production-detail-sidebar">
+                    <%--
                     <div class="production-detail-panel">
                         <h3 class="production-detail-panel-title">Watchlist</h3>
                         <form action="${watchlistActionUrl}" method="post">
@@ -126,6 +127,7 @@
                             </c:choose>
                         </form>
                     </div>
+                    --%>
 
                     <div class="production-detail-panel">
                         <h3 class="production-detail-panel-title">Calificar Producción</h3>

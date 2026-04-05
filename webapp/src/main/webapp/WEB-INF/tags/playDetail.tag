@@ -10,7 +10,7 @@
 <%@ attribute name="reviewsUrl" required="false" %>
 <%@ attribute name="otherEditions" required="false" %>
 <%@ attribute name="seen" required="false" type="java.lang.Boolean" %>
-<%@ attribute name="inWishlist" required="false" type="java.lang.Boolean" %>
+<%-- <%@ attribute name="inWishlist" required="false" type="java.lang.Boolean" %> --%>
 <%@ attribute name="currentlyRunning" required="false" type="java.lang.Boolean" %>
 <%@ attribute name="expiringSoon" required="false" type="java.lang.Boolean" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -18,7 +18,7 @@
 <%@ taglib prefix="paw" tagdir="/WEB-INF/tags" %>
 
 <c:set var="playSeen" value="${seen ne null ? seen : false}" />
-<c:set var="playInWishlist" value="${inWishlist ne null ? inWishlist : false}" />
+<%-- <c:set var="playInWishlist" value="${inWishlist ne null ? inWishlist : false}" /> --%>
 <c:set var="playCurrentlyRunning" value="${currentlyRunning ne null ? currentlyRunning : false}" />
 <c:set var="playExpiringSoon" value="${expiringSoon ne null ? expiringSoon : false}" />
 
@@ -82,10 +82,12 @@
                     <span class="play-detail-status-icon" aria-hidden="true">✓</span>
                     <span>Vista</span>
                 </span>
+                <%--
                 <span class="play-detail-status play-detail-status-wishlist ${playInWishlist ? 'play-detail-status-active' : 'play-detail-status-inactive'}">
                     <span class="play-detail-status-icon" aria-hidden="true">★</span>
                     <span>Wishlist</span>
                 </span>
+                --%>
                 <span class="play-detail-status play-detail-status-current ${playCurrentlyRunning ? 'play-detail-status-active' : 'play-detail-status-inactive'}">
                     <span class="play-detail-status-icon" aria-hidden="true">☀</span>
                     <span>En cartelera</span>
@@ -106,7 +108,7 @@
                 <a href="${resolvedTicketUrl}" class="btn btn-md play-detail-ticket-link">Ver entradas</a>
             </c:if>
             <paw:button text="Calificar obra vista" size="md" cssClass="play-detail-rate-button" />
-            <paw:button text="${playInWishlist ? 'Eliminar de la watchlist' : 'Agregar a watchlist'}" size="md" cssClass="play-detail-wishlist-button" />
+            <%-- <paw:button text="${playInWishlist ? 'Eliminar de la watchlist' : 'Agregar a watchlist'}" size="md" cssClass="play-detail-wishlist-button" /> --%>
         </div>
     </div>
 

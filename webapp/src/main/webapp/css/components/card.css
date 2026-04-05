@@ -26,6 +26,7 @@
     background-color: #333;
 }
 
+/*
 .obra-card-wishlist {
     position: absolute;
     top: 8px;
@@ -37,6 +38,7 @@
 .obra-card:hover .obra-card-wishlist {
     opacity: 1;
 }
+*/
 
 .obra-card-title {
     margin-top: 0.5rem;

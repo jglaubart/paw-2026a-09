@@ -15,15 +15,15 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/navbar.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/search.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/button.css" />
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/production-card.css" />
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/section-row.css" />
+    <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/production-card.css" /> --%>
+    <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/section-row.css" /> --%>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/user-profile.css" />
 </head>
 <body>
 
     <paw:navbar />
 
-    <c:url var="carteleraUrl" value="/cartelera" />
+    <%-- <c:url var="carteleraUrl" value="/cartelera" /> --%>
 
     <main class="user-profile-page">
         <section class="user-profile-header">
@@ -31,7 +31,9 @@
             <p class="user-profile-subtitle">Usuario de demostración (hardcoded)</p>
         </section>
 
-        <%-- Watchlist --%>
+        <%--
+        Watchlist temporalmente deshabilitada para este sprint.
+
         <c:choose>
             <c:when test="${not empty watchlist}">
                 <paw:sectionRow title="Mi Watchlist" subtitle="Producciones que quiero ver">
@@ -57,6 +59,7 @@
                 </section>
             </c:otherwise>
         </c:choose>
+        --%>
 
         <section class="user-profile-section">
             <h2>Mis Reseñas</h2>

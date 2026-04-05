@@ -7,7 +7,6 @@ import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
 import ar.edu.itba.paw.interfaces.services.SeenService;
 import ar.edu.itba.paw.interfaces.services.ShowService;
-import ar.edu.itba.paw.interfaces.services.WatchlistService;
 import ar.edu.itba.paw.models.Obra;
 import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.Review;
@@ -31,7 +30,7 @@ public class ObraController {
 
     private static final long HARDCODED_USER_ID = 1L;
 
-    // Demo flow still uses a fixed user for wishlist/seen/rating until auth exists.
+    // Demo flow still uses a fixed user for seen/rating until auth exists.
 
     private final ObraService obraService;
     private final ProductionService productionService;
@@ -39,7 +38,6 @@ public class ObraController {
     private final ReviewService reviewService;
     private final MailService mailService;
     private final ShowService showService;
-    private final WatchlistService watchlistService;
     private final SeenService seenService;
 
     @Autowired
@@ -49,7 +47,7 @@ public class ObraController {
                           final ReviewService reviewService,
                           final MailService mailService,
                           final ShowService showService,
-                          final WatchlistService watchlistService,
+                          /* final WatchlistService watchlistService, */
                           final SeenService seenService) {
         this.obraService = obraService;
         this.productionService = productionService;
@@ -57,7 +55,7 @@ public class ObraController {
         this.reviewService = reviewService;
         this.mailService = mailService;
         this.showService = showService;
-        this.watchlistService = watchlistService;
+        /* this.watchlistService = watchlistService; */
         this.seenService = seenService;
     }
 
@@ -111,12 +109,15 @@ public class ObraController {
             mav.addObject("selectedProductionActive", false);
         }
 
+        /*
         if (selectedProduction != null) {
             mav.addObject("isInWishlist",
                     watchlistService.isInWatchlist(HARDCODED_USER_ID, selectedProduction.getId()));
         } else {
             mav.addObject("isInWishlist", false);
         }
+        */
+        mav.addObject("isInWishlist", false);
         mav.addObject("hasSeen", seenService.hasSeen(HARDCODED_USER_ID, id));
 
         return mav;

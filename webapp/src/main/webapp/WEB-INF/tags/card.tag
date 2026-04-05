@@ -37,7 +37,9 @@
             </div>
         </c:otherwise>
     </c:choose>
+    <%--
     <div class="obra-card-wishlist">
         <paw:button text="♡" cssClass="btn-wishlist" />
     </div>
+    --%>
 </div>
