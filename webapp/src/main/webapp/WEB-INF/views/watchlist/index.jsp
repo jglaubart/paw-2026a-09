@@ -35,7 +35,7 @@
             <c:when test="${not empty seenObras}">
                 <div class="user-list-grid">
                     <c:forEach var="o" items="${seenObras}">
-                        <c:url var="obraUrl" value="/obras/${o.id}" />
+                        <c:set var="obraUrl" value="/obras/${o.id}" />
                         <a href="${obraUrl}" class="user-list-obra-card">
                             <div class="user-list-obra-info">
                                 <span class="user-list-obra-title"><c:out value="${o.title}" /></span>

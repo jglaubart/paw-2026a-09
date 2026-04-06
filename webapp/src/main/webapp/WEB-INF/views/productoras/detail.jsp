@@ -59,10 +59,10 @@
         <c:if test="${not empty productions}">
             <paw:sectionRow title="Producciones" subtitle="De ${fn:escapeXml(productora.name)}">
                 <c:forEach var="p" items="${productions}">
-                    <c:url var="detailUrl" value="/productions/${p.id}" />
+                    <c:set var="detailUrl" value="/productions/${p.id}" />
                     <paw:productionCard
                         title="${fn:escapeXml(p.name)}"
-                        imageUrl="${not empty p.imageUrl ? p.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
+                        imageUrl="${not empty p.imageUrl ? p.imageUrl : '/images/Portadas/hamlet.jpg'}"
                         venue="${fn:escapeXml(p.theater)}"
                         rating="${productionRatings[p.id]}"
                         detailUrl="${detailUrl}"

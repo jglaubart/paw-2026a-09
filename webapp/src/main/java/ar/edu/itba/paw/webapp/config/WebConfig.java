@@ -176,12 +176,26 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     private static void loadDotEnvIntoSystemProperties() {
+        Map<String, String> values = null;
         final Path dotenvPath = resolveDotEnvPath();
-        if (dotenvPath == null) {
+        
+        if (dotenvPath != null) {
+            values = parseDotEnv(dotenvPath);
+        } else {
+            final ClassPathResource cp = new ClassPathResource(".env");
+            if (cp.exists()) {
+                try {
+                    values = parseDotEnvStream(cp.getInputStream());
+                } catch (IOException e) {
+                    System.err.println("[Platea] Could not read .env from classpath: " + e.getMessage());
+                }
+            }
+        }
+
+        if (values == null) {
             return;
         }
 
-        final Map<String, String> values = parseDotEnv(dotenvPath);
         for (final Map.Entry<String, String> entry : values.entrySet()) {
             final String key = entry.getKey();
             final String value = entry.getValue();
@@ -219,9 +233,18 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     private static Map<String, String> parseDotEnv(final Path dotenvPath) {
-        final Map<String, String> values = new LinkedHashMap<>();
         try {
-            for (final String rawLine : Files.readAllLines(dotenvPath, StandardCharsets.UTF_8)) {
+            return parseDotEnvStream(Files.newInputStream(dotenvPath));
+        } catch (final IOException e) {
+            throw new IllegalStateException("Could not load .env file from " + dotenvPath, e);
+        }
+    }
+
+    private static Map<String, String> parseDotEnvStream(final java.io.InputStream is) throws IOException {
+        final Map<String, String> values = new LinkedHashMap<>();
+        try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(is, StandardCharsets.UTF_8))) {
+            String rawLine;
+            while ((rawLine = reader.readLine()) != null) {
                 String line = rawLine.trim();
                 if (line.isEmpty() || line.startsWith("#")) {
                     continue;
@@ -242,8 +265,6 @@ public class WebConfig implements WebMvcConfigurer {
                 }
                 values.put(key, value);
             }
-        } catch (final IOException e) {
-            throw new IllegalStateException("Could not load .env file from " + dotenvPath, e);
         }
         return values;
     }

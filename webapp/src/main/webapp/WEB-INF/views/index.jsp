@@ -30,7 +30,7 @@
             <paw:hero slides="${heroSlides}" badge="EN ESCENA" />
         </c:when>
         <c:when test="${featuredProduction != null}">
-            <c:set var="heroImageUrl" value="${not empty featuredProduction.imageUrl ? featuredProduction.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}" />
+            <c:set var="heroImageUrl" value="${not empty featuredProduction.imageUrl ? featuredProduction.imageUrl : '/images/Portadas/hamlet.jpg'}" />
             <paw:hero
                 title="${fn:escapeXml(featuredProduction.name)}"
                 description="${fn:escapeXml(featuredProduction.synopsis)}"
@@ -42,7 +42,7 @@
             <paw:hero
                 title="Platea"
                 description="Descubrí teatro en Buenos Aires"
-                imageUrl="${pageContext.request.contextPath}/images/Portadas/hamlet.jpg"
+                imageUrl="/images/Portadas/hamlet.jpg"
                 badge="BIENVENIDO"
             />
         </c:otherwise>
@@ -52,12 +52,10 @@
         <c:if test="${not empty todayProductions}">
             <paw:sectionRow title="Para Hoy" subtitle="Obras con función hoy" cssClass="home-section-row" railNavigation="true">
                 <c:forEach var="p" items="${todayProductions}">
-                    <c:url var="detailUrl" value="/obras/${p.obraId}">
-                        <c:param name="produccionId" value="${p.id}" />
-                    </c:url>
+                    <c:set var="detailUrl" value="/obras/${p.obraId}?produccionId=${p.id}" />
                     <paw:productionCard
                         title="${fn:escapeXml(p.name)}"
-                        imageUrl="${not empty p.imageUrl ? p.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
+                        imageUrl="${not empty p.imageUrl ? p.imageUrl : '/images/Portadas/hamlet.jpg'}"
                         venue="${fn:escapeXml(p.theater)}"
                         rating="${productionRatings[p.id]}"
                         badge="HOY"
@@ -70,12 +68,10 @@
         <c:if test="${not empty availableProductions}">
             <paw:sectionRow title="En Cartelera" subtitle="Obras activas dentro de su periodo" cssClass="home-section-row" railNavigation="true">
                 <c:forEach var="p" items="${availableProductions}">
-                    <c:url var="detailUrl" value="/obras/${p.obraId}">
-                        <c:param name="produccionId" value="${p.id}" />
-                    </c:url>
+                    <c:set var="detailUrl" value="/obras/${p.obraId}?produccionId=${p.id}" />
                     <paw:productionCard
                         title="${fn:escapeXml(p.name)}"
-                        imageUrl="${not empty p.imageUrl ? p.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
+                        imageUrl="${not empty p.imageUrl ? p.imageUrl : '/images/Portadas/hamlet.jpg'}"
                         venue="${fn:escapeXml(p.theater)}"
                         rating="${productionRatings[p.id]}"
                         detailUrl="${detailUrl}"
@@ -87,12 +83,10 @@
         <c:if test="${not empty allProductions}">
             <paw:sectionRow title="Catálogo" subtitle="Todas las obras cargadas, activas o no" cssClass="home-section-row" railNavigation="true">
                 <c:forEach var="p" items="${allProductions}">
-                    <c:url var="detailUrl" value="/obras/${p.obraId}">
-                        <c:param name="produccionId" value="${p.id}" />
-                    </c:url>
+                    <c:set var="detailUrl" value="/obras/${p.obraId}?produccionId=${p.id}" />
                     <paw:productionCard
                         title="${fn:escapeXml(p.name)}"
-                        imageUrl="${not empty p.imageUrl ? p.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/principito.jpg')}"
+                        imageUrl="${not empty p.imageUrl ? p.imageUrl : '/images/Portadas/principito.jpg'}"
                         venue="${fn:escapeXml(p.theater)}"
                         rating="${productionRatings[p.id]}"
                         detailUrl="${detailUrl}"

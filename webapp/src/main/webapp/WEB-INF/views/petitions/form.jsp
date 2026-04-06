@@ -25,7 +25,7 @@
 <paw:navbar />
 
 <section class="petition-hero">
-    <div class="petition-hero-backdrop" style="background-image: linear-gradient(90deg, rgba(20,20,20,0.94) 0%, rgba(20,20,20,0.74) 45%, rgba(20,20,20,0.88) 100%), url('${pageContext.request.contextPath}${heroImageUrl}');"></div>
+    <div class="petition-hero-backdrop" style="background-image: linear-gradient(90deg, rgba(20,20,20,0.94) 0%, rgba(20,20,20,0.74) 45%, rgba(20,20,20,0.88) 100%), url('${heroImageUrl}');"></div>
     <div class="petition-hero-content">
         <p class="petition-hero-kicker">Convocatoria Platea</p>
         <h1 class="petition-hero-title">Traé tu obra a la cartelera</h1>

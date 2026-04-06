@@ -23,7 +23,7 @@
 <paw:navbar />
 
 <section class="petition-admin-hero">
-    <div class="petition-admin-hero-backdrop" style="background-image: linear-gradient(90deg, rgba(20,20,20,0.94) 0%, rgba(20,20,20,0.78) 50%, rgba(20,20,20,0.92) 100%), url('${pageContext.request.contextPath}${heroImageUrl}');"></div>
+    <div class="petition-admin-hero-backdrop" style="background-image: linear-gradient(90deg, rgba(20,20,20,0.94) 0%, rgba(20,20,20,0.78) 50%, rgba(20,20,20,0.92) 100%), url('${heroImageUrl}');"></div>
     <div class="petition-admin-hero-content">
         <p class="petition-admin-kicker">Developer access</p>
         <h1>Backoffice de peticiones</h1>
@@ -77,7 +77,7 @@
                 </c:when>
                 <c:otherwise>
                     <c:forEach var="petition" items="${petitions}">
-                        <c:url var="detailUrl" value="/internal/dev/play-petitions/${petition.id}" />
+                        <c:set var="detailUrl" value="/internal/dev/play-petitions/${petition.id}" />
                         <article class="petition-admin-card">
                             <div class="petition-admin-card-main">
                                 <div class="petition-admin-card-head">

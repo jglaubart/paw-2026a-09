@@ -23,48 +23,8 @@
 
     <paw:navbar />
 
-    <c:url var="previousPageUrl" value="/search">
-        <c:if test="${not empty query}">
-            <c:param name="q" value="${query}" />
-        </c:if>
-        <c:if test="${not empty genre}">
-            <c:param name="genre" value="${genre}" />
-        </c:if>
-        <c:if test="${not empty theater}">
-            <c:param name="theater" value="${theater}" />
-        </c:if>
-        <c:if test="${not empty location}">
-            <c:param name="location" value="${location}" />
-        </c:if>
-        <c:if test="${not empty date}">
-            <c:param name="date" value="${date}" />
-        </c:if>
-        <c:if test="${available}">
-            <c:param name="available" value="true" />
-        </c:if>
-        <c:param name="page" value="${page - 1}" />
-    </c:url>
-    <c:url var="nextPageUrl" value="/search">
-        <c:if test="${not empty query}">
-            <c:param name="q" value="${query}" />
-        </c:if>
-        <c:if test="${not empty genre}">
-            <c:param name="genre" value="${genre}" />
-        </c:if>
-        <c:if test="${not empty theater}">
-            <c:param name="theater" value="${theater}" />
-        </c:if>
-        <c:if test="${not empty location}">
-            <c:param name="location" value="${location}" />
-        </c:if>
-        <c:if test="${not empty date}">
-            <c:param name="date" value="${date}" />
-        </c:if>
-        <c:if test="${available}">
-            <c:param name="available" value="true" />
-        </c:if>
-        <c:param name="page" value="${page + 1}" />
-    </c:url>
+    <c:set var="previousPageUrl" value="/search?q=${query}&genre=${genre}&theater=${theater}&location=${location}&date=${date}&available=true&page=${page - 1}" />
+    <c:set var="nextPageUrl" value="/search?q=${query}&genre=${genre}&theater=${theater}&location=${location}&date=${date}&available=true&page=${page + 1}" />
 
     <main class="search-results-page">
         <section class="search-results-filters">
@@ -102,24 +62,7 @@
 
                     <div class="search-results-nearby-list">
                         <c:forEach var="dateOption" items="${nearbyDates}">
-                            <c:url var="nearbyDateUrl" value="/search">
-                                <c:if test="${not empty query}">
-                                    <c:param name="q" value="${query}" />
-                                </c:if>
-                                <c:if test="${not empty genre}">
-                                    <c:param name="genre" value="${genre}" />
-                                </c:if>
-                                <c:if test="${not empty theater}">
-                                    <c:param name="theater" value="${theater}" />
-                                </c:if>
-                                <c:if test="${not empty location}">
-                                    <c:param name="location" value="${location}" />
-                                </c:if>
-                                <c:if test="${available}">
-                                    <c:param name="available" value="true" />
-                                </c:if>
-                                <c:param name="date" value="${dateOption.date}" />
-                            </c:url>
+                            <c:set var="nearbyDateUrl" value="/search?q=${query}&genre=${genre}&theater=${theater}&location=${location}&available=true&date=${dateOption.date}" />
 
                             <a href="${nearbyDateUrl}" class="search-results-nearby-option search-results-nearby-option-link">
                                 <span class="search-results-nearby-date"><c:out value="${dateOption.date}" /></span>
@@ -135,12 +78,10 @@
             <c:when test="${not empty results}">
                 <paw:sectionRow title="Resultados" subtitle="${fn:length(results)} producciones encontradas">
                     <c:forEach var="p" items="${results}">
-                        <c:url var="detailUrl" value="/obras/${p.obraId}">
-                            <c:param name="produccionId" value="${p.id}" />
-                        </c:url>
+                        <c:set var="detailUrl" value="/obras/${p.obraId}?produccionId=${p.id}" />
                         <paw:productionCard
                             title="${fn:escapeXml(p.name)}"
-                            imageUrl="${not empty p.imageUrl ? p.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
+                            imageUrl="${not empty p.imageUrl ? p.imageUrl : '/images/Portadas/hamlet.jpg'}"
                             venue="${fn:escapeXml(p.theater)}"
                             rating="${productionRatings[p.id]}"
                             detailUrl="${detailUrl}"

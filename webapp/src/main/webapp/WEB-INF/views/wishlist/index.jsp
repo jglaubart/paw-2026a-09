@@ -37,12 +37,10 @@
             <c:when test="${not empty wishlist}">
                 <paw:sectionRow title="En tu watchlist" subtitle="${fn:length(wishlist)} produccion${fn:length(wishlist) != 1 ? 'es' : ''}">
                     <c:forEach var="p" items="${wishlist}">
-                        <c:url var="detailUrl" value="/obras/${p.obraId}">
-                            <c:param name="produccionId" value="${p.id}" />
-                        </c:url>
+                        <c:set var="detailUrl" value="/obras/${p.obraId}?produccionId=${p.id}" />
                         <paw:productionCard
                             title="${fn:escapeXml(p.name)}"
-                            imageUrl="${not empty p.imageUrl ? p.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}"
+                            imageUrl="${not empty p.imageUrl ? p.imageUrl : '/images/Portadas/hamlet.jpg'}"
                             venue="${fn:escapeXml(p.theater)}"
                             rating="${productionRatings[p.id]}"
                             detailUrl="${detailUrl}"

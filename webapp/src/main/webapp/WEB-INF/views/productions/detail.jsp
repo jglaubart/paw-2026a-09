@@ -23,9 +23,9 @@
 
     <paw:navbar />
 
-    <c:set var="imgUrl" value="${not empty production.imageUrl ? production.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}" />
+    <c:set var="imgUrl" value="${not empty production.imageUrl ? production.imageUrl : '/images/Portadas/hamlet.jpg'}" />
     <c:if test="${obra != null}">
-        <c:url var="obraUrl" value="/obras/${obra.id}" />
+        <c:set var="obraUrl" value="/obras/${obra.id}" />
     </c:if>
     <c:if test="${productora != null}">
         <c:url var="productoraUrl" value="/productoras/${productora.id}" />
