@@ -18,6 +18,73 @@
         return form.querySelector("[data-search-trigger]");
     }
 
+    function getInlineTrigger(form) {
+        return form.querySelector("[data-search-expand-trigger]");
+    }
+
+    function getInlineInput(form) {
+        return form.querySelector("[data-search-inline-input]");
+    }
+
+    function hasInlineValue(form) {
+        var input = getInlineInput(form);
+
+        return !!(input && input.value.replace(/^\s+|\s+$/g, ""));
+    }
+
+    function isInlineOpen(form) {
+        return form.classList.contains("search-form-inline-open");
+    }
+
+    function updateInlineTriggerState(form) {
+        var trigger = getInlineTrigger(form);
+
+        if (trigger) {
+            trigger.setAttribute("aria-expanded", isInlineOpen(form) ? "true" : "false");
+        }
+    }
+
+    function setInlineState(form, nextState, restoreFocus) {
+        var input = getInlineInput(form);
+        var wasOpen = isInlineOpen(form);
+
+        if (nextState) {
+            form.classList.add("search-form-inline-open");
+        } else {
+            form.classList.remove("search-form-inline-open");
+        }
+
+        updateInlineTriggerState(form);
+
+        if (nextState && !wasOpen && input) {
+            window.setTimeout(function () {
+                input.focus();
+            }, 0);
+        }
+
+        if (!nextState && restoreFocus) {
+            window.setTimeout(function () {
+                var trigger = getInlineTrigger(form);
+
+                if (trigger) {
+                    trigger.focus();
+                }
+            }, 0);
+        }
+    }
+
+    function closeInlineSearch(form, restoreFocus, force) {
+        if (!isInlineOpen(form)) {
+            return;
+        }
+
+        if (!force && hasInlineValue(form)) {
+            return;
+        }
+
+        setInlineState(form, false, restoreFocus);
+    }
+
     function isPopoverOpen(form) {
         var details = getDetails(form);
         return !!(details && details.classList.contains("search-form-details-open"));
@@ -452,17 +519,35 @@
                 return !!field;
             });
         var trigger = getTrigger(form);
+        var inlineTrigger = getInlineTrigger(form);
+        var inlineInput = getInlineInput(form);
         var closeNodes = form.querySelectorAll("[data-search-close]");
         var clearButton = form.querySelector("[data-search-clear-filters]");
 
         updatePanelOffset(form);
         renderChips(form);
 
+        if (hasInlineValue(form)) {
+            form.classList.add("search-form-inline-open");
+        } else {
+            form.classList.remove("search-form-inline-open");
+        }
+
+        updateInlineTriggerState(form);
+
         if (trigger) {
             trigger.addEventListener("click", function (event) {
                 event.preventDefault();
                 event.stopPropagation();
                 setPopoverState(form, !isPopoverOpen(form), false);
+            });
+        }
+
+        if (inlineTrigger) {
+            inlineTrigger.addEventListener("click", function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                setInlineState(form, true, false);
             });
         }
 
@@ -486,12 +571,31 @@
             }
         });
 
+        if (inlineInput) {
+            inlineInput.addEventListener("focus", function () {
+                setInlineState(form, true, false);
+            });
+
+            inlineInput.addEventListener("input", function () {
+                if (hasInlineValue(form)) {
+                    setInlineState(form, true, false);
+                }
+            });
+        }
+
         if (clearButton) {
             clearButton.addEventListener("click", function (event) {
                 event.preventDefault();
                 clearFilters(form);
             });
         }
+
+        form.addEventListener("submit", function (event) {
+            if (!isInlineOpen(form)) {
+                event.preventDefault();
+                setInlineState(form, true, false);
+            }
+        });
 
         attachFilterComboboxes(form);
     }
@@ -500,12 +604,12 @@
 
     document.addEventListener("click", function (event) {
         toArray(forms).forEach(function (form) {
-            if (!isPopoverOpen(form)) {
-                return;
-            }
-
             if (!form.contains(event.target)) {
-                closePopover(form, false);
+                if (isPopoverOpen(form)) {
+                    closePopover(form, false);
+                }
+
+                closeInlineSearch(form, false, false);
             }
         });
     });
@@ -517,6 +621,7 @@
 
         toArray(forms).forEach(function (form) {
             closePopover(form, true);
+            closeInlineSearch(form, true, true);
         });
     });
 

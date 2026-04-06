@@ -8,8 +8,9 @@
 <c:set var="hasActiveFilters" value="${not empty param.genre or not empty param.theater or not empty param.location or not empty param.date or param.available == 'true'}" />
 <c:set var="activeFilterCount" value="${(not empty param.genre ? 1 : 0) + (not empty param.theater ? 1 : 0) + (not empty param.location ? 1 : 0) + (not empty param.date ? 1 : 0) + (param.available == 'true' ? 1 : 0)}" />
 <c:set var="searchFeedback" value="${error}" />
+<c:set var="hasSearchQuery" value="${not empty param.q}" />
 
-<form action="${searchUrl}" method="get" class="search-form search-form-${variant} ${hasActiveFilters ? 'search-form-has-active-filters' : ''}" data-navbar-search>
+<form action="${searchUrl}" method="get" class="search-form search-form-${variant} ${hasActiveFilters ? 'search-form-has-active-filters' : ''} ${hasSearchQuery ? 'search-form-inline-open' : ''}" data-navbar-search>
     <c:choose>
         <c:when test="${variant == 'navbar'}">
             <div class="search-form-bar">
@@ -246,7 +247,12 @@
                         </section>
                     </div>
 
-                    <label class="search-form-query search-form-query-navbar" for="navbar-search-q">
+                    <button type="button"
+                            class="search-form-expand-toggle"
+                            data-search-expand-trigger
+                            aria-controls="navbar-search-inline"
+                            aria-expanded="${hasSearchQuery ? 'true' : 'false'}"
+                            aria-label="Abrir búsqueda">
                         <span class="search-form-icon" aria-hidden="true">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
                                  stroke="currentColor" stroke-width="2.05"
@@ -255,18 +261,32 @@
                                 <line x1="16.5" y1="16.5" x2="21" y2="21"/>
                             </svg>
                         </span>
-                        <input id="navbar-search-q"
-                               type="text"
-                               name="q"
-                               value="${fn:escapeXml(param.q)}"
-                               placeholder="Buscar obra, sala o productora"
-                               maxlength="100"
-                               class="search-form-input search-form-input-query" />
-                    </label>
-
-                    <button type="submit" class="btn btn-primary btn-sm search-form-submit search-form-submit-navbar">
-                        Buscar
                     </button>
+
+                    <div id="navbar-search-inline" class="search-form-inline-search">
+                        <label class="search-form-query search-form-query-navbar" for="navbar-search-q">
+                            <span class="search-form-icon" aria-hidden="true">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2.05"
+                                     stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="7"/>
+                                    <line x1="16.5" y1="16.5" x2="21" y2="21"/>
+                                </svg>
+                            </span>
+                            <input id="navbar-search-q"
+                                   type="text"
+                                   name="q"
+                                   value="${fn:escapeXml(param.q)}"
+                                   placeholder="Buscar obra, sala o productora"
+                                   maxlength="100"
+                                   class="search-form-input search-form-input-query"
+                                   data-search-inline-input />
+                        </label>
+
+                        <button type="submit" class="btn btn-primary btn-sm search-form-submit search-form-submit-navbar">
+                            Buscar
+                        </button>
+                    </div>
                 </div>
             </div>
         </c:when>

@@ -51,11 +51,12 @@
 
 .search-form-shell {
     position: relative;
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    display: flex;
     align-items: center;
     gap: 0.3rem;
-    width: 100%;
+    width: auto;
+    max-width: 100%;
+    margin-left: auto;
     padding: 0.24rem;
     border-radius: 1.45rem;
     overflow: visible;
@@ -71,6 +72,24 @@
     transition: background 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, transform 0.22s ease;
 }
 
+.search-form-navbar:not(.search-form-inline-open) .search-form-shell {
+    gap: 0;
+    width: auto;
+    padding: 0;
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.search-form-navbar:not(.search-form-inline-open) .search-form-shell:hover,
+.search-form-navbar:not(.search-form-inline-open) .search-form-shell:focus-within {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+}
+
 .search-form-shell:hover,
 .search-form-shell:focus-within,
 .search-form-has-active-filters .search-form-shell {
@@ -84,10 +103,19 @@
         0 8px 22px rgba(132, 85, 239, 0.14);
 }
 
+.search-form-navbar.search-form-has-active-filters:not(.search-form-inline-open) .search-form-shell,
+.search-form-navbar.search-form-has-active-filters:not(.search-form-inline-open) .search-form-shell:hover,
+.search-form-navbar.search-form-has-active-filters:not(.search-form-inline-open) .search-form-shell:focus-within {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+}
+
 .search-form-query {
     display: flex;
     align-items: center;
     gap: 0.58rem;
+    flex: 1 1 auto;
     min-width: 0;
     min-height: var(--navbar-search-height);
     padding: 0 0.9rem;
@@ -246,6 +274,73 @@
 .search-form-details {
     position: static;
     display: flex;
+    min-width: 0;
+}
+
+.search-form-navbar:not(.search-form-inline-open) .search-form-details {
+    display: none;
+}
+
+.search-form-inline-search {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    min-width: 0;
+    max-width: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(0.24rem);
+    transition: max-width 0.22s ease, opacity 0.18s ease, transform 0.22s ease;
+}
+
+.search-form-expand-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--navbar-search-height);
+    min-width: var(--navbar-search-height);
+    min-height: var(--navbar-search-height);
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--platea-text-muted);
+    cursor: pointer;
+    box-shadow: none;
+    transition: width 0.22s ease, min-width 0.22s ease, opacity 0.18s ease, transform 0.18s ease, color 0.2s ease;
+}
+
+.search-form-expand-toggle:hover,
+.search-form-expand-toggle:focus {
+    color: var(--platea-text-primary);
+    background: transparent;
+    box-shadow: none;
+}
+
+.search-form-expand-toggle svg {
+    width: 1.40625rem;
+    height: 1.40625rem;
+}
+
+.search-form-inline-open .search-form-inline-search {
+    flex: 1 1 auto;
+    max-width: 30rem;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+}
+
+.search-form-inline-open .search-form-expand-toggle {
+    width: 0;
+    min-width: 0;
+    border-width: 0;
+    opacity: 0;
+    transform: scale(0.9);
+    overflow: hidden;
+}
+
+.search-form-query-navbar {
     min-width: 0;
 }
 
@@ -703,6 +798,11 @@ body.navbar-search-lock-scroll {
 }
 
 @media (max-width: 768px) {
+    .search-form-inline-open .search-form-inline-search {
+        max-width: none;
+        width: 100%;
+    }
+
     .search-form-filter-toggle {
         padding: 0 0.74rem;
     }
@@ -758,6 +858,8 @@ body.navbar-search-lock-scroll {
 @media (prefers-reduced-motion: reduce) {
     .search-form-shell,
     .search-form-query,
+    .search-form-inline-search,
+    .search-form-expand-toggle,
     .search-form-filter-toggle,
     .search-form-panel,
     .search-form-backdrop,
