@@ -24,7 +24,7 @@
             <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
                 <file>logs/platea.log</file>
                 <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <fileNamePattern>logs/platea.%d{yyyy-MM-dd}.log</fileNamePattern>
+                    <fileNamePattern>logs/paw-2026a-09.%d{yyyy-MM-dd}.log</fileNamePattern>
                     <maxHistory>5</maxHistory>
                 </rollingPolicy>
                 <encoder>
