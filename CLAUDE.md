@@ -11,8 +11,6 @@
 ```
 paw-2026a-09/
 ├── pom.xml                              ← Parent POM (version mgmt, shared deps)
-├── utils/
-│   └── AGENTS.md                        ← This file
 │
 ├── models/                              ← Plain domain entity POJOs
 │   └── pom.xml
@@ -29,70 +27,81 @@ paw-2026a-09/
 │       ├── java/ar/edu/itba/paw/persistence/
 │       └── resources/
 │           ├── schema.sql
-│           └── seed.sql
+│           ├── seed.sql
+│           └── migration_*.sql          ← idempotent ALTER TABLE migrations
 │
 └── webapp/                              ← WAR module (Spring MVC + JSP)
     ├── pom.xml
-    └── src/main/
-        ├── java/ar/edu/itba/paw/webapp/
-        │   ├── config/
-        │   │   └── WebConfig.java       ← Spring config (@Configuration, component scan, ViewResolver, resources)
-        │   └── controller/
-        │       ├── HomeController.java
-        │       ├── ObraController.java
-        │       ├── ProductionController.java
-        │       ├── ProductoraController.java
-        │       ├── SearchController.java
-        │       ├── UserController.java
-        │       ├── WatchlistController.java
-        │       ├── SeenController.java
-        │       ├── RatingController.java
-        │       └── ReviewController.java
-        └── webapp/
-            ├── WEB-INF/
-            │   ├── web.xml              ← Servlet container config (DispatcherServlet, context listener)
-            │   ├── views/               ← JSP pages (private — never accessible directly)
-            │   │   ├── index.jsp
-            │   │   ├── obras/detail.jsp
-            │   │   ├── productions/list.jsp
-            │   │   ├── productions/detail.jsp
-            │   │   ├── productoras/detail.jsp
-            │   │   ├── search/results.jsp
-            │   │   ├── users/profile.jsp
-            │   │   ├── wishlist/index.jsp
-            │   │   └── watchlist/index.jsp
-            │   └── tags/                ← Custom JSP tag files (.tag)
-            │       ├── alert.tag
-            │       ├── button.tag
-            │       ├── card.tag
-            │       ├── hero.tag
-            │       ├── navbar.tag
-            │       ├── playDetail.tag
-            │       ├── productionCard.tag
-            │       ├── search.tag
-            │       └── sectionRow.tag
-            ├── css/
-            │   ├── main.css             ← Global reset + base styles (body, header, main, h2)
-            │   └── components/          ← One CSS file per UI component
-            │       ├── alert.css
-            │       ├── button.css
-            │       ├── card.css
-            │       ├── hero.css
-            │       ├── navbar.css
-            │       ├── play-detail.css
-            │       ├── production-card.css
-            │       ├── home-page.css
-            │       ├── productora-detail.css
-            │       ├── production-detail-page.css
-            │       ├── production-list-page.css
-            │       ├── search.css
-            │       ├── search-results-page.css
-            │       └── section-row.css
-            └── images/
-                └── Portadas/            ← Play cover images (jpg)
-                    ├── hamilton.jpg
-                    ├── hamlet.jpg
-                    └── principito.jpg
+    └── src/
+        ├── main/
+        │   ├── java/ar/edu/itba/paw/webapp/
+        │   │   ├── auth/
+        │   │   │   ├── PawUserDetails.java        ← wraps domain User, provides role
+        │   │   │   └── PawUserDetailsService.java ← loads user from DB for Spring Security
+        │   │   ├── config/
+        │   │   │   ├── WebConfig.java             ← Spring MVC config, DataSource, BCrypt bean
+        │   │   │   └── WebAuthConfig.java         ← Spring Security config
+        │   │   └── controller/
+        │   │       ├── HomeController.java
+        │   │       ├── ObraController.java
+        │   │       ├── ProductionController.java
+        │   │       ├── ProductoraController.java
+        │   │       ├── SearchController.java
+        │   │       ├── UserController.java
+        │   │       ├── WatchlistController.java
+        │   │       ├── SeenController.java
+        │   │       ├── RatingController.java
+        │   │       └── ReviewController.java
+        │   ├── resources/
+        │   │   └── logback.xml                    ← dev=STDOUT/INFO, prod=rolling/WARN
+        │   └── webapp/
+        │       ├── WEB-INF/
+        │       │   ├── web.xml              ← DispatcherServlet + DelegatingFilterProxy
+        │       │   ├── views/               ← JSP pages (private)
+        │       │   │   ├── index.jsp
+        │       │   │   ├── obras/detail.jsp
+        │       │   │   ├── productions/list.jsp
+        │       │   │   ├── productions/detail.jsp
+        │       │   │   ├── productoras/detail.jsp
+        │       │   │   ├── search/results.jsp
+        │       │   │   ├── users/profile.jsp
+        │       │   │   ├── users/login.jsp
+        │       │   │   ├── users/register.jsp
+        │       │   │   ├── wishlist/index.jsp
+        │       │   │   └── watchlist/index.jsp
+        │       │   └── tags/                ← Custom JSP tag files (.tag)
+        │       │       ├── alert.tag
+        │       │       ├── button.tag
+        │       │       ├── card.tag
+        │       │       ├── hero.tag
+        │       │       ├── navbar.tag
+        │       │       ├── playDetail.tag
+        │       │       ├── productionCard.tag
+        │       │       ├── search.tag
+        │       │       └── sectionRow.tag
+        │       ├── css/
+        │       │   ├── main.css             ← Global reset + base styles
+        │       │   └── components/
+        │       │       ├── auth-form.css
+        │       │       ├── alert.css
+        │       │       ├── button.css
+        │       │       ├── card.css
+        │       │       ├── hero.css
+        │       │       ├── navbar.css
+        │       │       ├── play-detail.css
+        │       │       ├── production-card.css
+        │       │       ├── home-page.css
+        │       │       ├── productora-detail.css
+        │       │       ├── production-detail-page.css
+        │       │       ├── production-list-page.css
+        │       │       ├── search.css
+        │       │       ├── search-results-page.css
+        │       │       └── section-row.css
+        │       └── images/
+        │           └── Portadas/
+        └── test/
+            └── resources/
+                └── logback-test.xml               ← STDOUT/INFO for tests, excluded from WAR
 ```
 
 This document is a living guide. Keep it synchronized with the repository when architecture or conventions change.
@@ -112,7 +121,9 @@ This document is a living guide. Keep it synchronized with the repository when a
 |----------|-------|-------|
 | `spring.version` | `5.3.33` | Spring MVC, JDBC, context-support |
 | `spring.security.version` | `5.8.10` | spring-security-web, config, core |
-| `logback.version` | `1.4.14` | SLF4J 2.x compatible binding |
+| `slf4j.version` | `2.0.12` | SLF4J API (compile dep in services/persistence) |
+| `logback.version` | `1.4.14` | SLF4J 2.x compatible binding (runtime in webapp) |
+| `janino.version` | `3.1.12` | required for `<if>` conditions in logback.xml |
 | `org.postgresql.version` | `42.7.3` | |
 | `javax.servlet.version` | `4.0.1` | provided scope |
 | `jstl.version` | `1.2` | |
@@ -267,14 +278,29 @@ class PlayServiceImpl {
 Spring Security 5.8.10 is configured in `WebAuthConfig` (`ar.edu.itba.paw.webapp.config`).
 
 ### Setup
-- `DelegatingFilterProxy` for `springSecurityFilterChain` registered in `web.xml` before all other filters.
+- `DelegatingFilterProxy` for `springSecurityFilterChain` registered in `web.xml` **before** all other filters.
 - `WebAuthConfig` extends `WebSecurityConfigurerAdapter`, annotated `@Configuration @EnableWebSecurity`.
 - `PasswordEncoder` bean (`BCryptPasswordEncoder`) lives in `WebConfig` — **not** in `WebAuthConfig` — to avoid a circular dependency with `PawUserDetailsService`.
 - `@ComponentScan` covers `ar.edu.itba.paw.webapp` (not just the controller sub-package) so `PawUserDetailsService` and `PawUserDetails` in `ar.edu.itba.paw.webapp.auth` are picked up.
 
 ### Auth classes (`ar.edu.itba.paw.webapp.auth`)
-- `PawUserDetails` — extends `org.springframework.security.core.userdetails.User`, wraps the domain `User` model, grants `ROLE_USER`.
-- `PawUserDetailsService` — `@Component` implementing `UserDetailsService`, delegates to `UserService.findByEmail()`.
+- `PawUserDetails` — extends `org.springframework.security.core.userdetails.User`, wraps the domain `User` model. The role (`ROLE_USER`) comes from `user.getRole()` (read from the DB `role` column) — **never hardcoded**.
+- `PawUserDetailsService` — `@Component` implementing `UserDetailsService`, delegates to `UserService.findByEmail()` and wraps the result in `PawUserDetails`.
+
+### User roles (DB-driven)
+- The `users` table has a `role VARCHAR(50) NOT NULL DEFAULT 'ROLE_USER'` column.
+- `User` model has a `role` field; `UserDaoImpl` reads it in every query.
+- `UserDaoImpl.create()` explicitly inserts `role = 'ROLE_USER'` via the params map (`SimpleJdbcInsert` does not use column DEFAULTs).
+- To grant admin access: `UPDATE users SET role = 'ROLE_ADMIN' WHERE id = ?` — no code change needed.
+
+### Static resource security
+```java
+@Override
+public void configure(WebSecurity web) {
+    web.ignoring().antMatchers("/css/**", "/js/**", "/images/**", "/favicon.png");
+}
+```
+`web.ignoring()` completely bypasses the filter chain — more efficient than `permitAll()`.
 
 ### Route rules
 - `/users/me` — requires `ROLE_USER`.
@@ -282,25 +308,61 @@ Spring Security 5.8.10 is configured in `WebAuthConfig` (`ar.edu.itba.paw.webapp
 - Login form: `/login` (GET show, POST handled by Spring Security), parameters `email` / `password`.
 - Logout: POST to `/logout` with CSRF token; redirects to `/login?logout=true`.
 
-### Success handler
-After login, a custom `AuthenticationSuccessHandler` redirects to `{contextPath}/users/me` via `response.sendRedirect()` — **not** `defaultSuccessUrl`. This avoids Jetty's UTF-8 query-string merging bug on JSP forwards.
+### Success handler (login)
+Uses `SavedRequestAwareAuthenticationSuccessHandler` overriding `onAuthenticationSuccess`. Manually removes the saved request before redirecting to prevent Jetty's UTF-8 query-string merging bug:
 
 ```java
 private AuthenticationSuccessHandler successHandler() {
-    return (request, response, authentication) -> {
-        response.sendRedirect(request.getContextPath() + "/users/me");
+    return new SavedRequestAwareAuthenticationSuccessHandler() {
+        @Override
+        public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                                            Authentication authentication) throws IOException, ServletException {
+            final HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+            final SavedRequest savedRequest = requestCache.getRequest(request, response);
+            requestCache.removeRequest(request, response);  // ← prevents Jetty 400 bug
+            clearAuthenticationAttributes(request);
+
+            final String targetUrl = (savedRequest != null)
+                    ? savedRequest.getRedirectUrl()
+                    : request.getContextPath() + "/users/me";
+            response.sendRedirect(targetUrl);
+        }
     };
 }
 ```
+
+**Why `removeRequest` is critical:** if the saved request is left in the cache, `RequestCacheAwareFilter` replays it by wrapping the next GET request with the saved POST parameters (which contain BCrypt hashes with `$` chars). When `InternalResourceView` forwards to the JSP, Jetty's `mergeQueryParameters` tries to decode those as UTF-8 and throws HTTP 400.
+
+### Auto-login after registration
+`UserController.register()` authenticates programmatically after `userService.create()`:
+
+```java
+final User user = userService.create(email, password);
+
+// Load full UserDetails via PawUserDetailsService (role comes from DB)
+final UserDetails authUser = userDetailsService.loadUserByUsername(user.getEmail());
+final Authentication auth = new UsernamePasswordAuthenticationToken(
+        authUser, authUser.getPassword(), authUser.getAuthorities()
+);
+SecurityContextHolder.getContext().setAuthentication(auth);
+
+// Handle saved request the same way as the success handler
+final HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+final SavedRequest savedRequest = requestCache.getRequest(request, response);
+requestCache.removeRequest(request, response);
+final String targetUrl = (savedRequest != null)
+        ? savedRequest.getRedirectUrl()
+        : request.getContextPath() + "/";
+return new ModelAndView("redirect:" + targetUrl);
+```
+
+**Why `loadUserByUsername` instead of `request.login()`:** using `loadUserByUsername` explicitly goes through `PawUserDetailsService`, guaranteeing the role is loaded from the DB. It keeps the auth logic DRY and visible.
 
 ### CSRF
 CSRF is enabled. Every POST form must include:
 ```jsp
 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 ```
-
-### Auto-login after registration
-`UserController.register()` calls `request.login(email, password)` after `userService.create()` to programmatically authenticate the new user, then redirects to `/users/me`.
 
 ### Accessing the logged-in user
 Inject `@AuthenticationPrincipal PawUserDetails userDetails` into controller methods. Get the domain object via `userDetails.getUser()`.
@@ -316,6 +378,83 @@ Inject `@AuthenticationPrincipal PawUserDetails userDetails` into controller met
     </c:otherwise>
 </c:choose>
 ```
+
+### Error handling in register form
+On duplicate email, render the register view directly from the POST handler (no redirect):
+```java
+if (userService.findByEmail(email).isPresent()) {
+    final ModelAndView mav = new ModelAndView("users/register");
+    mav.addObject("emailTaken", true);
+    return mav;
+}
+```
+The JSP uses `${emailTaken}` model attribute — **never** `${param.error}` — because redirecting with a query param causes the same Jetty 400 bug.
+
+---
+
+## Logging Conventions (SLF4J + Logback)
+
+### Dependency structure
+- `slf4j-api` — compile dependency in `services` and `persistence`. Code programs against this interface only.
+- `logback-classic` — runtime dependency in `webapp` only. Never in `services` or `persistence`.
+- `janino` — runtime dependency in `webapp`, required for `<if>` conditions in `logback.xml`.
+
+### Using SLF4J in code
+```java
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+private static final Logger LOGGER = LoggerFactory.getLogger(MyClass.class);
+
+LOGGER.info("User registered: {}", email);   // {} = lazy placeholder, no string concat
+LOGGER.warn("Email already taken: {}", email);
+LOGGER.error("Unexpected error", exception);
+```
+
+Always use `{}` placeholders — never string concatenation — so the `toString()` is skipped when the level is disabled.
+
+### Configuration files
+
+| File | Location | Used when |
+|------|----------|-----------|
+| `logback.xml` | `webapp/src/main/resources/` | `mvn jetty:run` (dev) and Pampero (prod) |
+| `logback-test.xml` | `webapp/src/test/resources/` | `mvn test` — auto-selected, excluded from WAR |
+
+Logback priority: `logback-test.xml` > `logback.xml`. Since `logback-test.xml` is in `src/test/resources`, Maven's WAR plugin never includes it in the artifact.
+
+### `logback.xml` — conditional dev/prod config
+Uses Janino `<if>` to switch based on the `env` system property:
+- `env=dev` (set by `jetty-maven-plugin`) → STDOUT at INFO
+- no env (Pampero/Tomcat) → rolling daily files at WARN, max 5 files
+
+```xml
+<if condition='"dev".equals(property("env"))'>
+    <then> <!-- ConsoleAppender, root INFO --> </then>
+    <else> <!-- RollingFileAppender logs/paw-2026a-09.%d{yyyy-MM-dd}.log, root WARN --> </else>
+</if>
+```
+
+### `jetty-maven-plugin` system property
+In `webapp/pom.xml`, the jetty plugin is configured to pass `-Denv=dev` automatically:
+```xml
+<systemProperties>
+    <systemProperty>
+        <name>env</name>
+        <value>dev</value>
+    </systemProperty>
+</systemProperties>
+```
+
+### Logger level guidelines
+| Package | Level | Reason |
+|---------|-------|--------|
+| `ar.edu.itba.paw` | INFO | our application code |
+| `org.springframework` | WARN | suppress verbose startup noise |
+| `org.springframework.security` | INFO | useful to see auth events |
+| `org.eclipse.jetty` | WARN | suppress server noise |
+
+### Spring → SLF4J routing
+Spring 5 uses `spring-jcl` internally which auto-detects SLF4J on the classpath and delegates to it. No bridge dependency needed — Spring logs flow through `logback.xml` automatically.
 
 ---
 
@@ -584,14 +723,19 @@ Examples:
 ```
 ar.edu.itba.paw.
 ├── webapp.
-│   ├── config.WebConfig           ← Spring MVC configuration
+│   ├── auth.
+│   │   ├── PawUserDetails         ← wraps domain User, provides role to Spring Security
+│   │   └── PawUserDetailsService  ← loads user from DB for authentication
+│   ├── config.
+│   │   ├── WebConfig              ← Spring MVC, DataSource, BCryptPasswordEncoder bean
+│   │   └── WebAuthConfig          ← Spring Security rules, success handler, CSRF
 │   └── controller.*Controller     ← @Controller classes
 ├── services.*ServiceImpl          ← @Service implementations
 ├── interfaces.
 │   ├── services.*Service          ← Service interfaces (in service-contracts)
 │   └── persistence.*Dao           ← DAO interfaces (in service-contracts)
-├── persistence.*DaoImpl           ← @Repository JDBC implementations (TBD)
-└── models.*                       ← Domain entity POJOs (TBD)
+├── persistence.*DaoImpl           ← @Repository JDBC implementations
+└── models.*                       ← Domain entity POJOs
 ```
 
 **Naming rules:**
@@ -703,7 +847,7 @@ ar.edu.itba.paw.
 
 ---
 
-## Current State (2026-03-23)
+## Current State (2026-04-06)
 
 **Implemented:**
 - Multi-module architecture with `models`, `service-contracts`, `services`, `persistence`, and `webapp`
@@ -713,8 +857,12 @@ ar.edu.itba.paw.
 - Service and DAO layers for productions, obras, productoras, ratings, reviews, wishlist, seen items, shows, users, and images
 - Shared JSP tags: `alert`, `button`, `card`, `hero`, `navbar`, `playDetail`, `productionCard`, `search`, `sectionRow`
 - Production cards reused across landing, cartelera, search results, productora pages, and wishlist/profile sections
+- **Spring Security 5.8.10**: full auth flow with form login, register, logout, remember-me, CSRF
+- **`PawUserDetails` / `PawUserDetailsService`**: DB-backed auth, role driven from `users.role` column
+- **Login/Register JSPs** with `auth-form.css`, navbar shows login/register or profile/logout based on auth state
+- **Logback + SLF4J**: `logback.xml` with `env`-conditional (dev=STDOUT/INFO, prod=rolling/WARN), `logback-test.xml` for tests
+- `slf4j-api` declared as compile dependency in `services` and `persistence`
 
-**Still pending or intentionally simplified:**
-- Authentication and real logged-in users (some controllers still use a hardcoded user id for demo flow)
+**Still pending:**
 - Email sending and async mail flows
 - Automated tests enforcing all documented conventions
