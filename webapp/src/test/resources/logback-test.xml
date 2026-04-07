@@ -11,7 +11,7 @@
     <logger name="org.eclipse.jetty"            level="WARN" />
     <logger name="org.springframework"          level="WARN" />
     <logger name="org.springframework.security" level="INFO" />
-    <logger name="ar.edu.itba.paw"              level="INFO" />
+    <logger name="ar.edu.itba.paw"              level="DEBUG" />
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />
