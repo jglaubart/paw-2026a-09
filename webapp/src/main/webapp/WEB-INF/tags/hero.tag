@@ -25,6 +25,12 @@
             <div class="hero-slides">
                 <c:forEach var="slide" items="${slides}" varStatus="status">
                     <c:set var="slideImageUrl" value="${not empty slide.imageUrl ? slide.imageUrl : pageContext.request.contextPath.concat('/images/Portadas/hamlet.jpg')}" />
+                    <c:set var="slideSynopsis" value="${slide.synopsis}" />
+                    <c:set var="slideSynopsisTruncated" value="${false}" />
+                    <c:if test="${not empty slideSynopsis and fn:length(slideSynopsis) > 225}">
+                        <c:set var="slideSynopsisTruncated" value="${true}" />
+                        <c:set var="slideSynopsis" value="${fn:substring(slideSynopsis, 0, 222).concat('...')}" />
+                    </c:if>
                     <c:url var="slideResolvedImageUrl" value="${slideImageUrl}" />
                     <c:url var="slideDetailUrl" value="/obras/${slide.obraId}">
                         <c:param name="produccionId" value="${slide.id}" />
@@ -52,8 +58,13 @@
 
                                 <h1 class="hero-title"><c:out value="${slide.name}" /></h1>
 
-                                <c:if test="${not empty slide.synopsis}">
-                                    <p class="hero-description"><c:out value="${slide.synopsis}" /></p>
+                                <c:if test="${not empty slideSynopsis}">
+                                    <p class="hero-description">
+                                        <c:out value="${slideSynopsis}" />
+                                        <c:if test="${slideSynopsisTruncated}">
+                                            <a href="${slideDetailUrl}" class="hero-description-more">Ver mas</a>
+                                        </c:if>
+                                    </p>
                                 </c:if>
 
                                 <div class="hero-actions">

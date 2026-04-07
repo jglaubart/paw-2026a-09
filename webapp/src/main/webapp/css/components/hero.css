@@ -99,6 +99,19 @@
     line-height: 1.65;
 }
 
+.hero-description-more {
+    margin-left: 0.35rem;
+    color: #64b5ff;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.hero-description-more:hover,
+.hero-description-more:focus {
+    color: #8ac8ff;
+    text-decoration: underline;
+}
+
 .hero-actions {
     display: flex;
     align-items: center;
