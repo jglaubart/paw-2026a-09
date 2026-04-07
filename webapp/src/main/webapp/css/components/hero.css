@@ -106,6 +106,10 @@
     text-decoration: none;
 }
 
+.hero-description-more:visited {
+    color: #64b5ff;
+}
+
 .hero-description-more:hover,
 .hero-description-more:focus {
     color: #8ac8ff;
