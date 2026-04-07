@@ -101,10 +101,32 @@ This document is a living guide. Keep it synchronized with the repository when a
 
 ## Module Structure & Maven Conventions
 
-- Parent POM: `ar.edu.itba.paw:platea` — holds `<dependencyManagement>` for all versions.
-- Child POMs declare dependencies **without versions** (inherited).
-- Spring version property: `${spring.version}` = `5.3.33`.
+- Parent POM: `ar.edu.itba.paw:platea` — holds `<dependencyManagement>` and `<pluginManagement>` for all versions.
+- Child POMs declare dependencies and plugins **without versions** (inherited from parent).
+- **All versions — dependencies and plugins — must be declared as `<properties>` in the parent POM.** Never hardcode a version number directly inside `<dependency>` or `<plugin>` tags.
 - Run locally: `cd webapp && mvn jetty:run` → `http://localhost:8080/`
+
+### Current version properties (parent `pom.xml`)
+
+| Property | Value | Notes |
+|----------|-------|-------|
+| `spring.version` | `5.3.33` | Spring MVC, JDBC, context-support |
+| `spring.security.version` | `5.8.10` | spring-security-web, config, core |
+| `logback.version` | `1.4.14` | SLF4J 2.x compatible binding |
+| `org.postgresql.version` | `42.7.3` | |
+| `javax.servlet.version` | `4.0.1` | provided scope |
+| `jstl.version` | `1.2` | |
+| `thymeleaf-spring5.version` | `3.1.2.RELEASE` | email templates |
+| `javax.mail.version` | `1.6.2` | |
+| `commons-fileupload.version` | `1.5` | multipart |
+| `jetty.plugin.version` | `9.4.58.v20250814` | local dev server |
+| `maven.compiler.plugin.version` | `3.13.0` | |
+| `maven.war.plugin.version` | `3.4.0` | |
+| `maven.surefire.plugin.version` | `3.3.0` | |
+| `maven.resources.plugin.version` | `3.3.1` | |
+| `maven.clean.plugin.version` | `3.4.0` | |
+| `maven.install.plugin.version` | `3.1.2` | |
+| `maven.deploy.plugin.version` | `3.1.2` | |
 
 ### Dependency rules (compile-time enforced via Maven scopes)
 
@@ -240,9 +262,66 @@ class PlayServiceImpl {
 
 ---
 
+## Spring Security Conventions
+
+Spring Security 5.8.10 is configured in `WebAuthConfig` (`ar.edu.itba.paw.webapp.config`).
+
+### Setup
+- `DelegatingFilterProxy` for `springSecurityFilterChain` registered in `web.xml` before all other filters.
+- `WebAuthConfig` extends `WebSecurityConfigurerAdapter`, annotated `@Configuration @EnableWebSecurity`.
+- `PasswordEncoder` bean (`BCryptPasswordEncoder`) lives in `WebConfig` — **not** in `WebAuthConfig` — to avoid a circular dependency with `PawUserDetailsService`.
+- `@ComponentScan` covers `ar.edu.itba.paw.webapp` (not just the controller sub-package) so `PawUserDetailsService` and `PawUserDetails` in `ar.edu.itba.paw.webapp.auth` are picked up.
+
+### Auth classes (`ar.edu.itba.paw.webapp.auth`)
+- `PawUserDetails` — extends `org.springframework.security.core.userdetails.User`, wraps the domain `User` model, grants `ROLE_USER`.
+- `PawUserDetailsService` — `@Component` implementing `UserDetailsService`, delegates to `UserService.findByEmail()`.
+
+### Route rules
+- `/users/me` — requires `ROLE_USER`.
+- All other routes — `permitAll()`.
+- Login form: `/login` (GET show, POST handled by Spring Security), parameters `email` / `password`.
+- Logout: POST to `/logout` with CSRF token; redirects to `/login?logout=true`.
+
+### Success handler
+After login, a custom `AuthenticationSuccessHandler` redirects to `{contextPath}/users/me` via `response.sendRedirect()` — **not** `defaultSuccessUrl`. This avoids Jetty's UTF-8 query-string merging bug on JSP forwards.
+
+```java
+private AuthenticationSuccessHandler successHandler() {
+    return (request, response, authentication) -> {
+        response.sendRedirect(request.getContextPath() + "/users/me");
+    };
+}
+```
+
+### CSRF
+CSRF is enabled. Every POST form must include:
+```jsp
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+```
+
+### Auto-login after registration
+`UserController.register()` calls `request.login(email, password)` after `userService.create()` to programmatically authenticate the new user, then redirects to `/users/me`.
+
+### Accessing the logged-in user
+Inject `@AuthenticationPrincipal PawUserDetails userDetails` into controller methods. Get the domain object via `userDetails.getUser()`.
+
+### Checking auth state in JSP (no taglib needed)
+```jsp
+<c:choose>
+    <c:when test="${pageContext.request.userPrincipal != null}">
+        <%-- authenticated --%>
+    </c:when>
+    <c:otherwise>
+        <%-- anonymous --%>
+    </c:otherwise>
+</c:choose>
+```
+
+---
+
 ## Spring MVC Conventions
 
-- `@ComponentScan` in `WebConfig`: `ar.edu.itba.paw.webapp.controller`, `ar.edu.itba.paw.services`, `ar.edu.itba.paw.persistence`.
+- `@ComponentScan` in `WebConfig`: `ar.edu.itba.paw.webapp` (covers controllers, auth, and config sub-packages), `ar.edu.itba.paw.services`, `ar.edu.itba.paw.persistence`.
 - Views resolved as: `/WEB-INF/views/<name>.jsp` via `InternalResourceViewResolver` (prefix + suffix in `WebConfig`).
 - Static resources: `/css/**` → `/css/`, `/images/**` → `/images/` (configured in `WebConfig.addResourceHandlers`).
 - Controller methods return `String` (view name) or `ModelAndView`.

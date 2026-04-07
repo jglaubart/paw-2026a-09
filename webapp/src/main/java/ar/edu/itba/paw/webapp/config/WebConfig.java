@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.webapp.config;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +36,7 @@ import java.util.Map;
 import java.util.Properties;
 
 @ComponentScan({
-    "ar.edu.itba.paw.webapp.controller",
+    "ar.edu.itba.paw.webapp",
     "ar.edu.itba.paw.services",
     "ar.edu.itba.paw.persistence"
 })
@@ -55,6 +57,11 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/js/**").addResourceLocations("/js/");
         registry.addResourceHandler("/images/**").addResourceLocations("/images/");
         registry.addResourceHandler("/favicon.png").addResourceLocations("/favicon.png");
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -152,6 +159,9 @@ public class WebConfig implements WebMvcConfigurer {
             runScript(dataSource, "migration_backfill_play_ratings_from_production_ratings.sql");
             runScript(dataSource, "migration_review_email_identity.sql");
             runScript(dataSource, "migration_reviews_per_obra.sql");
+            runScript(dataSource, "migration_bcrypt_demo_password.sql");
+            runScript(dataSource, "migration_productions_image_url.sql");
+            runScript(dataSource, "migration_users_role.sql");
         };
     }
 

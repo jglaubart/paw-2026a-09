@@ -198,6 +198,7 @@
 
                 <c:url var="shareActionUrl" value="/obras/${obra.id}/share" />
                 <form action="${shareActionUrl}" method="post" class="obra-share-form">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                     <input type="hidden" name="produccionId" value="${selectedProduction.id}" />
 
                     <label class="obra-share-label" for="share-sender-name">Tu nombre</label>
@@ -402,6 +403,7 @@
                                   accept-charset="UTF-8"
                                   class="obra-rate-form-inner"
                                   data-obra-feedback-form>
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                                 <input type="hidden" name="produccionId" value="${selectedProduction.id}" />
                                 <input type="email"
                                        name="email"

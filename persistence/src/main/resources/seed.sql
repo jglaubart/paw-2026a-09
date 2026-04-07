@@ -4,7 +4,8 @@
 -- ============================================
 
 -- 1. Usuario demo
-INSERT INTO users (email, password) VALUES ('demo@platea.com', 'demo1234');
+-- password = "password" encoded with BCrypt cost 10
+INSERT INTO users (email, password) VALUES ('demo@platea.com', '$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG');
 
 -- 2. Obras (pieza teatral base)
 INSERT INTO obras (title, synopsis, genre) VALUES

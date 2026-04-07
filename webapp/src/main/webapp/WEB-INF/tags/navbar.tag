@@ -7,6 +7,10 @@
 <c:url var="homeUrl"         value="/" />
 <c:url var="carteleraUrl"    value="/cartelera" />
 <c:url var="subirObraUrl"    value="/subir-obra" />
+<c:url var="loginUrl"        value="/login" />
+<c:url var="registerUrl"     value="/register" />
+<c:url var="logoutUrl"       value="/logout" />
+<c:url var="profileUrl"      value="/users/me" />
 <%-- <c:url var="watchlistUrl" value="/watchlist" /> --%>
 <%-- <c:url var="historialUrl" value="/historial" /> --%>
 <c:url var="navbarSearchScriptUrl" value="/js/components/navbar-search.js" />
@@ -41,7 +45,22 @@
 
     <div class="navbar-actions">
         <paw:advancedSearch variant="navbar" />
-        <paw:button text="Subir obra" size="md" cssClass="btn-primary navbar-submit-button" href="${subirObraUrl}" />
+        <div class="navbar-btn-group">
+            <c:choose>
+                <c:when test="${pageContext.request.userPrincipal != null}">
+                    <a href="${profileUrl}" class="btn btn-md navbar-ghost-btn">Mi perfil</a>
+                    <form action="${logoutUrl}" method="post" class="navbar-logout-form">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                        <button type="submit" class="btn btn-md navbar-ghost-btn">Salir</button>
+                    </form>
+                </c:when>
+                <c:otherwise>
+                    <a href="${loginUrl}" class="btn btn-md navbar-ghost-btn">Ingresar</a>
+                    <a href="${registerUrl}" class="btn btn-md navbar-submit-button">Registrarse</a>
+                </c:otherwise>
+            </c:choose>
+            <paw:button text="Subir obra" size="md" cssClass="btn-primary navbar-submit-button" href="${subirObraUrl}" />
+        </div>
     </div>
 </header>
 <script src="${navbarSearchScriptUrl}" defer></script>

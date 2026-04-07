@@ -5,7 +5,9 @@ import ar.edu.itba.paw.interfaces.services.ProductionService;
 import ar.edu.itba.paw.interfaces.services.ShowService;
 import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.Show;
+import ar.edu.itba.paw.webapp.auth.PawUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,7 +45,10 @@ public class HomeController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView index() {
+    public ModelAndView index(@AuthenticationPrincipal final PawUserDetails userDetails) {
+        if (userDetails != null) {
+            return new ModelAndView("redirect:/users/me");
+        }
         final ModelAndView mav = new ModelAndView("index");
         final List<Production> available = productionService.findAvailable();
         final List<Production> today = findTodayProductions(available);

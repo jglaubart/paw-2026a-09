@@ -96,6 +96,7 @@
 
                 <c:if test="${petition.status eq 'PENDING'}">
                     <form action="${pageContext.request.contextPath}/internal/dev/play-petitions/${petition.id}/decision" method="post" class="petition-admin-decision-form">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                         <label for="adminNotes">Notas para el solicitante</label>
                         <textarea id="adminNotes" name="adminNotes" rows="7"><c:out value="${petition.adminNotes}" /></textarea>
                         <div class="petition-admin-actions">

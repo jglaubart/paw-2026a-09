@@ -1,9 +1,11 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.RatingService;
+import ar.edu.itba.paw.webapp.auth.PawUserDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,8 +20,6 @@ import java.nio.charset.StandardCharsets;
 @Controller
 public class RatingController {
 
-    private static final long HARDCODED_USER_ID = 1L;
-
     private final RatingService ratingService;
 
     @Autowired
@@ -31,11 +31,12 @@ public class RatingController {
     public Object rateProduction(@PathVariable("id") final long productionId,
                                  @RequestParam("score") final String score,
                                  @RequestParam(value = "obraId", required = false) final Long obraId,
+                                 @AuthenticationPrincipal final PawUserDetails userDetails,
                                  final HttpServletRequest request) {
         final Integer normalizedScore = normalizeScore(score);
 
-        if (normalizedScore != null) {
-            ratingService.rateProduction(HARDCODED_USER_ID, productionId, normalizedScore);
+        if (normalizedScore != null && userDetails != null) {
+            ratingService.rateProduction(userDetails.getUser().getId(), productionId, normalizedScore);
         }
 
         if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {

@@ -135,6 +135,7 @@
                             <p class="production-detail-score">Tu puntaje: <c:out value="${userScore}" />/10</p>
                         </c:if>
                         <form action="${rateActionUrl}" method="post" class="production-detail-rate-form">
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                             <select name="score" class="production-detail-score-select">
                                 <c:forEach var="i" begin="1" end="10">
                                     <option value="${i}" ${userScore != null && userScore == i ? 'selected' : ''}><c:out value="${i}" /></option>

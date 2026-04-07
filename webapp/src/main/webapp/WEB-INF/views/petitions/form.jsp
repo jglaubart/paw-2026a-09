@@ -77,6 +77,7 @@
             </c:if>
 
             <form action="${pageContext.request.contextPath}/subir-obra" method="post" enctype="multipart/form-data" class="petition-form-card" data-play-petition-form>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                 <section class="petition-form-step">
                     <div class="petition-form-step-heading">
                         <span class="petition-form-step-number">1</span>

@@ -27,10 +27,6 @@ import java.time.LocalDate;
 @Controller
 public class ObraController {
 
-    private static final long HARDCODED_USER_ID = 1L;
-
-    // Demo flow still uses a fixed user for rating until auth exists.
-
     private final ObraService obraService;
     private final ProductionService productionService;
     private final RatingService ratingService;

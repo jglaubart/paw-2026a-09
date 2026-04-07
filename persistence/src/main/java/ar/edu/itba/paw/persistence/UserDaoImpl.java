@@ -21,7 +21,7 @@ public class UserDaoImpl implements UserDao {
     private final SimpleJdbcInsert jdbcInsert;
 
     private static final RowMapper<User> USER_MAPPER = (rs, rowNum) ->
-            new User(rs.getLong("id"), rs.getString("email"), rs.getString("password"));
+            new User(rs.getLong("id"), rs.getString("email"), rs.getString("password"), rs.getString("role"));
 
     @Autowired
     public UserDaoImpl(final DataSource dataSource) {
@@ -34,7 +34,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public Optional<User> findById(final long id) {
         final List<User> users = jdbcTemplate.query(
-                "SELECT id, email, password FROM users WHERE id = ?",
+                "SELECT id, email, password, role FROM users WHERE id = ?",
                 new Object[]{ id },
                 USER_MAPPER
         );
@@ -44,7 +44,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public Optional<User> findByEmail(final String email) {
         final List<User> users = jdbcTemplate.query(
-                "SELECT id, email, password FROM users WHERE email = ?",
+                "SELECT id, email, password, role FROM users WHERE email = ?",
                 new Object[]{ email },
                 USER_MAPPER
         );
@@ -56,7 +56,8 @@ public class UserDaoImpl implements UserDao {
         final Map<String, Object> params = new HashMap<>();
         params.put("email", email);
         params.put("password", password);
+        params.put("role", "ROLE_USER");
         final Number key = jdbcInsert.executeAndReturnKey(params);
-        return new User(key.longValue(), email, password);
+        return new User(key.longValue(), email, password, "ROLE_USER");
     }
 }

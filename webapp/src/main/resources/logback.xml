@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Activated by -Denv=dev (jetty-maven-plugin) for local dev.
+     Without that property (Pampero/Tomcat) the release appender is used. -->
+<configuration>
+
+    <if condition='"dev".equals(property("env"))'>
+        <then>
+            <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder>
+                    <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+                </encoder>
+            </appender>
+
+            <logger name="org.eclipse.jetty"            level="WARN" />
+            <logger name="org.springframework"          level="WARN" />
+            <logger name="org.springframework.security" level="INFO" />
+            <logger name="ar.edu.itba.paw"              level="INFO" />
+
+            <root level="INFO">
+                <appender-ref ref="STDOUT" />
+            </root>
+        </then>
+        <else>
+            <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>logs/platea.log</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <fileNamePattern>logs/platea.%d{yyyy-MM-dd}.log</fileNamePattern>
+                    <maxHistory>5</maxHistory>
+                </rollingPolicy>
+                <encoder>
+                    <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+                </encoder>
+            </appender>
+
+            <root level="WARN">
+                <appender-ref ref="FILE" />
+            </root>
+        </else>
+    </if>
+
+</configuration>
