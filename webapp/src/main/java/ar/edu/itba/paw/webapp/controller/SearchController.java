@@ -2,7 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.ProductionService;
 import ar.edu.itba.paw.interfaces.services.RatingService;
-import ar.edu.itba.paw.models.Production;
+import ar.edu.itba.paw.models.ProductionCardSummary;
 import ar.edu.itba.paw.models.ProductionSearchCriteria;
 import ar.edu.itba.paw.models.SearchDateOption;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,8 +68,8 @@ public class SearchController {
                 availableOnly
         );
 
-        final List<Production> results = productionService.search(criteria, normalizedPage, PAGE_SIZE);
-        if (date != null && results.isEmpty()) {
+        final List<ProductionCardSummary> resultCards = productionService.searchCards(criteria, normalizedPage, PAGE_SIZE);
+        if (date != null && resultCards.isEmpty()) {
             mav.addObject(
                     "nearbyDates",
                     buildAlternativeDateOptions(
@@ -78,15 +78,15 @@ public class SearchController {
                     )
             );
         }
-        mav.addObject("results", results);
-        mav.addObject("productionRatings", ratingService.getProductionRatingLabels(collectProductionIds(results)));
+        mav.addObject("resultCards", resultCards);
+        mav.addObject("productionRatings", ratingService.getProductionRatingLabels(collectProductionIds(resultCards)));
         return mav;
     }
 
-    private List<Long> collectProductionIds(final List<Production> productions) {
+    private List<Long> collectProductionIds(final List<ProductionCardSummary> productionCards) {
         final List<Long> productionIds = new ArrayList<>();
-        for (final Production production : productions) {
-            productionIds.add(production.getId());
+        for (final ProductionCardSummary productionCard : productionCards) {
+            productionIds.add(productionCard.getRepresentativeProductionId());
         }
         return productionIds;
     }

@@ -24,6 +24,7 @@ public interface ProductionService {
     List<ProductionCardSummary> findByGenreCards(String genre, int page, int pageSize);
     List<Production> search(String query, int page, int pageSize);
     List<Production> search(ProductionSearchCriteria criteria, int page, int pageSize);
+    List<ProductionCardSummary> searchCards(ProductionSearchCriteria criteria, int page, int pageSize);
     List<SearchDateOption> findNearbyDates(ProductionSearchCriteria criteria, LocalDate selectedDate, int windowDays);
     List<Production> findByGenre(String genre, int page, int pageSize);
     List<String> findAvailableGenres();

@@ -53,7 +53,7 @@
                 </c:if>
             </div>
 
-            <c:if test="${empty results and not empty nearbyDates}">
+            <c:if test="${empty resultCards and not empty nearbyDates}">
                 <section class="search-results-nearby" aria-label="Fechas cercanas">
                     <div class="search-results-nearby-head">
                         <p class="search-results-nearby-kicker">Otras fechas</p>
@@ -66,7 +66,7 @@
 
                             <a href="${nearbyDateUrl}" class="search-results-nearby-option search-results-nearby-option-link">
                                 <span class="search-results-nearby-date"><c:out value="${dateOption.date}" /></span>
-                                <span class="search-results-nearby-count"><c:out value="${dateOption.productionCount}" /> producciones</span>
+                                <span class="search-results-nearby-count"><c:out value="${dateOption.productionCount}" /> obras</span>
                             </a>
                         </c:forEach>
                     </div>
@@ -75,15 +75,15 @@
         </section>
 
         <c:choose>
-            <c:when test="${not empty results}">
-                <paw:sectionRow title="Resultados" subtitle="${fn:length(results)} producciones encontradas">
-                    <c:forEach var="p" items="${results}">
-                        <c:set var="detailUrl" value="/obras/${p.obraId}?produccionId=${p.id}" />
+            <c:when test="${not empty resultCards}">
+                <paw:sectionRow title="Resultados" subtitle="${fn:length(resultCards)} obras encontradas">
+                    <c:forEach var="card" items="${resultCards}">
+                        <c:set var="detailUrl" value="/obras/${card.obraId}?produccionId=${card.representativeProductionId}" />
                         <paw:productionCard
-                            title="${fn:escapeXml(p.name)}"
-                            imageUrl="${not empty p.imageUrl ? p.imageUrl : '/images/Portadas/hamlet.jpg'}"
-                            venue="${fn:escapeXml(p.theater)}"
-                            rating="${productionRatings[p.id]}"
+                            title="${fn:escapeXml(card.title)}"
+                            imageUrl="${not empty card.imageUrl ? card.imageUrl : '/images/Portadas/hamlet.jpg'}"
+                            venue="${fn:escapeXml(card.theaterSummary)}"
+                            rating="${productionRatings[card.representativeProductionId]}"
                             detailUrl="${detailUrl}"
                         />
                     </c:forEach>
@@ -116,7 +116,7 @@
             <c:if test="${page > 0}">
                 <a href="${previousPageUrl}" class="btn btn-primary btn-md search-results-link">← Anterior</a>
             </c:if>
-            <c:if test="${fn:length(results) == 12}">
+            <c:if test="${fn:length(resultCards) == 12}">
                 <a href="${nextPageUrl}" class="btn btn-primary btn-md search-results-link">Siguiente →</a>
             </c:if>
         </div>

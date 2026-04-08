@@ -120,6 +120,11 @@ public class ProductionServiceImpl implements ProductionService {
     }
 
     @Override
+    public List<ProductionCardSummary> searchCards(final ProductionSearchCriteria criteria, final int page, final int pageSize) {
+        return paginate(summarizeByObra(productionDao.search(criteria, 0, Integer.MAX_VALUE)), page, pageSize);
+    }
+
+    @Override
     public List<SearchDateOption> findNearbyDates(final ProductionSearchCriteria criteria,
                                                   final LocalDate selectedDate,
                                                   final int windowDays) {

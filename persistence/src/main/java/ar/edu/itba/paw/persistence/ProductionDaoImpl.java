@@ -162,7 +162,7 @@ public class ProductionDaoImpl implements ProductionDao {
         }
 
         final StringBuilder sql = new StringBuilder(
-                "SELECT s.show_date, COUNT(DISTINCT p.id) AS production_count FROM productions p " +
+                "SELECT s.show_date, COUNT(DISTINCT o.id) AS production_count FROM productions p " +
                 "JOIN obras o ON p.obra_id = o.id " +
                 "LEFT JOIN productoras pr ON p.productora_id = pr.id " +
                 "JOIN shows s ON s.production_id = p.id " +
