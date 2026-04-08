@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/search.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/button.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/production-card.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/production-list-page.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/search-results-page.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/section-row.css" />
 </head>
@@ -23,10 +24,7 @@
 
     <paw:navbar />
 
-    <c:set var="previousPageUrl" value="/search?q=${query}&genre=${genre}&theater=${theater}&location=${location}&date=${date}&available=true&page=${page - 1}" />
-    <c:set var="nextPageUrl" value="/search?q=${query}&genre=${genre}&theater=${theater}&location=${location}&date=${date}&available=true&page=${page + 1}" />
-
-    <main class="search-results-page">
+    <main class="search-results-page production-list-page">
         <section class="search-results-filters">
             <p class="search-results-kicker">Busqueda</p>
             <h1 class="search-results-title">Resultados</h1>
@@ -76,18 +74,27 @@
 
         <c:choose>
             <c:when test="${not empty resultCards}">
-                <paw:sectionRow title="Resultados" subtitle="${fn:length(resultCards)} obras encontradas">
-                    <c:forEach var="card" items="${resultCards}">
-                        <c:set var="detailUrl" value="/obras/${card.obraId}?produccionId=${card.representativeProductionId}" />
-                        <paw:productionCard
-                            title="${fn:escapeXml(card.title)}"
-                            imageUrl="${not empty card.imageUrl ? card.imageUrl : '/images/Portadas/hamlet.jpg'}"
-                            venue="${fn:escapeXml(card.theaterSummary)}"
-                            rating="${productionRatings[card.representativeProductionId]}"
-                            detailUrl="${detailUrl}"
-                        />
-                    </c:forEach>
-                </paw:sectionRow>
+                <section class="section-row production-list-row">
+                    <div class="section-row-header">
+                        <div class="section-row-header-text">
+                            <h2 class="section-row-title">Resultados</h2>
+                            <p class="section-row-subtitle"><c:out value="${fn:length(resultCards)}" /> obras encontradas</p>
+                        </div>
+                    </div>
+
+                    <div class="section-row-cards production-list-row-cards">
+                        <c:forEach var="card" items="${resultCards}">
+                            <c:set var="detailUrl" value="/obras/${card.obraId}?produccionId=${card.representativeProductionId}" />
+                            <paw:productionCard
+                                title="${fn:escapeXml(card.title)}"
+                                imageUrl="${not empty card.imageUrl ? card.imageUrl : '/images/Portadas/hamlet.jpg'}"
+                                venue="${fn:escapeXml(card.theaterSummary)}"
+                                rating="${productionRatings[card.representativeProductionId]}"
+                                detailUrl="${detailUrl}"
+                            />
+                        </c:forEach>
+                    </div>
+                </section>
             </c:when>
             <c:otherwise>
                 <section class="search-results-empty">
@@ -112,14 +119,6 @@
             </c:otherwise>
         </c:choose>
 
-        <div class="search-results-pagination">
-            <c:if test="${page > 0}">
-                <a href="${previousPageUrl}" class="btn btn-primary btn-md search-results-link">← Anterior</a>
-            </c:if>
-            <c:if test="${fn:length(resultCards) == 12}">
-                <a href="${nextPageUrl}" class="btn btn-primary btn-md search-results-link">Siguiente →</a>
-            </c:if>
-        </div>
     </main>
 
 </body>

@@ -1,11 +1,6 @@
-.search-results-page {
-    padding: 2rem 0 3rem;
-}
-
 .search-results-filters {
-    max-width: 1120px;
-    margin: 0 auto 2rem;
-    padding: 0 2rem;
+    margin: 0 0 2rem;
+    padding: 0;
 }
 
 .search-results-kicker {
@@ -137,7 +132,7 @@
 }
 
 .search-results-empty {
-    padding: 4rem 2rem;
+    padding: 4rem 0;
     text-align: center;
 }
 
@@ -146,27 +141,16 @@
 }
 
 .search-results-page .section-row {
-    max-width: 1120px;
-    margin: 0 auto;
-    padding-inline: 2rem;
+    max-width: none;
+    margin: 0;
+    padding-inline: 0;
 }
 
-.search-results-pagination {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    padding: 2rem;
-}
-
-.search-results-link {
-    text-decoration: none;
+.search-results-page .production-list-row-cards {
+    padding-right: 0;
 }
 
 @media (max-width: 768px) {
-    .search-results-filters {
-        padding: 0 1rem;
-    }
-
     .search-results-nearby {
         padding: 1rem;
     }
@@ -176,6 +160,6 @@
     }
 
     .search-results-page .section-row {
-        padding-inline: 1rem;
+        padding-inline: 0;
     }
 }

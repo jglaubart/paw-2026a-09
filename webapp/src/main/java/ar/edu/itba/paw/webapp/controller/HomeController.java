@@ -23,6 +23,7 @@ import java.util.Map;
 public class HomeController {
 
     private static final int HERO_SLIDE_COUNT = 4;
+    private static final String EXCLUDED_HERO_TITLE = "AMOR/VENENO — Tangos y Boleros";
     private static final List<String> HERO_SLIDE_SELECTION = Arrays.asList(
             "A navegar, Piratas!",
             "La Revista del Cervantes",
@@ -60,7 +61,7 @@ public class HomeController {
     }
 
     private List<Production> buildHeroSlides(final List<Production>... groups) {
-        final List<Production> pool = collectUniqueProductions(groups);
+        final List<Production> pool = collectEligibleHeroProductions(collectUniqueProductions(groups));
         final Map<Long, Production> selected = new LinkedHashMap<>();
 
         for (final String title : HERO_SLIDE_SELECTION) {
@@ -134,5 +135,23 @@ public class HomeController {
         }
 
         return new ArrayList<>(productionsById.values());
+    }
+
+    private boolean isExcludedHeroProduction(final Production production) {
+        final String name = production.getName();
+        return name != null && EXCLUDED_HERO_TITLE.equalsIgnoreCase(name.trim());
+    }
+
+    private List<Production> collectEligibleHeroProductions(final List<Production> productions) {
+        // Filter out productions that must never appear in the home hero slider.
+        final List<Production> eligibleProductions = new ArrayList<>();
+
+        for (final Production production : productions) {
+            if (!isExcludedHeroProduction(production)) {
+                eligibleProductions.add(production);
+            }
+        }
+
+        return eligibleProductions;
     }
 }
