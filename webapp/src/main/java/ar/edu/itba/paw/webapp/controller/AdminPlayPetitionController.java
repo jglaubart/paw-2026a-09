@@ -16,7 +16,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/internal/dev/play-petitions")
+@RequestMapping("/admin")
 public class AdminPlayPetitionController {
 
     private static final int PAGE_SIZE = 20;
@@ -57,7 +57,7 @@ public class AdminPlayPetitionController {
                                @RequestParam(value = "error", required = false) final String error) {
         final Optional<PlayPetition> petition = playPetitionService.findById(id);
         if (!petition.isPresent()) {
-            return new ModelAndView("redirect:/internal/dev/play-petitions?error=not_found");
+            return new ModelAndView("redirect:/admin?error=not_found");
         }
 
         final ModelAndView mav = new ModelAndView("petitions/admin-detail");
@@ -74,17 +74,17 @@ public class AdminPlayPetitionController {
         try {
             if ("approve".equals(action)) {
                 playPetitionService.approve(id, adminNotes);
-                return new ModelAndView("redirect:/internal/dev/play-petitions/" + id + "?updated=approved");
+                return new ModelAndView("redirect:/admin/" + id + "?updated=approved");
             }
             if ("reject".equals(action)) {
                 playPetitionService.reject(id, adminNotes);
-                return new ModelAndView("redirect:/internal/dev/play-petitions/" + id + "?updated=rejected");
+                return new ModelAndView("redirect:/admin/" + id + "?updated=rejected");
             }
-            return new ModelAndView("redirect:/internal/dev/play-petitions/" + id + "?error=invalid_action");
+            return new ModelAndView("redirect:/admin/" + id + "?error=invalid_action");
         } catch (final IllegalArgumentException e) {
-            return new ModelAndView("redirect:/internal/dev/play-petitions/" + id + "?error=not_found");
+            return new ModelAndView("redirect:/admin/" + id + "?error=not_found");
         } catch (final IllegalStateException e) {
-            return new ModelAndView("redirect:/internal/dev/play-petitions/" + id + "?error=already_resolved");
+            return new ModelAndView("redirect:/admin/" + id + "?error=already_resolved");
         }
     }
 

@@ -12,13 +12,9 @@
 <c:set var="btnDisabled" value="${disabled ne null ? disabled : false}" />
 <c:set var="classes" value="btn btn-${btnSize} ${btnCssClass}" />
 
-<c:if test="${not empty href}">
-    <c:url var="resolvedHref" value="${href}" />
-</c:if>
-
 <c:choose>
     <c:when test="${not empty href and not btnDisabled}">
-        <a href="${resolvedHref}"
+        <a href="${href}"
            class="${classes}"
            <c:if test="${not empty ariaLabel}">aria-label="<c:out value="${ariaLabel}" />"</c:if>>
             <c:out value="${text}" />

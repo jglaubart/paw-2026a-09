@@ -23,7 +23,8 @@
 <main class="petition-admin-page petition-admin-page-detail">
     <section class="petition-admin-shell petition-admin-detail-shell">
         <div class="petition-admin-detail-header petition-admin-panel petition-admin-panel-hero">
-            <a href="${pageContext.request.contextPath}/internal/dev/play-petitions" class="petition-admin-back">← Volver al listado</a>
+            <c:url var="adminListUrl" value="/admin" />
+            <a href="${adminListUrl}" class="petition-admin-back">← Volver al listado</a>
             <div class="petition-admin-card-head">
                 <span class="petition-admin-status petition-admin-status-${fn:toLowerCase(petition.status)}"><c:out value="${petition.status}" /></span>
                 <p class="petition-admin-card-id">Solicitud #<c:out value="${petition.id}" /></p>
@@ -95,7 +96,8 @@
                 <p class="petition-admin-panel-copy">Dejá una nota opcional para el solicitante. Si aprobás, se crea automáticamente la obra y su producción base en la plataforma.</p>
 
                 <c:if test="${petition.status eq 'PENDING'}">
-                    <form action="${pageContext.request.contextPath}/internal/dev/play-petitions/${petition.id}/decision" method="post" class="petition-admin-decision-form">
+                    <c:url var="decisionUrl" value="/admin/${petition.id}/decision" />
+                    <form action="${decisionUrl}" method="post" class="petition-admin-decision-form">
                         <label for="adminNotes">Notas para el solicitante</label>
                         <textarea id="adminNotes" name="adminNotes" rows="7"><c:out value="${petition.adminNotes}" /></textarea>
                         <div class="petition-admin-actions">

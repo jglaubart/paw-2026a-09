@@ -43,10 +43,14 @@
             <div>
                 <p class="petition-admin-toolbar-label">Filtro rápido</p>
                 <div class="petition-admin-filters">
-                    <a class="petition-admin-filter ${selectedStatus eq 'ALL' ? 'petition-admin-filter-active' : ''}" href="${pageContext.request.contextPath}/internal/dev/play-petitions">Todas</a>
-                    <a class="petition-admin-filter ${selectedStatus eq 'PENDING' ? 'petition-admin-filter-active' : ''}" href="${pageContext.request.contextPath}/internal/dev/play-petitions?status=PENDING">Pendientes</a>
-                    <a class="petition-admin-filter ${selectedStatus eq 'APPROVED' ? 'petition-admin-filter-active' : ''}" href="${pageContext.request.contextPath}/internal/dev/play-petitions?status=APPROVED">Aprobadas</a>
-                    <a class="petition-admin-filter ${selectedStatus eq 'REJECTED' ? 'petition-admin-filter-active' : ''}" href="${pageContext.request.contextPath}/internal/dev/play-petitions?status=REJECTED">Rechazadas</a>
+                    <c:url var="filterAllUrl"      value="/admin" />
+                    <c:url var="filterPendingUrl"  value="/admin?status=PENDING" />
+                    <c:url var="filterApprovedUrl" value="/admin?status=APPROVED" />
+                    <c:url var="filterRejectedUrl" value="/admin?status=REJECTED" />
+                    <a class="petition-admin-filter ${selectedStatus eq 'ALL' ? 'petition-admin-filter-active' : ''}" href="${filterAllUrl}">Todas</a>
+                    <a class="petition-admin-filter ${selectedStatus eq 'PENDING' ? 'petition-admin-filter-active' : ''}" href="${filterPendingUrl}">Pendientes</a>
+                    <a class="petition-admin-filter ${selectedStatus eq 'APPROVED' ? 'petition-admin-filter-active' : ''}" href="${filterApprovedUrl}">Aprobadas</a>
+                    <a class="petition-admin-filter ${selectedStatus eq 'REJECTED' ? 'petition-admin-filter-active' : ''}" href="${filterRejectedUrl}">Rechazadas</a>
                 </div>
             </div>
         </div>
@@ -77,7 +81,7 @@
                 </c:when>
                 <c:otherwise>
                     <c:forEach var="petition" items="${petitions}">
-                        <c:set var="detailUrl" value="/internal/dev/play-petitions/${petition.id}" />
+                        <c:url var="detailUrl" value="/admin/${petition.id}" />
                         <article class="petition-admin-card">
                             <div class="petition-admin-card-main">
                                 <div class="petition-admin-card-head">
