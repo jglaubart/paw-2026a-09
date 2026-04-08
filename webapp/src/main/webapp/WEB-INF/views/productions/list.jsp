@@ -40,13 +40,13 @@
                 </button>
 
                 <div class="section-row-cards production-list-row-cards">
-                    <c:forEach var="p" items="${productions}">
-                        <c:set var="detailUrl" value="/obras/${p.obraId}?produccionId=${p.id}" />
+                    <c:forEach var="card" items="${productionCards}">
+                        <c:set var="detailUrl" value="/obras/${card.obraId}?produccionId=${card.representativeProductionId}" />
                         <paw:productionCard
-                            title="${fn:escapeXml(p.name)}"
-                            imageUrl="${not empty p.imageUrl ? p.imageUrl : '/images/Portadas/hamlet.jpg'}"
-                            venue="${fn:escapeXml(p.theater)}"
-                            rating="${productionRatings[p.id]}"
+                            title="${fn:escapeXml(card.title)}"
+                            imageUrl="${not empty card.imageUrl ? card.imageUrl : '/images/Portadas/hamlet.jpg'}"
+                            venue="${fn:escapeXml(card.theaterSummary)}"
+                            rating="${productionRatings[card.representativeProductionId]}"
                             detailUrl="${detailUrl}"
                         />
                     </c:forEach>
@@ -58,7 +58,7 @@
             </div>
         </section>
 
-        <c:if test="${empty productions}">
+        <c:if test="${empty productionCards}">
             <section class="production-list-empty">
                 <h2>No se encontraron producciones</h2>
             </section>

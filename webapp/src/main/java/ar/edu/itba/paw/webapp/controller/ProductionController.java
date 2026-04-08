@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.ProductionService;
 import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.models.Production;
+import ar.edu.itba.paw.models.ProductionCardSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,26 +53,26 @@ public class ProductionController {
             @RequestParam(value = "available", defaultValue = "false") final boolean available,
             @RequestParam(value = "genre", required = false) final String genre) {
         final ModelAndView mav = new ModelAndView("productions/list");
-        final List<Production> productions;
+        final List<ProductionCardSummary> productionCards;
         if (genre != null && !genre.isEmpty()) {
-            productions = productionService.findByGenre(genre, page, PRODUCTION_PAGE_SIZE);
+            productionCards = productionService.findByGenreCards(genre, page, PRODUCTION_PAGE_SIZE);
         } else if (available) {
-            productions = productionService.findAvailable(page, PRODUCTION_PAGE_SIZE);
+            productionCards = productionService.findAvailableCards(page, PRODUCTION_PAGE_SIZE);
         } else {
-            productions = productionService.findAll(page, PRODUCTION_PAGE_SIZE);
+            productionCards = productionService.findAllCards(page, PRODUCTION_PAGE_SIZE);
         }
-        mav.addObject("productions", productions);
-        mav.addObject("productionRatings", ratingService.getProductionRatingLabels(collectProductionIds(productions)));
+        mav.addObject("productionCards", productionCards);
+        mav.addObject("productionRatings", ratingService.getProductionRatingLabels(collectProductionIds(productionCards)));
         mav.addObject("page", page);
         mav.addObject("available", available);
         mav.addObject("genre", genre);
         return mav;
     }
 
-    private List<Long> collectProductionIds(final List<Production> productions) {
+    private List<Long> collectProductionIds(final List<ProductionCardSummary> productionCards) {
         final List<Long> productionIds = new java.util.ArrayList<>();
-        for (final Production production : productions) {
-            productionIds.add(production.getId());
+        for (final ProductionCardSummary productionCard : productionCards) {
+            productionIds.add(productionCard.getRepresentativeProductionId());
         }
         return productionIds;
     }

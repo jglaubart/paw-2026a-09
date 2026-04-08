@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.interfaces.services.ProductionService;
 import ar.edu.itba.paw.interfaces.services.ShowService;
 import ar.edu.itba.paw.models.Production;
+import ar.edu.itba.paw.models.ProductionCardSummary;
 import ar.edu.itba.paw.models.Show;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -46,12 +47,13 @@ public class HomeController {
     public ModelAndView index() {
         final ModelAndView mav = new ModelAndView("index");
         final List<Production> available = productionService.findAvailable();
+        final List<ProductionCardSummary> availableCards = productionService.findAvailableCards();
         final List<Production> today = findTodayProductions(available);
-        final List<Production> all = productionService.findAll();
+        final List<ProductionCardSummary> allCards = productionService.findAllCards();
         mav.addObject("todayProductions", today);
-        mav.addObject("availableProductions", available);
-        mav.addObject("allProductions", all);
-        mav.addObject("productionRatings", ratingService.getProductionRatingLabels(collectProductionIds(today, available, all)));
+        mav.addObject("availableCards", availableCards);
+        mav.addObject("allCards", allCards);
+        mav.addObject("productionRatings", ratingService.getProductionRatingLabels(collectProductionIds(today, availableCards, allCards)));
         mav.addObject("heroSlides", buildHeroSlides(available));
         mav.addObject("featuredProduction", available.isEmpty() ? null : available.get(0));
         return mav;
@@ -108,11 +110,15 @@ public class HomeController {
         return todayProductions;
     }
 
-    private List<Long> collectProductionIds(final List<Production>... groups) {
+    private List<Long> collectProductionIds(final List<Production> productions,
+                                            final List<ProductionCardSummary>... cardGroups) {
         final ArrayList<Long> productionIds = new ArrayList<>();
-        for (final List<Production> productions : groups) {
-            for (final Production production : productions) {
-                productionIds.add(production.getId());
+        for (final Production production : productions) {
+            productionIds.add(production.getId());
+        }
+        for (final List<ProductionCardSummary> cards : cardGroups) {
+            for (final ProductionCardSummary card : cards) {
+                productionIds.add(card.getRepresentativeProductionId());
             }
         }
         return productionIds;
