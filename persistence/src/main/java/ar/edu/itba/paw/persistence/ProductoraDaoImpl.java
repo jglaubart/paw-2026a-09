@@ -25,7 +25,7 @@ public class ProductoraDaoImpl implements ProductoraDao {
                     rs.getLong("id"),
                     rs.getString("name"),
                     rs.getString("bio"),
-                    rs.getString("image_url"),
+                    resolveImageUrl(rs.getLong("image_id"), rs.wasNull(), rs.getString("image_url")),
                     rs.getString("instagram"),
                     rs.getString("website")
             );
@@ -41,7 +41,7 @@ public class ProductoraDaoImpl implements ProductoraDao {
     @Override
     public Optional<Productora> findById(final long id) {
         final List<Productora> results = jdbcTemplate.query(
-                "SELECT id, name, bio, image_url, instagram, website FROM productoras WHERE id = ?",
+                "SELECT id, name, bio, image_id, image_url, instagram, website FROM productoras WHERE id = ?",
                 new Object[]{ id },
                 PRODUCTORA_MAPPER
         );
@@ -51,7 +51,7 @@ public class ProductoraDaoImpl implements ProductoraDao {
     @Override
     public List<Productora> findAll() {
         return jdbcTemplate.query(
-                "SELECT id, name, bio, image_url, instagram, website FROM productoras ORDER BY name",
+                "SELECT id, name, bio, image_id, image_url, instagram, website FROM productoras ORDER BY name",
                 PRODUCTORA_MAPPER
         );
     }
@@ -67,5 +67,9 @@ public class ProductoraDaoImpl implements ProductoraDao {
         params.put("website", website);
         final Number key = jdbcInsert.executeAndReturnKey(params);
         return new Productora(key.longValue(), name, bio, imageUrl, instagram, website);
+    }
+
+    private static String resolveImageUrl(final long imageId, final boolean imageIdNull, final String legacyImageUrl) {
+        return imageIdNull ? legacyImageUrl : "/images/" + imageId;
     }
 }
