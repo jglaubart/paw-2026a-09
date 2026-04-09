@@ -132,7 +132,7 @@ public class PlayPetitionServiceImpl implements PlayPetitionService {
                 petition.getTheater(),
                 petition.getStartDate(),
                 petition.getEndDate(),
-                petition.getCoverImageId() != null ? "/petition-images/" + petition.getCoverImageId() : null,
+                petition.getCoverImageId(),
                 null,
                 petition.getTicketUrl()
         );

@@ -8,11 +8,18 @@ CREATE TABLE IF NOT EXISTS obras (
     genre    VARCHAR(100)
 );
 
+CREATE TABLE IF NOT EXISTS images (
+    id           SERIAL PRIMARY KEY,
+    content_type VARCHAR(100) NOT NULL DEFAULT 'image/jpeg',
+    content      BYTEA NOT NULL,
+    sha256       CHAR(64)
+);
+
 CREATE TABLE IF NOT EXISTS productoras (
     id        SERIAL PRIMARY KEY,
     name      VARCHAR(255) NOT NULL,
     bio       TEXT,
-    image_url VARCHAR(500),
+    image_id  INT REFERENCES images(id),
     instagram VARCHAR(255),
     website   VARCHAR(255)
 );
@@ -27,7 +34,7 @@ CREATE TABLE IF NOT EXISTS productions (
     theater       VARCHAR(255),
     start_date    DATE,
     end_date      DATE,
-    image_url     VARCHAR(500),
+    image_id      INT REFERENCES images(id),
     instagram     VARCHAR(255),
     website       VARCHAR(255)
 );

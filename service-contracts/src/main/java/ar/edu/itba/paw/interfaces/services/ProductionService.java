@@ -32,5 +32,5 @@ public interface ProductionService {
     List<String> findAvailableLocations();
     Production create(String name, long obraId, Long productoraId, String synopsis,
                       String direction, String theater, LocalDate startDate, LocalDate endDate,
-                      String imageUrl, String instagram, String website);
+                      Long imageId, String instagram, String website);
 }

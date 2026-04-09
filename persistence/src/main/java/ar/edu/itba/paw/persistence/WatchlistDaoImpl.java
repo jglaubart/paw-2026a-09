@@ -23,7 +23,7 @@ public class WatchlistDaoImpl implements WatchlistDao {
         final boolean productoraNull = rs.wasNull();
         final long imageId = rs.getLong("image_id");
         final boolean imageIdNull = rs.wasNull();
-        final String resolvedImageUrl = imageIdNull ? rs.getString("image_url") : "/images/" + imageId;
+        final String resolvedImageUrl = imageIdNull ? null : "/images/" + imageId;
         return new Production(
                 rs.getLong("id"),
                 rs.getString("name"),
