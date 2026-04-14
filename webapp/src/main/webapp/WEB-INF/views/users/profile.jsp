@@ -16,24 +16,21 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/navbar.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/search.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/button.css" />
-    <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/production-card.css" /> --%>
-    <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/section-row.css" /> --%>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/production-card.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/section-row.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/user-profile.css" />
 </head>
 <body>
 
     <paw:navbar />
 
-    <%-- <c:url var="carteleraUrl" value="/cartelera" /> --%>
+    <c:url var="carteleraUrl" value="/cartelera" />
 
     <main class="user-profile-page">
         <section class="user-profile-header">
             <h1 class="user-profile-title"><spring:message code="profile.title" /></h1>
             <p class="user-profile-subtitle"><c:out value="${currentUserEmail}" /></p>
         </section>
-
-        <%--
-        Watchlist temporalmente deshabilitada para este sprint.
 
         <c:choose>
             <c:when test="${not empty watchlist}">
@@ -42,7 +39,7 @@
                         <c:set var="detailUrl" value="/obras/${p.obraId}?produccionId=${p.id}" />
                         <paw:productionCard
                             title="${fn:escapeXml(p.name)}"
-                            imageUrl="${not empty p.imageUrl ? p.imageUrl : '/images/Portadas/hamlet.jpg'}"
+                            imageUrl="${not empty p.imageUrl ? p.imageUrl : ''}"
                             venue="${fn:escapeXml(p.theater)}"
                             rating="${productionRatings[p.id]}"
                             detailUrl="${detailUrl}"
@@ -58,7 +55,6 @@
                 </section>
             </c:otherwise>
         </c:choose>
-        --%>
 
         <section class="user-profile-section">
             <h2><spring:message code="profile.reviews.title" /></h2>

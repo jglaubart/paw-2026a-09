@@ -1,8 +1,11 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.interfaces.services.WatchlistService;
 import ar.edu.itba.paw.interfaces.services.exception.UserAlreadyExistsException;
+import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.webapp.auth.PawAuthUser;
 import ar.edu.itba.paw.webapp.form.RegisterForm;
@@ -33,15 +36,20 @@ public class UserController {
 
     private final UserService userService;
     private final ReviewService reviewService;
+    private final WatchlistService watchlistService;
+    private final RatingService ratingService;
     private final UserDetailsService userDetailsService;
 
     @Autowired
     public UserController(final UserService userService,
                           final ReviewService reviewService,
-                          final UserDetailsService userDetailsService
-                          /*, final RatingService ratingService */) {
+                          final WatchlistService watchlistService,
+                          final RatingService ratingService,
+                          final UserDetailsService userDetailsService) {
         this.userService = userService;
         this.reviewService = reviewService;
+        this.watchlistService = watchlistService;
+        this.ratingService = ratingService;
         this.userDetailsService = userDetailsService;
     }
 
@@ -102,12 +110,23 @@ public class UserController {
 
     @RequestMapping(value = "/users/me", method = RequestMethod.GET)
     public ModelAndView profile(@AuthenticationPrincipal final PawAuthUser authUser) {
+        final long userId = authUser.getUser().getId();
         final ModelAndView mav = new ModelAndView("users/profile");
-        final List<Review> reviews = reviewService.findByUser(authUser.getUser().getId());
         mav.addObject("currentUserEmail", authUser.getUser().getEmail());
         mav.addObject("currentUsername", authUser.getUser().getUsername());
-        mav.addObject("reviews", reviews);
+        mav.addObject("reviews", reviewService.findByUser(userId));
+        final List<Production> watchlist = watchlistService.findByUser(userId);
+        mav.addObject("watchlist", watchlist);
+        mav.addObject("productionRatings", ratingService.getProductionRatingLabels(collectProductionIds(watchlist)));
         return mav;
+    }
+
+    private List<Long> collectProductionIds(final List<Production> productions) {
+        final List<Long> ids = new java.util.ArrayList<>();
+        for (final Production p : productions) {
+            ids.add(p.getId());
+        }
+        return ids;
     }
 
     private ModelAndView registerView(final RegisterForm form) {

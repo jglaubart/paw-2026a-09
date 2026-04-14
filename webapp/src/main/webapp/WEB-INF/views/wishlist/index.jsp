@@ -1,5 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%--
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="paw" tagdir="/WEB-INF/tags" %>
@@ -22,7 +21,7 @@
 </head>
 <body>
 
-    <paw:navbar />
+    <paw:navbar activeSection="watchlist" />
 
     <c:url var="carteleraUrl" value="/cartelera" />
 
@@ -40,7 +39,7 @@
                         <c:set var="detailUrl" value="/obras/${p.obraId}?produccionId=${p.id}" />
                         <paw:productionCard
                             title="${fn:escapeXml(p.name)}"
-                            imageUrl="${not empty p.imageUrl ? p.imageUrl : '/images/Portadas/hamlet.jpg'}"
+                            imageUrl="${not empty p.imageUrl ? p.imageUrl : ''}"
                             venue="${fn:escapeXml(p.theater)}"
                             rating="${productionRatings[p.id]}"
                             detailUrl="${detailUrl}"
@@ -64,4 +63,3 @@
 
 </body>
 </html>
---%>
