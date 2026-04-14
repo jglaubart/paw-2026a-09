@@ -5,7 +5,9 @@ import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.ProductionService;
 import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
+import ar.edu.itba.paw.interfaces.services.SeenService;
 import ar.edu.itba.paw.interfaces.services.ShowService;
+import ar.edu.itba.paw.interfaces.services.WatchlistService;
 import ar.edu.itba.paw.models.Obra;
 import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.Review;
@@ -35,6 +37,8 @@ public class ObraController {
     private final ReviewService reviewService;
     private final MailService mailService;
     private final ShowService showService;
+    private final WatchlistService watchlistService;
+    private final SeenService seenService;
 
     @Autowired
     public ObraController(final ObraService obraService,
@@ -42,17 +46,17 @@ public class ObraController {
                           final RatingService ratingService,
                           final ReviewService reviewService,
                           final MailService mailService,
-                          final ShowService showService
-                          /*, final WatchlistService watchlistService, */
-                          /*, final SeenService seenService */) {
+                          final ShowService showService,
+                          final WatchlistService watchlistService,
+                          final SeenService seenService) {
         this.obraService = obraService;
         this.productionService = productionService;
         this.ratingService = ratingService;
         this.reviewService = reviewService;
         this.mailService = mailService;
         this.showService = showService;
-        /* this.watchlistService = watchlistService; */
-        /* this.seenService = seenService; */
+        this.watchlistService = watchlistService;
+        this.seenService = seenService;
     }
 
     @RequestMapping(value = "/obras/{id:\\d+}", method = RequestMethod.GET)
@@ -106,17 +110,13 @@ public class ObraController {
 
         mav.addObject("currentUserEmail", authUser != null ? authUser.getUser().getEmail() : null);
 
-        /*
-        if (selectedProduction != null) {
+        if (authUser != null && selectedProduction != null) {
             mav.addObject("isInWishlist",
-                    watchlistService.isInWatchlist(HARDCODED_USER_ID, selectedProduction.getId()));
+                    watchlistService.isInWatchlist(authUser.getUser().getId(), selectedProduction.getId()));
         } else {
             mav.addObject("isInWishlist", false);
         }
-        */
-        mav.addObject("isInWishlist", false);
-        /* mav.addObject("hasSeen", seenService.hasSeen(HARDCODED_USER_ID, id)); */
-        mav.addObject("hasSeen", false);
+        mav.addObject("hasSeen", authUser != null && seenService.hasSeen(authUser.getUser().getId(), id));
 
         return mav;
     }
