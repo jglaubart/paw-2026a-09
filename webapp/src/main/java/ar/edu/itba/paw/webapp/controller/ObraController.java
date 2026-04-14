@@ -9,7 +9,9 @@ import ar.edu.itba.paw.interfaces.services.ShowService;
 import ar.edu.itba.paw.models.Obra;
 import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.Review;
+import ar.edu.itba.paw.webapp.auth.PawAuthUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,10 +28,6 @@ import java.time.LocalDate;
 
 @Controller
 public class ObraController {
-
-    private static final long HARDCODED_USER_ID = 1L;
-
-    // Demo flow still uses a fixed user for rating until auth exists.
 
     private final ObraService obraService;
     private final ProductionService productionService;
@@ -60,7 +58,7 @@ public class ObraController {
     @RequestMapping(value = "/obras/{id:\\d+}", method = RequestMethod.GET)
     public ModelAndView detail(@PathVariable("id") final long id,
                                @RequestParam(value = "produccionId", required = false) final Long produccionId,
-                               @RequestParam(value = "email", required = false) final String email) {
+                               @AuthenticationPrincipal final PawAuthUser authUser) {
         final Optional<Obra> obraOpt = obraService.findById(id);
         if (!obraOpt.isPresent()) {
             return new ModelAndView("redirect:/");
@@ -77,9 +75,10 @@ public class ObraController {
 
         if (selectedProduction != null) {
             final long pid = selectedProduction.getId();
+            final long currentUserId = authUser != null ? authUser.getUser().getId() : -1L;
             mav.addObject("reviews", reviewService.findByObra(id));
-            final Integer userScore = email != null
-                    ? ratingService.getObraRatingByEmail(email, id).map(r -> r.getScore()).orElse(null)
+            final Integer userScore = authUser != null
+                    ? ratingService.getObraRating(currentUserId, id).map(r -> r.getScore()).orElse(null)
                     : null;
             final Double avgRating = ratingService.getObraAverageRating(id).orElse(null);
             mav.addObject("userScore", userScore);
@@ -87,8 +86,7 @@ public class ObraController {
             mav.addObject("avgRating", avgRating);
             mav.addObject("avgStars", avgRating);
             mav.addObject("avgStarsPercent", avgRating != null ? Math.max(0d, Math.min(100d, avgRating * 10d)) : 0d);
-            mav.addObject("userReview", email != null ? reviewService.findByEmailAndObra(email, id).orElse(null) : null);
-            mav.addObject("reviewEmail", email);
+            mav.addObject("userReview", authUser != null ? reviewService.findByUserAndObra(currentUserId, id).orElse(null) : null);
             final List<LocalDate> showDates = collectUniqueShowDates(pid);
             mav.addObject("showDates", showDates);
             mav.addObject("lastShowDate", showDates.isEmpty() ? selectedProduction.getEndDate() : showDates.get(showDates.size() - 1));
@@ -101,11 +99,12 @@ public class ObraController {
             mav.addObject("avgStars", null);
             mav.addObject("avgStarsPercent", 0d);
             mav.addObject("userReview", null);
-            mav.addObject("reviewEmail", email);
             mav.addObject("showDates", Collections.emptyList());
             mav.addObject("lastShowDate", null);
             mav.addObject("selectedProductionActive", false);
         }
+
+        mav.addObject("currentUserEmail", authUser != null ? authUser.getUser().getEmail() : null);
 
         /*
         if (selectedProduction != null) {

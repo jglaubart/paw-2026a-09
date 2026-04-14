@@ -3,9 +3,11 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.GenreService;
 import ar.edu.itba.paw.interfaces.services.PlayPetitionService;
 import ar.edu.itba.paw.models.Genre;
+import ar.edu.itba.paw.webapp.auth.PawAuthUser;
 import ar.edu.itba.paw.webapp.config.WebConfig;
 import ar.edu.itba.paw.webapp.form.PlayPetitionForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,18 +42,24 @@ public class PlayPetitionController {
 
     @RequestMapping(value = "/subir-obra", method = RequestMethod.GET)
     public ModelAndView form(@RequestParam(value = "created", required = false) final String created,
-                             @RequestParam(value = "imageTooLarge", required = false) final String imageTooLarge) {
+                             @RequestParam(value = "imageTooLarge", required = false) final String imageTooLarge,
+                             @AuthenticationPrincipal final PawAuthUser authUser) {
         final Map<String, String> errors = new LinkedHashMap<>();
+        final PlayPetitionForm form = new PlayPetitionForm();
+        prefillPetitionerEmail(form, authUser);
+
         if ("1".equals(imageTooLarge)) {
             errors.put("coverImage", "La imagen excede el tamaño máximo permitido de " + readableUploadLimit() + ".");
         }
-        final ModelAndView mav = petitionForm(new PlayPetitionForm(), errors);
+        final ModelAndView mav = petitionForm(form, errors);
         mav.addObject("created", "1".equals(created));
         return mav;
     }
 
     @RequestMapping(value = "/subir-obra", method = RequestMethod.POST)
-    public ModelAndView submit(@ModelAttribute("form") final PlayPetitionForm form) {
+    public ModelAndView submit(@ModelAttribute("form") final PlayPetitionForm form,
+                               @AuthenticationPrincipal final PawAuthUser authUser) {
+        prefillPetitionerEmail(form, authUser);
         final Map<String, String> errors = validate(form);
         final List<Long> genreIds = parseGenreIds(form.getGenreIds(), errors);
         final Integer durationMinutes = parseDuration(form.getDurationMinutes(), errors);
@@ -237,6 +245,13 @@ public class PlayPetitionController {
 
     private boolean hasText(final String value) {
         return value != null && !value.trim().isEmpty();
+    }
+
+    private void prefillPetitionerEmail(final PlayPetitionForm form,
+                                        final PawAuthUser authUser) {
+        if (authUser != null) {
+            form.setPetitionerEmail(authUser.getUser().getEmail());
+        }
     }
 
     private String readableUploadLimit() {

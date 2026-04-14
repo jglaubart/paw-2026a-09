@@ -468,6 +468,30 @@
     margin: 0;
 }
 
+.obra-review-signed-in-as {
+    margin: 0 0 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.84rem;
+}
+
+.obra-interact-panel-guest {
+    display: grid;
+    gap: 0.9rem;
+}
+
+.obra-interact-guest-copy {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.7;
+}
+
+.obra-interact-auth-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
 .obra-review-textarea {
     display: block;
     width: 100%;
@@ -845,6 +869,11 @@
     }
 
     .obra-review-actions {
+        align-items: stretch;
+    }
+
+    .obra-interact-auth-actions {
+        flex-direction: column;
         align-items: stretch;
     }
 

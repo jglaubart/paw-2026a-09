@@ -59,4 +59,13 @@ public class UserDaoImpl implements UserDao {
         final Number key = jdbcInsert.executeAndReturnKey(params);
         return new User(key.longValue(), email, password);
     }
+
+    @Override
+    public void updatePassword(final long userId, final String password) {
+        jdbcTemplate.update(
+                "UPDATE users SET password = ? WHERE id = ?",
+                password,
+                userId
+        );
+    }
 }

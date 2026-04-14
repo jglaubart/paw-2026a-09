@@ -98,6 +98,7 @@
                 <c:if test="${petition.status eq 'PENDING'}">
                     <c:url var="decisionUrl" value="/admin/${petition.id}/decision" />
                     <form action="${decisionUrl}" method="post" class="petition-admin-decision-form">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${fn:escapeXml(_csrf.token)}" />
                         <label for="adminNotes">Notas para el solicitante</label>
                         <textarea id="adminNotes" name="adminNotes" rows="7"><c:out value="${petition.adminNotes}" /></textarea>
                         <div class="petition-admin-actions">

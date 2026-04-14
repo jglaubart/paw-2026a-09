@@ -1,9 +1,11 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.RatingService;
+import ar.edu.itba.paw.webapp.auth.PawAuthUser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,13 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
 @Controller
 public class RatingController {
-
-    private static final long HARDCODED_USER_ID = 1L;
 
     private final RatingService ratingService;
 
@@ -31,11 +28,16 @@ public class RatingController {
     public Object rateProduction(@PathVariable("id") final long productionId,
                                  @RequestParam("score") final String score,
                                  @RequestParam(value = "obraId", required = false) final Long obraId,
+                                 @AuthenticationPrincipal final PawAuthUser authUser,
                                  final HttpServletRequest request) {
+        if (authUser == null) {
+            return unauthorizedResponse(request);
+        }
+
         final Integer normalizedScore = normalizeScore(score);
 
         if (normalizedScore != null) {
-            ratingService.rateProduction(HARDCODED_USER_ID, productionId, normalizedScore);
+            ratingService.rateProduction(authUser.getUser().getId(), productionId, normalizedScore);
         }
 
         if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
@@ -53,31 +55,40 @@ public class RatingController {
 
     @RequestMapping(value = "/obras/{id:\\d+}/rate", method = RequestMethod.POST)
     public Object rateObra(@PathVariable("id") final long obraId,
-                           @RequestParam("email") final String email,
                            @RequestParam("score") final String score,
                            @RequestParam(value = "produccionId", required = false) final Long produccionId,
+                           @AuthenticationPrincipal final PawAuthUser authUser,
                            final HttpServletRequest request) {
-        final Integer normalizedScore = normalizeScore(score);
-        final String normalizedEmail = email != null ? email.trim().toLowerCase() : null;
+        if (authUser == null) {
+            return unauthorizedResponse(request);
+        }
 
-        if (normalizedScore != null && normalizedEmail != null && normalizedEmail.contains("@")) {
-            ratingService.rateObraByEmail(normalizedEmail, obraId, normalizedScore);
+        final Integer normalizedScore = normalizeScore(score);
+
+        if (normalizedScore != null) {
+            ratingService.rateObra(authUser.getUser().getId(), obraId, normalizedScore);
         }
 
         if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-            if (normalizedScore == null || normalizedEmail == null || !normalizedEmail.contains("@")) {
+            if (normalizedScore == null) {
                 return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
             }
             return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
         }
 
-        final String encodedEmail = normalizedEmail != null ? URLEncoder.encode(normalizedEmail, StandardCharsets.UTF_8) : "";
         final String redirectBase = "/obras/" + obraId + (produccionId != null ? "?produccionId=" + produccionId : "?");
         final String separator = redirectBase.contains("?") && !redirectBase.endsWith("?") ? "&" : "";
-        if (normalizedScore == null || normalizedEmail == null || !normalizedEmail.contains("@")) {
+        if (normalizedScore == null) {
             return new ModelAndView("redirect:" + redirectBase + separator + "error=invalid_rating");
         }
-        return new ModelAndView("redirect:" + redirectBase + separator + "rating=saved&email=" + encodedEmail);
+        return new ModelAndView("redirect:" + redirectBase + separator + "rating=saved");
+    }
+
+    private Object unauthorizedResponse(final HttpServletRequest request) {
+        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+            return new ResponseEntity<Void>(HttpStatus.UNAUTHORIZED);
+        }
+        return new ModelAndView("redirect:/login");
     }
 
     private Integer normalizeScore(final String rawScore) {

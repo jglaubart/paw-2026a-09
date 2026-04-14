@@ -18,12 +18,15 @@
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <spring.version>5.3.33</spring.version>
+    <spring.security.version>5.8.16</spring.security.version>
     <org.postgresql.version>42.7.3</org.postgresql.version>
     <javax.servlet.version>4.0.1</javax.servlet.version>
     <jstl.version>1.2</jstl.version>
     <thymeleaf-spring5.version>3.1.2.RELEASE</thymeleaf-spring5.version>
     <javax.mail.version>1.6.2</javax.mail.version>
     <commons-fileupload.version>1.5</commons-fileupload.version>
+    <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
+    <javax.el.version>3.0.1-b12</javax.el.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -88,6 +91,26 @@
         <version>${spring.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-config</artifactId>
+        <version>${spring.security.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-web</artifactId>
+        <version>${spring.security.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-taglibs</artifactId>
+        <version>${spring.security.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-crypto</artifactId>
+        <version>${spring.security.version}</version>
+      </dependency>
+      <dependency>
         <groupId>com.sun.mail</groupId>
         <artifactId>javax.mail</artifactId>
         <version>${javax.mail.version}</version>
@@ -96,6 +119,16 @@
         <groupId>commons-fileupload</groupId>
         <artifactId>commons-fileupload</artifactId>
         <version>${commons-fileupload.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate.validator</groupId>
+        <artifactId>hibernate-validator</artifactId>
+        <version>${hibernate.validator.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish</groupId>
+        <artifactId>javax.el</artifactId>
+        <version>${javax.el.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
