@@ -33,7 +33,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Review createOrUpdateByEmail(final String email, final long productionId, final String body) {
         final User user = userDao.findByEmail(email)
-                .orElseGet(() -> userDao.create(email, null));
+                .orElseGet(() -> userDao.create(email, null, ""));
         return createOrUpdate(user.getId(), productionId, body);
     }
 
@@ -49,7 +49,7 @@ public class ReviewServiceImpl implements ReviewService {
     public Review createOrUpdateByEmailForObra(final String email, final long obraId,
                                                final long productionId, final String body) {
         final User user = userDao.findByEmail(email)
-                .orElseGet(() -> userDao.create(email, null));
+                .orElseGet(() -> userDao.create(email, null, ""));
         return createOrUpdateForObra(user.getId(), obraId, productionId, body);
     }
 

@@ -124,9 +124,13 @@ public class ObraController {
     @RequestMapping(value = "/obras/{id:\\d+}/share", method = RequestMethod.POST)
     public ModelAndView share(@PathVariable("id") final long id,
                               @RequestParam("recipientEmail") final String recipientEmail,
-                              @RequestParam("senderName") final String senderName,
-                              @RequestParam(value = "produccionId", required = false) final Long produccionId) {
-        if (recipientEmail == null || !recipientEmail.contains("@") || senderName == null || senderName.trim().isEmpty()) {
+                              @RequestParam(value = "senderName", required = false) final String senderNameParam,
+                              @RequestParam(value = "produccionId", required = false) final Long produccionId,
+                              @AuthenticationPrincipal final PawAuthUser authUser) {
+        final String senderName = authUser != null && !authUser.getUser().getUsername().isEmpty()
+                ? authUser.getUser().getUsername()
+                : (senderNameParam != null ? senderNameParam.trim() : "");
+        if (recipientEmail == null || !recipientEmail.contains("@") || senderName.isEmpty()) {
             return new ModelAndView("redirect:/obras/" + id + (produccionId != null ? "?produccionId=" + produccionId + "&share=invalid" : "?share=invalid"));
         }
 

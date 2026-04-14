@@ -35,6 +35,10 @@
         <section class="auth-panel auth-panel-form">
             <div class="auth-card">
                 <form:form action="${registerActionUrl}" method="post" modelAttribute="registerForm" class="auth-form">
+                    <label class="auth-label" for="username"><spring:message code="auth.field.username" /></label>
+                    <form:input id="username" path="username" type="text" class="auth-input" maxlength="30" />
+                    <form:errors path="username" element="span" cssClass="auth-field-error" />
+
                     <label class="auth-label" for="email"><spring:message code="auth.field.email" /></label>
                     <form:input id="email" path="email" type="email" class="auth-input" maxlength="255" />
                     <form:errors path="email" element="span" cssClass="auth-field-error" />

@@ -67,10 +67,18 @@
                     <c:forEach var="r" items="${reviews}">
                         <c:url var="reviewObraUrl" value="/obras/${r.obraId}" />
                         <div class="user-profile-review-card">
-                            <p class="user-profile-review-meta">
-                                <a href="${reviewObraUrl}" class="user-profile-review-link">Obra #<c:out value="${r.obraId}" /></a>
-                            </p>
-                            <p class="user-profile-review-body"><c:out value="${r.body}" /></p>
+                            <c:if test="${r.productionImageId != null}">
+                                <c:url var="reviewImgUrl" value="/images/${r.productionImageId}" />
+                                <a href="${reviewObraUrl}" class="user-profile-review-img-link">
+                                    <img class="user-profile-review-img" src="${reviewImgUrl}" alt="${fn:escapeXml(r.obraTitle)}" />
+                                </a>
+                            </c:if>
+                            <div class="user-profile-review-content">
+                                <a href="${reviewObraUrl}" class="user-profile-review-link">
+                                    <c:out value="${not empty r.obraTitle ? r.obraTitle : 'Ver obra'}" />
+                                </a>
+                                <p class="user-profile-review-body"><c:out value="${r.body}" /></p>
+                            </div>
                         </div>
                     </c:forEach>
                 </c:when>

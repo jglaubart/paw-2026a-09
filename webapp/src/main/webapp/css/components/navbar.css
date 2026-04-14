@@ -171,29 +171,6 @@
     color: var(--platea-text-primary);
 }
 
-.navbar-user-email {
-    display: inline-flex;
-    align-items: center;
-    min-height: 2.5rem;
-    padding: 0 0.9rem;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: var(--platea-text-primary);
-    font-size: 0.78rem;
-    font-weight: 700;
-}
-
-.navbar-logout-form {
-    margin: 0;
-}
-
-.navbar-logout-button {
-    padding: 0;
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-}
 
 .navbar .search-form-navbar {
     width: auto;
@@ -247,6 +224,12 @@
     opacity: 1;
 }
 
+/* ── Avatar + Dropdown ─────────────────────────────────── */
+
+.navbar-user-menu {
+    position: relative;
+}
+
 .navbar-user-btn {
     display: flex;
     align-items: center;
@@ -255,16 +238,99 @@
     height: 2.5rem;
     padding: 0;
     border-radius: 50%;
-    border: 1px solid var(--platea-glass-stroke);
+    border: 2px solid transparent;
     background: var(--platea-surface-container-low);
-    color: var(--platea-text-primary);
+    color: #fff;
+    font-size: 0.88rem;
+    font-weight: 800;
+    letter-spacing: 0;
     cursor: pointer;
-    transition: background 0.18s ease, box-shadow 0.18s ease;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+    flex-shrink: 0;
 }
 
 .navbar-user-btn:hover {
-    background: var(--platea-surface-container-high);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.22);
+    border-color: rgba(255,255,255,0.28);
+    box-shadow: 0 0 0 3px rgba(186,158,255,0.18);
+    transform: scale(1.05);
+}
+
+.navbar-user-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.65rem);
+    right: 0;
+    min-width: 200px;
+    background: #1a1a24;
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 12px;
+    box-shadow: 0 20px 48px rgba(0,0,0,0.55);
+    overflow: hidden;
+    z-index: 500;
+}
+
+.navbar-user-dropdown.is-open {
+    display: block;
+}
+
+.navbar-dropdown-header {
+    padding: 0.9rem 1.1rem 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.navbar-dropdown-username {
+    display: block;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--platea-text-primary);
+}
+
+.navbar-dropdown-email {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--platea-text-soft);
+    margin-top: 0.15rem;
+    word-break: break-all;
+}
+
+.navbar-dropdown-list {
+    padding: 0.4rem 0;
+}
+
+.navbar-dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 0.65rem 1.1rem;
+    background: transparent;
+    border: none;
+    color: var(--platea-text-muted);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.14s ease, color 0.14s ease;
+    letter-spacing: 0;
+}
+
+.navbar-dropdown-item:hover {
+    background: rgba(255,255,255,0.06);
+    color: var(--platea-text-primary);
+}
+
+.navbar-dropdown-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.07);
+    margin: 0.35rem 0;
+}
+
+.navbar-dropdown-item-danger {
+    color: #f87171;
+}
+
+.navbar-dropdown-item-danger:hover {
+    background: rgba(248,113,113,0.08);
+    color: #fca5a5;
 }
 
 @media (max-width: 1120px) {
@@ -362,18 +428,8 @@
         justify-content: stretch;
     }
 
-    .navbar-user-email,
-    .navbar-logout-form,
     .navbar-auth-link {
         width: 100%;
-    }
-
-    .navbar-user-email {
-        justify-content: center;
-    }
-
-    .navbar-auth-link,
-    .navbar-logout-button {
         display: inline-flex;
         justify-content: center;
     }

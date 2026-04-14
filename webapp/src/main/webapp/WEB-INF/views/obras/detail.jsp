@@ -342,10 +342,10 @@
                     <c:when test="${not empty reviews}">
                         <div class="obra-reviews-grid" data-feedback-reviews-grid>
                             <c:forEach var="r" items="${reviews}">
-                                <div class="obra-review-card" data-review-card data-review-email="${fn:escapeXml(fn:toLowerCase(r.userEmail))}">
+                                <div class="obra-review-card" data-review-card data-review-username="${fn:escapeXml(r.username)}">
                                     <div class="obra-review-header">
-                                        <span class="obra-review-avatar">${fn:toUpperCase(fn:substring(r.userEmail, 0, 1))}</span>
-                                        <span class="obra-review-author"><c:out value="${r.userEmail}" /></span>
+                                        <span class="obra-review-avatar">${fn:toUpperCase(fn:substring(r.username, 0, 1))}</span>
+                                        <span class="obra-review-author"><c:out value="${r.username}" /></span>
                                         <c:if test="${r.score != null}">
                                             <span class="obra-review-score"><c:out value="${r.score}" />/10</span>
                                         </c:if>

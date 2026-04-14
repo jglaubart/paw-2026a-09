@@ -194,6 +194,7 @@ public class WebConfig implements WebMvcConfigurer {
             runScript(dataSource, "migration_backfill_play_ratings_from_production_ratings.sql");
             runScript(dataSource, "migration_review_email_identity.sql");
             runScript(dataSource, "migration_reviews_per_obra.sql");
+            runScript(dataSource, "migration_users_username.sql");
             hashLegacyUserPasswords(jdbcTemplate, passwordEncoder);
         };
     }

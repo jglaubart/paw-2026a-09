@@ -35,13 +35,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User create(final String email, final String password) {
+    public User create(final String email, final String password, final String username) {
         final String normalizedEmail = normalizeEmail(email);
         final String encodedPassword = passwordEncoder.encode(password);
         final Optional<User> existingUser = userDao.findByEmail(normalizedEmail);
 
         if (!existingUser.isPresent()) {
-            return userDao.create(normalizedEmail, encodedPassword);
+            return userDao.create(normalizedEmail, encodedPassword, username != null ? username.trim() : "");
         }
 
         final User user = existingUser.get();
@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
         }
 
         userDao.updatePassword(user.getId(), encodedPassword);
-        return new User(user.getId(), user.getEmail(), encodedPassword, user.getRole());
+        return new User(user.getId(), user.getEmail(), encodedPassword, user.getRole(), user.getUsername());
     }
 
     private String normalizeEmail(final String email) {

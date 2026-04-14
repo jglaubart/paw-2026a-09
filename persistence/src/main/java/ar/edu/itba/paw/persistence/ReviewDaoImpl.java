@@ -20,22 +20,30 @@ public class ReviewDaoImpl implements ReviewDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    private static final RowMapper<Review> REVIEW_MAPPER = (rs, rowNum) ->
-            new Review(
-                    rs.getLong("id"),
-                    rs.getLong("user_id"),
-                    rs.getString("user_email"),
-                    rs.getLong("production_id"),
-                    rs.getLong("obra_id"),
-                    rs.getString("body"),
-                    rs.getObject("rating_id") != null ? rs.getLong("rating_id") : null,
-                    rs.getObject("score") != null ? rs.getInt("score") : null
-            );
+    private static final RowMapper<Review> REVIEW_MAPPER = (rs, rowNum) -> {
+        final Object imgId = rs.getObject("production_image_id");
+        return new Review(
+                rs.getLong("id"),
+                rs.getLong("user_id"),
+                rs.getString("user_username"),
+                rs.getLong("production_id"),
+                rs.getLong("obra_id"),
+                rs.getString("obra_title"),
+                imgId != null ? rs.getLong("production_image_id") : null,
+                rs.getString("body"),
+                rs.getObject("rating_id") != null ? rs.getLong("rating_id") : null,
+                rs.getObject("score") != null ? rs.getInt("score") : null
+        );
+    };
 
     private static final String SELECT_WITH_JOIN =
-            "SELECT r.id, r.body, r.rating_id, r.user_id, r.production_id, r.obra_id, u.email AS user_email, pr.score " +
+            "SELECT r.id, r.body, r.rating_id, r.user_id, r.production_id, r.obra_id, " +
+            "u.username AS user_username, pr.score, " +
+            "o.title AS obra_title, p.image_id AS production_image_id " +
             "FROM production_reviews r " +
             "JOIN users u ON r.user_id = u.id " +
+            "JOIN obras o ON r.obra_id = o.id " +
+            "LEFT JOIN productions p ON r.production_id = p.id " +
             "LEFT JOIN play_ratings pr ON pr.user_id = r.user_id AND pr.obra_id = r.obra_id ";
 
     @Autowired

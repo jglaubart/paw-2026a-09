@@ -91,7 +91,7 @@ public class UserController {
         }
 
         try {
-            userService.create(form.getEmail(), form.getPassword());
+            userService.create(form.getEmail(), form.getPassword(), form.getUsername());
             authenticateUser(form.getEmail());
             return new ModelAndView("redirect:" + resolvePostRegisterTarget(request, response));
         } catch (final UserAlreadyExistsException e) {
@@ -105,6 +105,7 @@ public class UserController {
         final ModelAndView mav = new ModelAndView("users/profile");
         final List<Review> reviews = reviewService.findByUser(authUser.getUser().getId());
         mav.addObject("currentUserEmail", authUser.getUser().getEmail());
+        mav.addObject("currentUsername", authUser.getUser().getUsername());
         mav.addObject("reviews", reviews);
         return mav;
     }
