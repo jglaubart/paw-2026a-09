@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/play-detail.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/star-rating.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/alert.css" />
-    <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/user-lists.css" /> --%>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/user-lists.css" />
     <script src="${pageContext.request.contextPath}/js/components/star-rating.js" defer></script>
     <script src="${pageContext.request.contextPath}/js/components/obra-feedback.js" defer></script>
     <script src="${pageContext.request.contextPath}/js/components/share-dialog.js" defer></script>
@@ -38,8 +38,8 @@
 <c:url var="carteleraUrl" value="/cartelera" />
 <c:url var="loginUrl" value="/login" />
 <c:url var="registerUrl" value="/register" />
-<%-- <c:url var="watchlistUrl" value="/watchlist" /> --%>
-<%-- <c:url var="historialUrl" value="/historial" /> --%>
+<c:url var="watchlistUrl" value="/watchlist" />
+<c:url var="historialUrl" value="/historial" />
 
 <main class="obra-detail-page">
 
@@ -113,33 +113,33 @@
     <%-- ═══════════════ ACCIONES ═══════════════ --%>
     <div class="obra-action-bar">
         <div class="obra-action-bar-left">
-            <%--
-            <c:if test="${selectedProduction != null}">
-                <c:url var="watchlistActionUrl" value="/productions/${selectedProduction.id}/watchlist" />
-                <form action="${watchlistActionUrl}" method="post" class="obra-action-form">
-                    <input type="hidden" name="obraId" value="${obra.id}" />
-                    <input type="hidden" name="action" value="${isInWishlist ? 'remove' : 'add'}" />
-                    <button type="submit" class="obra-action-btn ${isInWishlist ? 'obra-action-btn-active' : ''}">
-                        <span aria-hidden="true">${isInWishlist ? '♥' : '♡'}</span>
-                        <c:out value="${isInWishlist ? 'En watchlist' : 'Agregar a watchlist'}" />
+            <sec:authorize access="isAuthenticated()">
+                <c:if test="${selectedProduction != null}">
+                    <c:url var="watchlistActionUrl" value="/productions/${selectedProduction.id}/watchlist" />
+                    <form action="${watchlistActionUrl}" method="post" class="obra-action-form">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${fn:escapeXml(_csrf.token)}" />
+                        <input type="hidden" name="obraId" value="${obra.id}" />
+                        <input type="hidden" name="action" value="${isInWishlist ? 'remove' : 'add'}" />
+                        <button type="submit" class="obra-action-btn ${isInWishlist ? 'obra-action-btn-active' : ''}">
+                            <span aria-hidden="true">${isInWishlist ? '♥' : '♡'}</span>
+                            <c:out value="${isInWishlist ? 'En watchlist' : 'Agregar a watchlist'}" />
+                        </button>
+                    </form>
+                </c:if>
+
+                <c:url var="seenActionUrl" value="/obras/${obra.id}/seen" />
+                <form action="${seenActionUrl}" method="post" class="obra-action-form">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${fn:escapeXml(_csrf.token)}" />
+                    <c:if test="${selectedProduction != null}">
+                        <input type="hidden" name="produccionId" value="${selectedProduction.id}" />
+                    </c:if>
+                    <input type="hidden" name="action" value="${hasSeen ? 'remove' : 'add'}" />
+                    <button type="submit" class="obra-action-btn obra-action-btn-seen ${hasSeen ? 'obra-action-btn-active' : ''}">
+                        <span aria-hidden="true">${hasSeen ? '✓' : '○'}</span>
+                        <c:out value="${hasSeen ? 'Ya la vi' : 'Marcar como vista'}" />
                     </button>
                 </form>
-            </c:if>
-            --%>
-
-            <%--
-            <c:url var="seenActionUrl" value="/obras/${obra.id}/seen" />
-            <form action="${seenActionUrl}" method="post" class="obra-action-form">
-                <c:if test="${selectedProduction != null}">
-                    <input type="hidden" name="produccionId" value="${selectedProduction.id}" />
-                </c:if>
-                <input type="hidden" name="action" value="${hasSeen ? 'remove' : 'add'}" />
-                <button type="submit" class="obra-action-btn obra-action-btn-seen ${hasSeen ? 'obra-action-btn-active' : ''}">
-                    <span aria-hidden="true">${hasSeen ? '✓' : '○'}</span>
-                    <c:out value="${hasSeen ? 'Ya la vi' : 'Marcar como vista'}" />
-                </button>
-            </form>
-            --%>
+            </sec:authorize>
 
             <c:if test="${selectedProduction != null}">
                 <button type="button" class="obra-action-btn obra-action-btn-share" data-share-open>
@@ -456,16 +456,14 @@
                 <a href="${carteleraUrl}" class="btn btn-outline btn-md obra-sidebar-cta">
                     VER TODA LA CARTELERA
                 </a>
-                <%--
-                <a href="${watchlistUrl}" class="btn btn-outline btn-md obra-sidebar-cta">
-                    MI WATCHLIST
-                </a>
-                --%>
-                <%--
-                <a href="${historialUrl}" class="btn btn-outline btn-md obra-sidebar-cta">
-                    ✓ VISTA
-                </a>
-                --%>
+                <sec:authorize access="isAuthenticated()">
+                    <a href="${watchlistUrl}" class="btn btn-outline btn-md obra-sidebar-cta">
+                        MI WATCHLIST
+                    </a>
+                    <a href="${historialUrl}" class="btn btn-outline btn-md obra-sidebar-cta">
+                        ✓ HISTORIAL
+                    </a>
+                </sec:authorize>
             </div>
         </aside>
 
