@@ -28,8 +28,18 @@ public class ImageController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/images/{id:\\d+}", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> image(@PathVariable("id") final long id) {
+        return resolveImageResponse(id);
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/petition-images/{id:\\d+}", method = RequestMethod.GET)
     public ResponseEntity<byte[]> petitionImage(@PathVariable("id") final long id) {
+        return resolveImageResponse(id);
+    }
+
+    private ResponseEntity<byte[]> resolveImageResponse(final long id) {
         final Optional<Image> image = imageService.findById(id);
         if (!image.isPresent()) {
             return ResponseEntity.notFound().build();
