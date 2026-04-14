@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
         }
 
         userDao.updatePassword(user.getId(), encodedPassword);
-        return new User(user.getId(), user.getEmail(), encodedPassword);
+        return new User(user.getId(), user.getEmail(), encodedPassword, user.getRole());
     }
 
     private String normalizeEmail(final String email) {

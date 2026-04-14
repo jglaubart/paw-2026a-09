@@ -1,8 +1,8 @@
-# Platea — Project Context for Codex
+# Platea — Project Context for Claude
 
 ## What is this project
 
-**Platea** is a university project (PAW — Programación Avanzada en la Web, ITBA) for a theatre/play ticketing web application. Built with Spring MVC 5.3, JSP/JSTL, Maven multi-module, Java 21. Runs locally on Jetty and deploys as a WAR to Tomcat on Pampero. Database: PostgreSQL.
+**Platea** is a university project (PAW — Programación Avanzada en la Web, ITBA) for a theatre/play ticketing web application. Built with Spring MVC 5.3, JSP/JSTL, Maven multi-module, Java 21. Runs on Jetty. Database: PostgreSQL.
 
 ---
 
@@ -11,8 +11,6 @@
 ```
 paw-2026a-09/
 ├── pom.xml                              ← Parent POM (version mgmt, shared deps)
-├── utils/
-│   └── AGENTS.md                        ← This file
 │
 ├── models/                              ← Plain domain entity POJOs
 │   └── pom.xml
@@ -29,39 +27,53 @@ paw-2026a-09/
 │       ├── java/ar/edu/itba/paw/persistence/
 │       └── resources/
 │           ├── schema.sql
-│           └── seed.sql
+│           ├── seed.sql
+│           └── migration_*.sql          ← incremental migrations
 │
 └── webapp/                              ← WAR module (Spring MVC + JSP)
     ├── pom.xml
     └── src/main/
         ├── java/ar/edu/itba/paw/webapp/
+        │   ├── auth/
+        │   │   ├── PawUserDetailsService.java  ← implements UserDetailsService
+        │   │   └── PawAuthUser.java            ← implements UserDetails, wraps User
         │   ├── config/
-        │   │   └── WebConfig.java       ← Spring config (@Configuration, component scan, ViewResolver, resources)
-        │   └── controller/
-        │       ├── HomeController.java
-        │       ├── ObraController.java
-        │       ├── ProductionController.java
-        │       ├── ProductoraController.java
-        │       ├── SearchController.java
-        │       ├── UserController.java
-        │       ├── WatchlistController.java
-        │       ├── SeenController.java
-        │       ├── RatingController.java
-        │       └── ReviewController.java
+        │   │   ├── WebConfig.java              ← Spring MVC config
+        │   │   └── WebSecurityConfig.java      ← Spring Security config
+        │   ├── controller/
+        │   │   ├── HomeController.java
+        │   │   ├── ObraController.java
+        │   │   ├── ProductionController.java
+        │   │   ├── ProductoraController.java
+        │   │   ├── SearchController.java
+        │   │   ├── UserController.java
+        │   │   ├── WatchlistController.java
+        │   │   ├── SeenController.java
+        │   │   ├── RatingController.java
+        │   │   ├── ReviewController.java
+        │   │   ├── ImageController.java
+        │   │   ├── PlayPetitionController.java
+        │   │   └── AdminPlayPetitionController.java
+        │   └── form/
+        │       ├── RegisterForm.java
+        │       └── PlayPetitionForm.java
         └── webapp/
             ├── WEB-INF/
-            │   ├── web.xml              ← Servlet container config (DispatcherServlet, context listener)
-            │   ├── views/               ← JSP pages (private — never accessible directly)
+            │   ├── web.xml
+            │   ├── views/
             │   │   ├── index.jsp
             │   │   ├── obras/detail.jsp
             │   │   ├── productions/list.jsp
             │   │   ├── productions/detail.jsp
             │   │   ├── productoras/detail.jsp
             │   │   ├── search/results.jsp
-            │   │   ├── users/profile.jsp
+            │   │   ├── users/
+            │   │   │   ├── login.jsp
+            │   │   │   ├── register.jsp
+            │   │   │   └── profile.jsp
             │   │   ├── wishlist/index.jsp
             │   │   └── watchlist/index.jsp
-            │   └── tags/                ← Custom JSP tag files (.tag)
+            │   └── tags/
             │       ├── alert.tag
             │       ├── button.tag
             │       ├── card.tag
@@ -72,9 +84,10 @@ paw-2026a-09/
             │       ├── search.tag
             │       └── sectionRow.tag
             ├── css/
-            │   ├── main.css             ← Global reset + base styles (body, header, main, h2)
-            │   └── components/          ← One CSS file per UI component
+            │   ├── main.css
+            │   └── components/
             │       ├── alert.css
+            │       ├── auth.css             ← login + register pages
             │       ├── button.css
             │       ├── card.css
             │       ├── hero.css
@@ -89,10 +102,7 @@ paw-2026a-09/
             │       ├── search-results-page.css
             │       └── section-row.css
             └── images/
-                └── Portadas/            ← Play cover images (jpg)
-                    ├── hamilton.jpg
-                    ├── hamlet.jpg
-                    └── principito.jpg
+                └── Portadas/
 ```
 
 This document is a living guide. Keep it synchronized with the repository when architecture or conventions change.
@@ -104,6 +114,7 @@ This document is a living guide. Keep it synchronized with the repository when a
 - Parent POM: `ar.edu.itba.paw:platea` — holds `<dependencyManagement>` for all versions.
 - Child POMs declare dependencies **without versions** (inherited).
 - Spring version property: `${spring.version}` = `5.3.33`.
+- Spring Security version: `${spring.security.version}` = `5.8.x` — kept **separate** from Spring Framework version.
 - Run locally: `cd webapp && mvn jetty:run` → `http://localhost:8080/`
 
 ### Dependency rules (compile-time enforced via Maven scopes)
@@ -111,7 +122,7 @@ This document is a living guide. Keep it synchronized with the repository when a
 ```
 webapp          --compile-->  service-contracts
 webapp          --runtime-->  services
-webapp          --runtime-->  persistence       (when created)
+webapp          --runtime-->  persistence
 services        --compile-->  service-contracts
 persistence     --compile-->  service-contracts
 models          ← no Spring deps, just POJOs
@@ -192,6 +203,7 @@ Models (`ar.edu.itba.paw.models`) flow **up** through all layers as data carrier
 | Define `interface UserDao` | Contract | `service-contracts` |
 | Define `class User` (id, name, email…) | Model | `models` |
 | Render HTML, apply CSS | View | `webapp` JSP/tag |
+| Spring Security wiring, `UserDetailsService` | Auth | `webapp/auth/` |
 
 **If logic could be extracted to a service test without a web server — it belongs in `services`, not the controller.**
 **If logic touches a SQL table — it belongs in `persistence`, not `services`.**
@@ -236,6 +248,9 @@ class UserController {
 class PlayServiceImpl {
     @Autowired UserService userService;  // ← services do not call each other
 }
+
+// WRONG — hardcoded user ID
+private static final long HARDCODED_USER_ID = 1L;  // ← use @AuthenticationPrincipal
 ```
 
 ---
@@ -243,6 +258,7 @@ class PlayServiceImpl {
 ## Spring MVC Conventions
 
 - `@ComponentScan` in `WebConfig`: `ar.edu.itba.paw.webapp.controller`, `ar.edu.itba.paw.services`, `ar.edu.itba.paw.persistence`.
+- `@ComponentScan` must also cover `ar.edu.itba.paw.webapp.auth` for `PawUserDetailsService`.
 - Views resolved as: `/WEB-INF/views/<name>.jsp` via `InternalResourceViewResolver` (prefix + suffix in `WebConfig`).
 - Static resources: `/css/**` → `/css/`, `/images/**` → `/images/` (configured in `WebConfig.addResourceHandlers`).
 - Controller methods return `String` (view name) or `ModelAndView`.
@@ -264,9 +280,12 @@ class PlayServiceImpl {
 ### Required taglib declarations in every JSP/tag
 
 ```jsp
-<%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>   <%-- only if needed --%>
-<%@ taglib prefix="paw" tagdir="/WEB-INF/tags" %>                         <%-- only if composing tags --%>
+<%@ taglib prefix="c"      uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn"     uri="http://java.sun.com/jsp/jstl/functions" %>   <%-- only if needed --%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>       <%-- for i18n messages --%>
+<%@ taglib prefix="form"   uri="http://www.springframework.org/tags/form" %>  <%-- only for forms --%>
+<%@ taglib prefix="sec"    uri="http://www.springframework.org/security/tags" %> <%-- only if auth checks --%>
+<%@ taglib prefix="paw"    tagdir="/WEB-INF/tags" %>                          <%-- only if composing tags --%>
 ```
 
 ### Security rules (non-negotiable)
@@ -343,16 +362,12 @@ Every page must use `<paw:navbar>` as its `<header>` and place `<paw:hero>` **ou
 | `disabled` | no | Boolean | `false` | |
 | `ariaLabel` | no | String | — | |
 
-CSS: `.btn .btn-{size} {cssClass}` — classes from `button.css`.
-
 #### `<paw:card>`
 | Attribute | Required | Type | Notes |
 |-----------|----------|------|-------|
 | `title` | yes | String | Play title |
 | `imageUrl` | no | String | Falls back to `/images/placeholder.jpg` |
 | `detailUrl` | no | String | If present, card becomes a link; resolved via `<c:url>` |
-
-Renders `.obra-card`. If `detailUrl` present: wraps in `<a>` with `.obra-card-clickable`. Always includes `<paw:button>` for wishlist.
 
 #### `<paw:alert>`
 | Attribute | Required | Type | Default | Notes |
@@ -361,8 +376,6 @@ Renders `.obra-card`. If `detailUrl` present: wraps in `<a>` with `.obra-card-cl
 | `title` | no | String | — | |
 | `variant` | no | String | `info` | `info`, `success`, `warning`, `error` |
 | `showClose` | no | Boolean | `true` | |
-
-CSS class: `.alert .alert-{variant}`. Close button via `<paw:button>`.
 
 #### `<paw:search>`
 | Attribute | Required | Type | Default | Notes |
@@ -383,7 +396,8 @@ CSS class: `.alert .alert-{variant}`. Close button via `<paw:button>`.
 |-----------|----------|------|-------|
 | `activeSection` | no | String | `cartelera`, `teatros`, or `experiencias` — highlights the matching nav link |
 
-Renders `<header class="navbar">`. Reuses `<paw:search>` internally. Sticky, `z-index: 100`. CSS: `navbar.css` + overrides on `.navbar .search-*`.
+Renders `<header class="navbar">`. Reuses `<paw:search>` internally. Sticky, `z-index: 100`.
+After auth is wired, shows Login/Register links for anonymous users and username/Logout for authenticated users via `<sec:authorize>`.
 
 #### `<paw:hero>`
 | Attribute | Required | Type | Default | Notes |
@@ -395,8 +409,6 @@ Renders `<header class="navbar">`. Reuses `<paw:search>` internally. Sticky, `z-
 | `rating` | no | String | — | e.g., `4.9/5.0` |
 | `ticketUrl` | no | String | — | If set, "Reservar Entradas" renders as `<a>` instead of `<button>` |
 
-Full-width section with background image, gradient overlay, content bottom-left, nav arrows bottom-right. Reuses `<paw:button>` for all interactive elements.
-
 #### `<paw:productionCard>`
 | Attribute | Required | Type | Notes |
 |-----------|----------|------|-------|
@@ -407,22 +419,11 @@ Full-width section with background image, gradient overlay, content bottom-left,
 | `badge` | no | String | Overlay badge (e.g., `TOP1`) — amber pill top-right of image |
 | `detailUrl` | no | String | If set, image area wraps in `<a>`; resolved via `<c:url>` |
 
-Fixed width `210px`, portrait image (`aspect-ratio: 3/4`), hover scale on clickable cards. Use inside `<paw:sectionRow>`.
-
 #### `<paw:sectionRow>`
 | Attribute | Required | Type | Notes |
 |-----------|----------|------|-------|
 | `title` | yes | String | Section title (large bold italic) |
 | `subtitle` | no | String | Small uppercase subtitle below title |
-
-Body content: place `<paw:productionCard>` elements directly inside the tag. They render in a horizontally scrollable flex row. Uses `body-content="scriptless"` and `<jsp:doBody />`.
-
-```jsp
-<paw:sectionRow title="Tendencia" subtitle="Lo que todos están hablando">
-    <paw:productionCard title="Hamlet" venue="Teatro Regina" rating="4.9" ... />
-    <paw:productionCard title="Hamilton" venue="Gran Rex" rating="4.8" ... />
-</paw:sectionRow>
-```
 
 #### `<paw:playDetail>`
 | Attribute | Required | Type | Notes |
@@ -436,11 +437,396 @@ Body content: place `<paw:productionCard>` elements directly inside the tag. The
 | `summary` | no | String | |
 | `ticketUrl` | no | String | Resolved via `<c:url>` |
 | `reviewsUrl` | no | String | Resolved via `<c:url>` |
-| `otherEditions` | no | String | Format: `year;production;location~year2;production2;location2` (split `~` then `;`) |
+| `otherEditions` | no | String | Format: `year;production;location~year2;production2;location2` |
 | `seen` | no | Boolean | default `false` |
 | `inWishlist` | no | Boolean | default `false` |
 | `currentlyRunning` | no | Boolean | default `false` |
 | `expiringSoon` | no | Boolean | default `false` |
+
+---
+
+## Forms & Validation (JSR 303)
+
+### Form beans
+
+All HTML form inputs must bind to a **form bean** in `ar.edu.itba.paw.webapp.form`:
+- Private fields + public getters/setters
+- Public no-arg constructor
+- JSR 303 annotations for constraint validation
+
+```java
+public class RegisterForm {
+    @NotEmpty @Email
+    private String email;
+
+    @NotEmpty @Size(min = 8, max = 64)
+    private String password;
+
+    @NotEmpty
+    private String repeatPassword;
+
+    // getters + setters
+}
+```
+
+### Controller usage
+
+```java
+@RequestMapping(value = "/register", method = RequestMethod.POST)
+public ModelAndView register(@Valid @ModelAttribute("registerForm") RegisterForm form,
+                              final BindingResult errors) {
+    if (errors.hasErrors()) {
+        return registerView(form);
+    }
+    // delegate to service
+}
+```
+
+- `@Valid` triggers JSR 303 validation.
+- `BindingResult` must immediately follow the `@ModelAttribute` parameter.
+- `@ModelAttribute("name")` both binds the form object and adds it to the model.
+
+### Spring Form taglib in JSP
+
+```jsp
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<form:form modelAttribute="registerForm" action="..." method="post">
+    <form:input path="email" />
+    <form:errors path="email" element="span" cssClass="field-error" />
+</form:form>
+```
+
+### Overriding validation messages
+
+In `messages.properties`:
+```properties
+NotEmpty.registerForm.email=El email es obligatorio
+Size.registerForm.password=La contraseña debe tener al menos {2} caracteres
+Email.registerForm.email=Ingresá un email válido
+```
+
+---
+
+## Internationalization (i18n)
+
+### Properties file naming convention
+
+- `messages.properties` — default (fallback)
+- `messages_es.properties` — Spanish
+- `messages_es_AR.properties` — Spanish (Argentina) — most specific, tried first
+
+Files live in `src/main/resources/i18n/` (or `mail/` for email templates).
+
+### Using messages in JSP
+
+```jsp
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<spring:message code="register.title" />
+<spring:message code="welcome.greeting" arguments="${user.email}" />
+```
+
+### Rules
+
+- Every user-visible string must be externalized via `<spring:message>`.
+- Email templates (Thymeleaf) must also use `#{key}` message syntax.
+- Test with at least two locales before final delivery.
+- `@ModelAttribute` on a controller method adds an object to every request's model — useful for attaching the current logged-in user to all views.
+
+---
+
+## Spring Security
+
+Spring Security is a **separate module** — its version is NOT kept in sync with Spring Framework.
+
+### Modules required (`webapp/pom.xml`)
+
+```xml
+<dependency>spring-security-web</dependency>
+<dependency>spring-security-config</dependency>
+<dependency>spring-security-taglibs</dependency>  <!-- for <sec:authorize> in JSP -->
+```
+
+### Security filter in `web.xml`
+
+Add `DelegatingFilterProxy` for `springSecurityFilterChain` **before** the dispatcher servlet:
+
+```xml
+<filter>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
+
+Also add `WebSecurityConfig` to `contextConfigLocation`:
+```xml
+<param-value>ar.edu.itba.paw.webapp.config.WebConfig,ar.edu.itba.paw.webapp.config.WebSecurityConfig</param-value>
+```
+
+### `WebSecurityConfig` (separate from `WebConfig`)
+
+```java
+@Configuration
+@EnableWebSecurity
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired private PawUserDetailsService userDetailsService;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+            .authorizeRequests()
+                .antMatchers("/", "/search/**", "/obras/**", "/productions/**", "/productoras/**", "/images/**").permitAll()
+                .antMatchers("/login", "/register").anonymous()
+                .anyRequest().authenticated()
+            .and().formLogin()
+                .loginPage("/login")
+                .defaultSuccessUrl("/", false)
+                .failureUrl("/login?error")
+            .and().logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/");
+    }
+}
+```
+
+### `PawUserDetailsService` (`webapp/auth/`)
+
+Not a PAW `@Service` — it is a Spring Security `@Component`:
+
+```java
+@Component
+public class PawUserDetailsService implements UserDetailsService {
+    @Autowired private UserService userService;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userService.findByEmail(email)
+            .map(PawAuthUser::new)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
+    }
+}
+```
+
+### `PawAuthUser` (`webapp/auth/`)
+
+```java
+public class PawAuthUser implements UserDetails {
+    private final User user;
+
+    public PawAuthUser(User user) { this.user = user; }
+
+    public User getUser() { return user; }
+
+    @Override public String getUsername() { return user.getEmail(); }
+    @Override public String getPassword() { return user.getPassword(); }
+    @Override public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+    // isAccountNonExpired/Locked/CredentialsNonExpired/isEnabled → all true
+}
+```
+
+### Password encoding
+
+- **Always** `BCryptPasswordEncoder` — plain-text passwords are penalized.
+- Encode in `UserServiceImpl.create()`, NOT in the controller or DAO.
+
+### Getting the logged-in user in controllers
+
+```java
+@RequestMapping("/users/me")
+public ModelAndView profile(@AuthenticationPrincipal PawAuthUser authUser) {
+    long userId = authUser.getUser().getId();
+    // ...
+}
+```
+
+**Never** use hardcoded `HARDCODED_USER_ID = 1L`. Replace with `@AuthenticationPrincipal`.
+
+### Auth checks in JSP (navbar, conditional UI)
+
+```jsp
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
+<sec:authorize access="isAnonymous()">
+    <a href="<c:url value='/login' />">Iniciar sesión</a>
+    <a href="<c:url value='/register' />">Registrarse</a>
+</sec:authorize>
+
+<sec:authorize access="isAuthenticated()">
+    <sec:authentication property="principal.user.email" var="currentEmail" />
+    <c:out value="${currentEmail}" />
+    <a href="<c:url value='/logout' />">Cerrar sesión</a>
+</sec:authorize>
+```
+
+### ACL model
+
+- **Roles** define functionality: `ROLE_USER`, `ROLE_ADMIN`.
+- **Resources** are URL patterns.
+- **Permissions** say whether a role can access a resource.
+- One user can have multiple roles — do NOT model roles as user profile types.
+
+---
+
+## Logging
+
+### Framework
+
+SLF4J as the API, Logback as the implementation. **Never** use `System.out.println` or `java.util.logging`.
+
+### Defining a logger (one per class)
+
+```java
+private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+```
+
+Import from `org.slf4j`, not from Logback directly.
+
+### Log levels
+
+| Level | When to use |
+|-------|-------------|
+| `ERROR` | Unexpected failures requiring attention |
+| `WARN` | Unexpected but recoverable situations |
+| `INFO` | Key lifecycle events (startup, registration, login) |
+| `DEBUG` | Detailed trace — development only |
+
+### Placeholder syntax — never concatenate Strings
+
+```java
+// CORRECT
+LOGGER.info("User registered: {}", email);
+LOGGER.error("Email failed for {}: {}", email, e.getMessage(), e);
+
+// WRONG — always allocates String even if level is disabled
+LOGGER.info("User registered: " + email);
+```
+
+### Dual config (dev / prod)
+
+- `src/main/resources/logback-test.xml` — development: console appender, DEBUG level.
+- `src/main/resources/logback.xml` — production: rolling file appender, INFO level.
+- Maven WAR plugin excludes `logback-test.xml` from the WAR.
+- Use `additivity="false"` on package-level loggers to stop upward propagation.
+
+### Required log coverage
+
+Log at appropriate levels around:
+- Application startup / DB initialization
+- User registration and authentication events (login, logout, failures)
+- Email sending (attempt, success, failure)
+- Multipart file upload handling
+- Any caught exception
+
+---
+
+## AOP & Transactions
+
+### Why AOP
+
+AOP separates cross-cutting concerns (transactions, logging, security) from business logic. Spring implements AOP via **proxies** that intercept external method calls.
+
+### Key proxy constraint
+
+AOP advice only fires on **external** calls (through the proxy). Self-calls within the same bean bypass the proxy — `@Transactional` on a private/internal method has no effect.
+
+### `@Transactional` usage
+
+- Apply at **service layer** methods that span multiple DAO calls.
+- One transaction = one use-case.
+- Email sending must be `@Async` — never inside the same transaction.
+- Requires `@EnableTransactionManagement` in `WebConfig` and a `PlatformTransactionManager` bean.
+
+```java
+@Service
+public class UserServiceImpl implements UserService {
+    @Transactional
+    public User create(String email, String password) {
+        return userDao.create(email, passwordEncoder.encode(password));
+    }
+}
+```
+
+---
+
+## Unit Testing
+
+### Test structure (AAA — Arrange / Act / Assert)
+
+1. **Arrange** — set up preconditions and mocks
+2. **Act** — single method call on the object under test
+3. **Assert** — postconditions (max 4 assertions)
+
+The object under test must only be touched in the Act phase.
+
+### Service tests with Mockito
+
+```java
+@RunWith(MockitoJUnitRunner.class)
+public class UserServiceImplTest {
+
+    @Mock private UserDao userDao;
+    @InjectMocks private UserServiceImpl userService;
+
+    @Test
+    public void testCreate_newUser_returnsUser() {
+        when(userDao.create(anyString(), anyString()))
+            .thenReturn(new User(1L, "a@b.com", "hash"));
+
+        User result = userService.create("a@b.com", "secret");
+
+        assertEquals("a@b.com", result.getEmail());
+    }
+}
+```
+
+- Prefer `@InjectMocks` + `@Mock` over manual instantiation.
+- Do NOT use `Mockito.verify(...)` — tests implementation details, not contract behaviour.
+
+### DAO integration tests with HSQL
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = TestConfig.class)
+public class UserDaoImplTest {
+
+    @Autowired private UserDao userDao;
+    @Autowired private JdbcTemplate jdbcTemplate;
+
+    @Before
+    public void setUp() {
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "users");
+    }
+
+    @Test
+    public void testFindById_existingUser_returnsUser() {
+        jdbcTemplate.update("INSERT INTO users (email, password) VALUES (?,?)", "a@b.com", "hash");
+        long id = jdbcTemplate.queryForObject("SELECT id FROM users WHERE email=?", Long.class, "a@b.com");
+
+        Optional<User> result = userDao.findById(id);
+
+        assertTrue(result.isPresent());
+        assertEquals("a@b.com", result.get().getEmail());
+    }
+}
+```
+
+`TestConfig.java` provides an HSQL in-memory `DataSource` and loads `schema.sql`.
 
 ---
 
@@ -449,21 +835,14 @@ Body content: place `<paw:productionCard>` elements directly inside the tag. The
 ### File structure rules
 
 - `css/main.css` — global reset, `*` box-sizing, `body`, `header`, `main`, `h2` base styles only.
-- `css/components/<component>.css` — one file per tag/component, named in kebab-case matching the component concept.
+- `css/components/<component>.css` — one file per tag/component, named in kebab-case.
 - **Never put component styles in `main.css`.**
 - **Never put global styles in a component file.**
 - Each JSP view links `main.css` + every component CSS it uses, in `<head>`.
 
 ### Naming convention — Component-scoped BEM-like
 
-Pattern: `.<component>-<element>` and `.<component>-<modifier>` or `.<component>-<element>-<modifier>`.
-
-Examples:
-- `.obra-card`, `.obra-card-img`, `.obra-card-title`, `.obra-card-clickable`, `.obra-card-wishlist`
-- `.btn`, `.btn-sm`, `.btn-md`, `.btn-lg`, `.btn-wishlist`
-- `.alert`, `.alert-content`, `.alert-title`, `.alert-message`, `.alert-close`, `.alert-info`, `.alert-success`, `.alert-warning`, `.alert-error`
-- `.search-wrapper`, `.search-input`, `.search-input-error`, `.search-error-msg`
-- `.play-detail`, `.play-detail-body`, `.play-detail-title`, `.play-detail-status-active`, `.play-detail-status-inactive`
+Pattern: `.<component>-<element>` and `.<component>-<modifier>`.
 
 **All class names are lowercase kebab-case. No camelCase, no underscores.**
 
@@ -471,7 +850,7 @@ Examples:
 
 - Use **CSS Grid** for page-level and multi-column layouts.
 - Use **Flexbox** for single-axis component internals.
-- Never use inline `style=""` attributes in HTML (except Tailwind-style utilities, not used here).
+- Never use inline `style=""` attributes in HTML.
 - Never use `float` for layout.
 
 ### Design tokens (dark theme)
@@ -482,20 +861,20 @@ Examples:
 | Header bg | `#000` | `header` / navbar background |
 | Primary purple | `#7c3aed` | Logo, `.btn-primary`, CTA buttons |
 | Primary purple hover | `#6d28d9` | `.btn-primary:hover` |
-| Amber/featured | `#f5a623` | `hero-badge-featured`, `production-card-badge`, rating stars |
+| Amber/featured | `#f5a623` | `hero-badge-featured`, rating stars |
 | Gold accent | `#cc9108` | Ticket CTA in playDetail, rating display |
-| Error/danger | `#e50914` | Error states, `.search-input-error`, wishlist hover |
+| Error/danger | `#e50914` | Error states, `.search-input-error` |
 | Text primary | `#fff` | Default text |
-| Text muted | `rgba(255,255,255,0.80–0.88)` | Secondary text, summaries |
-| Text subtle | `rgba(255,255,255,0.45–0.65)` | Nav links, venue names, inactive states |
-| Surface subtle | `rgba(255,255,255,0.04–0.12)` | Cards, tags, badges, navbar search bg |
+| Text muted | `rgba(255,255,255,0.80–0.88)` | Secondary text |
+| Text subtle | `rgba(255,255,255,0.45–0.65)` | Nav links, venue names |
+| Surface subtle | `rgba(255,255,255,0.04–0.12)` | Cards, badges, search bg |
 | Border subtle | `rgba(255,255,255,0.08–0.18)` | Card/panel/input borders |
 
-**Hardcoding colors outside of their established component is forbidden** — reuse these values.
+**Hardcoding colors outside of their established component is forbidden.**
 
 ### Responsive design
 
-- Add `@media (max-width: 768px)` blocks inside the component's CSS file when needed (see `play-detail.css`).
+- Add `@media (max-width: 768px)` blocks inside the component's CSS file when needed.
 - Collapse grid to single column on mobile.
 
 ---
@@ -505,25 +884,25 @@ Examples:
 ```
 ar.edu.itba.paw.
 ├── webapp.
-│   ├── config.WebConfig           ← Spring MVC configuration
-│   └── controller.*Controller     ← @Controller classes
-├── services.*ServiceImpl          ← @Service implementations
+│   ├── auth.
+│   │   ├── PawUserDetailsService      ← Spring Security UserDetailsService
+│   │   └── PawAuthUser                ← UserDetails wrapper over domain User
+│   ├── config.
+│   │   ├── WebConfig                  ← Spring MVC configuration
+│   │   └── WebSecurityConfig          ← Spring Security configuration
+│   ├── controller.*Controller         ← @Controller classes
+│   └── form.*Form                     ← form beans (JSR 303 validation)
+├── services.*ServiceImpl              ← @Service implementations
 ├── interfaces.
-│   ├── services.*Service          ← Service interfaces (in service-contracts)
-│   └── persistence.*Dao           ← DAO interfaces (in service-contracts)
-├── persistence.*DaoImpl           ← @Repository JDBC implementations (TBD)
-└── models.*                       ← Domain entity POJOs (TBD)
+│   ├── services.*Service              ← Service interfaces
+│   └── persistence.*Dao               ← DAO interfaces
+├── persistence.*DaoImpl               ← @Repository JDBC implementations
+└── models.*                           ← Domain entity POJOs
 ```
-
-**Naming rules:**
-- Interfaces: `UserService`, `UserDao`
-- Implementations: `UserServiceImpl`, `UserDaoImpl`
-- Controllers: `UserController`, `PlayController`
-- One class per file, package mirrors module name.
 
 ---
 
-## Database Conventions (when implemented)
+## Database Conventions
 
 - Use `JdbcTemplate` for SELECT/UPDATE/DELETE — never raw JDBC.
 - Use `SimpleJdbcInsert` for INSERT — never hand-build INSERT strings.
@@ -536,106 +915,81 @@ ar.edu.itba.paw.
 
 ### Image storage pattern
 
-- The current implementation stores external cover URLs in `image_url` columns on domain tables such as `productions` and `productoras`.
-- For the course delivery, image uploads must use `multipart/form-data`.
-- A single request may carry both form fields and a file. A controller may bind them with `@ModelAttribute` into a form object that contains both regular fields and a `MultipartFile`.
-- Uploaded images should be persisted in PostgreSQL. Prefer storing the binary content or a dedicated image record there instead of relying on temporary filesystem state.
-- Images must be rendered through normal image URLs and the `src` attribute of `<img>`, not embedded inline.
-- Expose dedicated controller endpoints that return image content for the frontend to consume through application-owned URLs.
+- Separate `images` table with `id` and `content` (binary) columns. Domain tables reference `image_id` as a foreign key.
+- Never JOIN the images table alongside domain data — fetch separately through dedicated image endpoints.
+- Expose images via a dedicated `ImageController` endpoint returning `ResponseEntity<byte[]>`.
 - Never store or render images as Base64.
-- If the project later migrates to a different image persistence strategy, update this guide and the persistence layer together.
+- Upload via `multipart/form-data`; bind with `@ModelAttribute` + `MultipartFile`.
 
 ---
 
-## Email Conventions (when implemented)
+## Email Conventions
 
-- Use a mailing library instead of hand-building SMTP calls. Spring mail support is the expected baseline.
 - Send emails **only from the services layer** — never from controllers or persistence.
 - Mark email methods `@Async` — email must never block the request thread.
-- Enable `@EnableAsync` in `WebConfig`.
+- `@EnableAsync` is in `WebConfig`.
 - Thymeleaf is the compulsory template engine for emails.
-- Define a reusable base email style so every message shares the same visual structure and branding.
-- Templates must be internationalized (i18n). For the final delivery, email content must be translatable and tested with multiple locales.
+- Templates must be internationalized (i18n) — test with multiple locales.
 - Email structure: header (site branding) → body (reason/content) → call-to-action link → footer (optional).
-- Every email must include a clear call to action.
-- Emails must contain information the user does not already know.
+- Every email must include a clear call to action and information the user does not already know.
 
 ---
 
 ## Static Resources
 
-- Static assets may include JavaScript, CSS, and static images such as logos, icons, and placeholders.
-- CSS is mandatory for delivered views. Do not ship raw unstyled pages.
-- Keep static resources in the public static folders of the web module, next to the webapp assets layout already used by the project.
-- Reference static assets with `<c:url>` or with URLs built from the application context path. Do not hardcode deploy-specific absolute URLs.
-- Keep `WebConfig.addResourceHandlers(...)` aligned with any new static folders. In most cases the mapping is already configured and should be extended, not replaced.
+- Reference static assets with `${pageContext.request.contextPath}/...` or `<c:url>`. Do not hardcode absolute URLs.
+- Keep `WebConfig.addResourceHandlers(...)` aligned with any new static folders.
 
 ---
 
 ## Pampero Deploy Guide
 
 - Deployment target: `Tomcat 9.0.107-dev` on `pampero.itba.edu.ar`.
-- The deployable artifact is the WAR generated by the `webapp` module.
-- The final artifact must be uploaded as `/web/app.war` with that exact name.
-
-### Upload options
-
-- `scp path/to/file username@pampero.itba.edu.ar:/home/username/.`
-- `sftp paw-2026a-#i@10.16.1.110`
-- Then: `put web/app.war web/app.war`
-
-### Database access
-
-- Database engine: PostgreSQL.
-- Credentials are the same ones used for `sftp`.
-- Database name must match the group name.
-- Example connection: `psql -h 10.16.1.110 -U paw-2026a-$i`
-
-### Logs
-
-- Team log example: `http://pawserver.it.itba.edu.ar/logs/paw-2026a-01-webapp.2026-04-01.log`
-- General access log example: `http://pawserver.it.itba.edu.ar/logs/localhost_access_log.2026-04-01.txt`
-- Catalina stderr: `http://pawserver.it.itba.edu.ar/logs/catalina.err`
-- Log using the levels covered in the course lectures. Do not leave debugging blind spots around deploy, multipart handling, mail flows, and persistence failures.
-
-### Final URL
-
-- The final deployed app is exposed at `http://pawserver.it.itba.edu.ar/paw-2026a-#i`
+- Final artifact: WAR uploaded as `/web/app.war`.
+- `sftp paw-2026a-#i@10.16.1.110` → `put web/app.war web/app.war`
+- DB: `psql -h 10.16.1.110 -U paw-2026a-$i`
+- Logs: `http://pawserver.it.itba.edu.ar/logs/paw-2026a-01-webapp.YYYY-MM-DD.log`
+- Final URL: `http://pawserver.it.itba.edu.ar/paw-2026a-#i`
 
 ---
 
 ## Critical Coding Rules (violations are penalized)
 
-1. **No business logic in controllers** — receive, validate, delegate, return view. Nothing more.
-2. **No shared mutable state** — Spring beans have no instance fields that change per-request. Thread-safety via statelessness.
-3. **No null returns** — use `Optional<T>` for possibly-absent values at every layer boundary.
-4. **No raw SQL string construction** — always use `?` placeholders via `JdbcTemplate`/`SimpleJdbcInsert`.
+1. **No business logic in controllers** — receive, validate, delegate, return view.
+2. **No shared mutable state** — Spring beans must be stateless.
+3. **No null returns** — use `Optional<T>` at every layer boundary.
+4. **No raw SQL string construction** — `?` placeholders only.
 5. **No `${var}` for user data in JSP** — always `<c:out value="${var}" />`.
 6. **No raw URLs in JSP** — always `<c:url value="..." />`.
-7. **No inline styles in HTML** — all styling goes in CSS files.
-8. **No cross-layer compile dependencies** — Maven scopes enforce this; do not bypass.
-9. **No Base64 images** — upload with `multipart/form-data`, persist appropriately, and expose them through application URLs.
-10. **No undocumented image storage changes** — if image persistence strategy changes, update this file and the persistence layer together.
+7. **No inline styles in HTML** — all styling in CSS files.
+8. **No cross-layer compile dependencies** — Maven scopes enforce this.
+9. **No Base64 images** — multipart upload, binary persistence, URL endpoint.
+10. **No undocumented image storage changes** — update this file too.
 11. **No blocking email sends** — always `@Async`.
-12. **Emails live in services** — never trigger mail delivery directly from controllers.
-13. **Every email needs i18n and a CTA** — final delivery must satisfy both.
-14. **Pampero WAR path is fixed** — production deploy expects `/web/app.war`.
-15. **Immutability** — create new objects, never mutate existing ones. Domain objects from persistence are the single source of truth.
+12. **Emails from services only** — never from controllers.
+13. **Every email needs i18n and a CTA** — both required for final delivery.
+14. **Pampero WAR path is fixed** — `/web/app.war`.
+15. **Immutability** — create new objects, never mutate existing ones.
+16. **No plain-text passwords** — always `BCryptPasswordEncoder`.
+17. **No hardcoded user IDs** — always `@AuthenticationPrincipal PawAuthUser`.
+18. **No `Mockito.verify()`** in tests — tests contract behaviour, not implementation.
 
 ---
 
-## Current State (2026-03-23)
+## Current State (2026-04-14)
 
 **Implemented:**
-- Multi-module architecture with `models`, `service-contracts`, `services`, `persistence`, and `webapp`
-- Spring MVC configuration in `WebConfig`, including `DataSource`, JSP view resolution, and static resource handlers
-- PostgreSQL schema and seed data in `persistence/src/main/resources/`
-- Controllers for home, plays, productions, productoras, search, wishlist, seen list, ratings, reviews, and user profile
-- Service and DAO layers for productions, obras, productoras, ratings, reviews, wishlist, seen items, shows, users, and images
-- Shared JSP tags: `alert`, `button`, `card`, `hero`, `navbar`, `playDetail`, `productionCard`, `search`, `sectionRow`
-- Production cards reused across landing, cartelera, search results, productora pages, and wishlist/profile sections
+- Multi-module Maven architecture: `models`, `service-contracts`, `services`, `persistence`, `webapp`
+- `WebConfig` with `DataSource`, JSP view resolution, static resources, mail sender, Thymeleaf engine, `@EnableAsync`, multipart resolver
+- PostgreSQL schema + seed data + multiple migration scripts
+- Controllers: home, obras, productions, productoras, search, watchlist, seen, ratings, reviews, images, play petitions (admin + user)
+- Service and DAO layers for all entities above
+- `MailServiceImpl` with async email sending (Thymeleaf templates)
+- JSP tags: `alert`, `button`, `card`, `hero`, `navbar`, `playDetail`, `productionCard`, `search`, `sectionRow`
 
-**Still pending or intentionally simplified:**
-- Authentication and real logged-in users (some controllers still use a hardcoded user id for demo flow)
-- Email sending and async mail flows
-- Automated tests enforcing all documented conventions
+**Still pending:**
+- Spring Security (authentication not yet configured)
+- Some controllers still use `HARDCODED_USER_ID = 1L` — replace with `@AuthenticationPrincipal`
+- Registration form with JSR 303 validation
+- i18n for all UI-facing strings (only mail messages currently externalized)
+- Unit tests for service and DAO layers

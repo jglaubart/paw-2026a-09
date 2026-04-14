@@ -22,7 +22,10 @@ public class PawAuthUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+        final String role = user.getRole() != null && !user.getRole().trim().isEmpty()
+                ? user.getRole().trim()
+                : "ROLE_USER";
+        return Collections.singletonList(new SimpleGrantedAuthority(role));
     }
 
     @Override

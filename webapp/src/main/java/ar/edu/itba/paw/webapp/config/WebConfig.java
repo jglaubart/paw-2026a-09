@@ -186,6 +186,7 @@ public class WebConfig implements WebMvcConfigurer {
                 runScript(dataSource, "seed.sql");
             }
 
+            runScript(dataSource, "migration_users_role.sql");
             runScript(dataSource, "migration_backfill_shows_location_from_seed_theaters.sql");
             runScript(dataSource, "migration_play_petitions.sql");
             runScript(dataSource, "migration_backfill_play_ratings_from_production_ratings.sql");

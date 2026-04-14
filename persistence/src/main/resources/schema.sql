@@ -47,7 +47,8 @@ CREATE TABLE IF NOT EXISTS shows (
 CREATE TABLE IF NOT EXISTS users (
     id       SERIAL PRIMARY KEY,
     email    VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255)
+    password VARCHAR(255),
+    role     VARCHAR(50) NOT NULL DEFAULT 'ROLE_USER'
 );
 
 CREATE TABLE IF NOT EXISTS play_ratings (

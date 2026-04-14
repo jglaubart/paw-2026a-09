@@ -7,16 +7,23 @@ import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.webapp.auth.PawAuthUser;
 import ar.edu.itba.paw.webapp.form.RegisterForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Locale;
@@ -26,19 +33,27 @@ public class UserController {
 
     private final UserService userService;
     private final ReviewService reviewService;
+    private final UserDetailsService userDetailsService;
 
     @Autowired
     public UserController(final UserService userService,
-                          final ReviewService reviewService
+                          final ReviewService reviewService,
+                          final UserDetailsService userDetailsService
                           /*, final RatingService ratingService */) {
         this.userService = userService;
         this.reviewService = reviewService;
+        this.userDetailsService = userDetailsService;
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView login(@RequestParam(value = "error", required = false) final String error,
                               @RequestParam(value = "logout", required = false) final String logout,
-                              @RequestParam(value = "registered", required = false) final String registered) {
+                              @RequestParam(value = "registered", required = false) final String registered,
+                              @AuthenticationPrincipal final PawAuthUser authUser) {
+        if (authUser != null) {
+            return new ModelAndView("redirect:/users/me");
+        }
+
         final ModelAndView mav = new ModelAndView("users/login");
         mav.addObject("hasError", "1".equals(error));
         mav.addObject("loggedOut", "1".equals(logout));
@@ -47,13 +62,24 @@ public class UserController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView registerForm() {
+    public ModelAndView registerForm(@AuthenticationPrincipal final PawAuthUser authUser) {
+        if (authUser != null) {
+            return new ModelAndView("redirect:/users/me");
+        }
+
         return registerView(new RegisterForm());
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(@Valid @ModelAttribute("registerForm") final RegisterForm form,
-                                 final BindingResult errors) {
+                                 final BindingResult errors,
+                                 final HttpServletRequest request,
+                                 final HttpServletResponse response,
+                                 @AuthenticationPrincipal final PawAuthUser authUser) {
+        if (authUser != null) {
+            return new ModelAndView("redirect:/users/me");
+        }
+
         form.setEmail(normalizeEmail(form.getEmail()));
 
         if (!form.passwordsMatch()) {
@@ -66,7 +92,8 @@ public class UserController {
 
         try {
             userService.create(form.getEmail(), form.getPassword());
-            return new ModelAndView("redirect:/login?registered=1");
+            authenticateUser(form.getEmail());
+            return new ModelAndView("redirect:" + resolvePostRegisterTarget(request, response));
         } catch (final UserAlreadyExistsException e) {
             errors.rejectValue("email", "auth.register.email.taken");
             return registerView(errors);
@@ -97,5 +124,29 @@ public class UserController {
             return null;
         }
         return email.trim().toLowerCase(Locale.ROOT);
+    }
+
+    private void authenticateUser(final String email) {
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                userDetails,
+                userDetails.getPassword(),
+                userDetails.getAuthorities()
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    private String resolvePostRegisterTarget(final HttpServletRequest request,
+                                             final HttpServletResponse response) {
+        final HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+        final SavedRequest savedRequest = requestCache.getRequest(request, response);
+
+        requestCache.removeRequest(request, response);
+        if (savedRequest != null) {
+            return savedRequest.getRedirectUrl();
+        }
+
+        final String contextPath = request.getContextPath();
+        return (contextPath != null ? contextPath : "") + "/users/me";
     }
 }
