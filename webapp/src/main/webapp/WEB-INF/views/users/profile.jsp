@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="paw" tagdir="/WEB-INF/tags" %>
 
 <!DOCTYPE html>
@@ -8,7 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Perfil — Platea</title>
+    <title><spring:message code="profile.pageTitle" /></title>
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/favicon.png" />
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/main.css" />
@@ -27,8 +28,8 @@
 
     <main class="user-profile-page">
         <section class="user-profile-header">
-            <h1 class="user-profile-title">Mi Perfil</h1>
-            <p class="user-profile-subtitle">Usuario de demostración (hardcoded)</p>
+            <h1 class="user-profile-title"><spring:message code="profile.title" /></h1>
+            <p class="user-profile-subtitle"><c:out value="${currentUserEmail}" /></p>
         </section>
 
         <%--
@@ -60,21 +61,29 @@
         --%>
 
         <section class="user-profile-section">
-            <h2>Mis Reseñas</h2>
+            <h2><spring:message code="profile.reviews.title" /></h2>
             <c:choose>
                 <c:when test="${not empty reviews}">
                     <c:forEach var="r" items="${reviews}">
                         <c:url var="reviewObraUrl" value="/obras/${r.obraId}" />
                         <div class="user-profile-review-card">
-                            <p class="user-profile-review-meta">
-                                <a href="${reviewObraUrl}" class="user-profile-review-link">Obra #<c:out value="${r.obraId}" /></a>
-                            </p>
-                            <p class="user-profile-review-body"><c:out value="${r.body}" /></p>
+                            <c:if test="${r.productionImageId != null}">
+                                <c:url var="reviewImgUrl" value="/images/${r.productionImageId}" />
+                                <a href="${reviewObraUrl}" class="user-profile-review-img-link">
+                                    <img class="user-profile-review-img" src="${reviewImgUrl}" alt="${fn:escapeXml(r.obraTitle)}" />
+                                </a>
+                            </c:if>
+                            <div class="user-profile-review-content">
+                                <a href="${reviewObraUrl}" class="user-profile-review-link">
+                                    <c:out value="${not empty r.obraTitle ? r.obraTitle : 'Ver obra'}" />
+                                </a>
+                                <p class="user-profile-review-body"><c:out value="${r.body}" /></p>
+                            </div>
                         </div>
                     </c:forEach>
                 </c:when>
                 <c:otherwise>
-                    <p class="user-profile-no-reviews">No escribiste reseñas todavía.</p>
+                    <p class="user-profile-no-reviews"><spring:message code="profile.reviews.empty" /></p>
                 </c:otherwise>
             </c:choose>
         </section>

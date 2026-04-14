@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReviewService {
+    Review createOrUpdate(long userId, long productionId, String body);
     Review createOrUpdateByEmail(String email, long productionId, String body);
+    Review createOrUpdateForObra(long userId, long obraId, long productionId, String body);
     Review createOrUpdateByEmailForObra(String email, long obraId, long productionId, String body);
     Optional<Review> findByUserAndProduction(long userId, long productionId);
     Optional<Review> findByUserAndObra(long userId, long obraId);
@@ -14,5 +16,6 @@ public interface ReviewService {
     List<Review> findByProduction(long productionId);
     List<Review> findByObra(long obraId);
     List<Review> findByUser(long userId);
+    void deleteByUserAndObra(long userId, long obraId);
     void deleteByEmailAndObra(String email, long obraId);
 }

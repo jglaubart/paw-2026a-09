@@ -30,6 +30,9 @@ public class ProductionDaoImpl implements ProductionDao {
         final Date endDate   = rs.getDate("end_date");
         final long productoraId = rs.getLong("productora_id");
         final boolean productoraNull = rs.wasNull();
+        final long imageId = rs.getLong("image_id");
+        final boolean imageIdNull = rs.wasNull();
+        final String resolvedImageUrl = imageIdNull ? null : "/images/" + imageId;
         return new Production(
                 rs.getLong("id"),
                 rs.getString("name"),
@@ -40,7 +43,7 @@ public class ProductionDaoImpl implements ProductionDao {
                 rs.getString("theater"),
                 startDate != null ? startDate.toLocalDate() : null,
                 endDate   != null ? endDate.toLocalDate()   : null,
-                rs.getString("image_url"),
+                resolvedImageUrl,
                 rs.getString("instagram"),
                 rs.getString("website")
         );
@@ -274,7 +277,7 @@ public class ProductionDaoImpl implements ProductionDao {
     @Override
     public Production create(final String name, final long obraId, final Long productoraId,
                              final String synopsis, final String direction, final String theater,
-                             final LocalDate startDate, final LocalDate endDate, final String imageUrl,
+                             final LocalDate startDate, final LocalDate endDate, final Long imageId,
                              final String instagram, final String website) {
         final Map<String, Object> params = new HashMap<>();
         params.put("name", name);
@@ -285,11 +288,12 @@ public class ProductionDaoImpl implements ProductionDao {
         params.put("theater", theater);
         params.put("start_date", startDate != null ? Date.valueOf(startDate) : null);
         params.put("end_date",   endDate   != null ? Date.valueOf(endDate)   : null);
-        params.put("image_url", imageUrl);
+        params.put("image_id", imageId);
         params.put("instagram", instagram);
         params.put("website", website);
         final Number key = jdbcInsert.executeAndReturnKey(params);
+        final String resolvedImageUrl = imageId != null ? "/images/" + imageId : null;
         return new Production(key.longValue(), name, obraId, productoraId, synopsis, direction,
-                theater, startDate, endDate, imageUrl, instagram, website);
+                theater, startDate, endDate, resolvedImageUrl, instagram, website);
     }
 }

@@ -25,7 +25,7 @@ public class ProductoraDaoImpl implements ProductoraDao {
                     rs.getLong("id"),
                     rs.getString("name"),
                     rs.getString("bio"),
-                    rs.getString("image_url"),
+                    resolveImageUrl(rs.getLong("image_id"), rs.wasNull()),
                     rs.getString("instagram"),
                     rs.getString("website")
             );
@@ -41,7 +41,7 @@ public class ProductoraDaoImpl implements ProductoraDao {
     @Override
     public Optional<Productora> findById(final long id) {
         final List<Productora> results = jdbcTemplate.query(
-                "SELECT id, name, bio, image_url, instagram, website FROM productoras WHERE id = ?",
+                "SELECT id, name, bio, image_id, instagram, website FROM productoras WHERE id = ?",
                 new Object[]{ id },
                 PRODUCTORA_MAPPER
         );
@@ -51,21 +51,25 @@ public class ProductoraDaoImpl implements ProductoraDao {
     @Override
     public List<Productora> findAll() {
         return jdbcTemplate.query(
-                "SELECT id, name, bio, image_url, instagram, website FROM productoras ORDER BY name",
+                "SELECT id, name, bio, image_id, instagram, website FROM productoras ORDER BY name",
                 PRODUCTORA_MAPPER
         );
     }
 
     @Override
-    public Productora create(final String name, final String bio, final String imageUrl,
+    public Productora create(final String name, final String bio, final Long imageId,
                              final String instagram, final String website) {
         final Map<String, Object> params = new HashMap<>();
         params.put("name", name);
         params.put("bio", bio);
-        params.put("image_url", imageUrl);
+        params.put("image_id", imageId);
         params.put("instagram", instagram);
         params.put("website", website);
         final Number key = jdbcInsert.executeAndReturnKey(params);
-        return new Productora(key.longValue(), name, bio, imageUrl, instagram, website);
+        return new Productora(key.longValue(), name, bio, imageId != null ? "/images/" + imageId : null, instagram, website);
+    }
+
+    private static String resolveImageUrl(final long imageId, final boolean imageIdNull) {
+        return imageIdNull ? null : "/images/" + imageId;
     }
 }

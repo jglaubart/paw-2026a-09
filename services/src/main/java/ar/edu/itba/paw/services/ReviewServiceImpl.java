@@ -24,22 +24,33 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    public Review createOrUpdate(final long userId, final long productionId, final String body) {
+        return reviewDao.findByUserAndProduction(userId, productionId)
+                .map(existing -> reviewDao.update(userId, productionId, body))
+                .orElseGet(() -> reviewDao.create(userId, productionId, body));
+    }
+
+    @Override
     public Review createOrUpdateByEmail(final String email, final long productionId, final String body) {
         final User user = userDao.findByEmail(email)
-                .orElseGet(() -> userDao.create(email, null));
-        return reviewDao.findByUserAndProduction(user.getId(), productionId)
-                .map(existing -> reviewDao.update(user.getId(), productionId, body))
-                .orElseGet(() -> reviewDao.create(user.getId(), productionId, body));
+                .orElseGet(() -> userDao.create(email, null, ""));
+        return createOrUpdate(user.getId(), productionId, body);
+    }
+
+    @Override
+    public Review createOrUpdateForObra(final long userId, final long obraId,
+                                        final long productionId, final String body) {
+        return reviewDao.findByUserAndObra(userId, obraId)
+                .map(existing -> reviewDao.updateForObra(userId, obraId, productionId, body))
+                .orElseGet(() -> reviewDao.createForObra(userId, obraId, productionId, body));
     }
 
     @Override
     public Review createOrUpdateByEmailForObra(final String email, final long obraId,
                                                final long productionId, final String body) {
         final User user = userDao.findByEmail(email)
-                .orElseGet(() -> userDao.create(email, null));
-        return reviewDao.findByUserAndObra(user.getId(), obraId)
-                .map(existing -> reviewDao.updateForObra(user.getId(), obraId, productionId, body))
-                .orElseGet(() -> reviewDao.createForObra(user.getId(), obraId, productionId, body));
+                .orElseGet(() -> userDao.create(email, null, ""));
+        return createOrUpdateForObra(user.getId(), obraId, productionId, body);
     }
 
     @Override
@@ -80,8 +91,13 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    public void deleteByUserAndObra(final long userId, final long obraId) {
+        reviewDao.deleteByUserAndObra(userId, obraId);
+    }
+
+    @Override
     public void deleteByEmailAndObra(final String email, final long obraId) {
         userDao.findByEmail(email)
-                .ifPresent(user -> reviewDao.deleteByUserAndObra(user.getId(), obraId));
+                .ifPresent(user -> deleteByUserAndObra(user.getId(), obraId));
     }
 }

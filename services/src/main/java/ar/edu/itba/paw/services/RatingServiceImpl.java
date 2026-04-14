@@ -46,7 +46,7 @@ public class RatingServiceImpl implements RatingService {
     @Override
     public PlayRating rateObraByEmail(final String email, final long obraId, final int score) {
         final User user = userDao.findByEmail(email)
-                .orElseGet(() -> userDao.create(email, null));
+                .orElseGet(() -> userDao.create(email, null, ""));
         return rateObra(user.getId(), obraId, score);
     }
 

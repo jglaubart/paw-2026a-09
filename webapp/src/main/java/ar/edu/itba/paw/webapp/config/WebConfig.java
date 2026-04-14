@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.config;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -12,11 +13,16 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.Validator;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -30,11 +36,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 @ComponentScan({
     "ar.edu.itba.paw.webapp.controller",
+    "ar.edu.itba.paw.webapp.auth",
     "ar.edu.itba.paw.services",
     "ar.edu.itba.paw.persistence"
 })
@@ -86,6 +94,11 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
     public JavaMailSender mailSender() {
         final JavaMailSenderImpl sender = new JavaMailSenderImpl();
         sender.setHost(resolveConfig("PLATEA_MAIL_HOST", "platea.mail.host", "smtp.gmail.com"));
@@ -110,10 +123,22 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public ReloadableResourceBundleMessageSource messageSource() {
         final ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasename("classpath:mail/messages");
+        messageSource.setBasenames("classpath:i18n/messages", "classpath:mail/messages");
         messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
         messageSource.setFallbackToSystemLocale(false);
         return messageSource;
+    }
+
+    @Bean
+    public LocalValidatorFactoryBean validator() {
+        final LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
+        validator.setValidationMessageSource(messageSource());
+        return validator;
+    }
+
+    @Override
+    public Validator getValidator() {
+        return validator();
     }
 
     @Bean
@@ -132,7 +157,21 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public InitializingBean databaseInitializer(final DataSource dataSource) {
+    public BeanPostProcessor requestMappingHandlerAdapterCustomizer() {
+        return new BeanPostProcessor() {
+            @Override
+            public Object postProcessAfterInitialization(final Object bean, final String beanName) {
+                if (bean instanceof RequestMappingHandlerAdapter) {
+                    ((RequestMappingHandlerAdapter) bean).setIgnoreDefaultModelOnRedirect(true);
+                }
+                return bean;
+            }
+        };
+    }
+
+    @Bean
+    public InitializingBean databaseInitializer(final DataSource dataSource,
+                                                final PasswordEncoder passwordEncoder) {
         return () -> {
             runScript(dataSource, "schema.sql");
             runScript(dataSource, "migration_add_shows_location_columns.sql");
@@ -147,11 +186,16 @@ public class WebConfig implements WebMvcConfigurer {
                 runScript(dataSource, "seed.sql");
             }
 
+            runScript(dataSource, "migration_users_role.sql");
             runScript(dataSource, "migration_backfill_shows_location_from_seed_theaters.sql");
             runScript(dataSource, "migration_play_petitions.sql");
+            runScript(dataSource, "migration_images_for_productions.sql");
+            runScript(dataSource, "migration_drop_legacy_image_urls.sql");
             runScript(dataSource, "migration_backfill_play_ratings_from_production_ratings.sql");
             runScript(dataSource, "migration_review_email_identity.sql");
             runScript(dataSource, "migration_reviews_per_obra.sql");
+            runScript(dataSource, "migration_users_username.sql");
+            hashLegacyUserPasswords(jdbcTemplate, passwordEncoder);
         };
     }
 
@@ -302,5 +346,29 @@ public class WebConfig implements WebMvcConfigurer {
             return second.trim();
         }
         return null;
+    }
+
+    private void hashLegacyUserPasswords(final JdbcTemplate jdbcTemplate,
+                                         final PasswordEncoder passwordEncoder) {
+        final List<Map<String, Object>> users = jdbcTemplate.queryForList(
+                "SELECT id, password FROM users WHERE password IS NOT NULL"
+        );
+
+        for (final Map<String, Object> user : users) {
+            final String password = (String) user.get("password");
+            if (password == null || password.trim().isEmpty() || looksLikeBcryptHash(password)) {
+                continue;
+            }
+
+            jdbcTemplate.update(
+                    "UPDATE users SET password = ? WHERE id = ?",
+                    passwordEncoder.encode(password),
+                    ((Number) user.get("id")).longValue()
+            );
+        }
+    }
+
+    private boolean looksLikeBcryptHash(final String password) {
+        return password.startsWith("$2a$") || password.startsWith("$2b$") || password.startsWith("$2y$");
     }
 }

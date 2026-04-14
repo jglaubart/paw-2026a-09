@@ -2,6 +2,7 @@
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="paw" tagdir="/WEB-INF/tags" %>
 
 <!DOCTYPE html>
@@ -35,6 +36,8 @@
     <c:url var="selectedProductionWebsiteUrl" value="${selectedProduction.website}" />
 </c:if>
 <c:url var="carteleraUrl" value="/cartelera" />
+<c:url var="loginUrl" value="/login" />
+<c:url var="registerUrl" value="/register" />
 <%-- <c:url var="watchlistUrl" value="/watchlist" /> --%>
 <%-- <c:url var="historialUrl" value="/historial" /> --%>
 
@@ -198,6 +201,7 @@
 
                 <c:url var="shareActionUrl" value="/obras/${obra.id}/share" />
                 <form action="${shareActionUrl}" method="post" class="obra-share-form">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${fn:escapeXml(_csrf.token)}" />
                     <input type="hidden" name="produccionId" value="${selectedProduction.id}" />
 
                     <label class="obra-share-label" for="share-sender-name">Tu nombre</label>
@@ -338,10 +342,10 @@
                     <c:when test="${not empty reviews}">
                         <div class="obra-reviews-grid" data-feedback-reviews-grid>
                             <c:forEach var="r" items="${reviews}">
-                                <div class="obra-review-card" data-review-card data-review-email="${fn:escapeXml(fn:toLowerCase(r.userEmail))}">
+                                <div class="obra-review-card" data-review-card data-review-username="${fn:escapeXml(r.username)}">
                                     <div class="obra-review-header">
-                                        <span class="obra-review-avatar">${fn:toUpperCase(fn:substring(r.userEmail, 0, 1))}</span>
-                                        <span class="obra-review-author"><c:out value="${r.userEmail}" /></span>
+                                        <span class="obra-review-avatar">${fn:toUpperCase(fn:substring(r.username, 0, 1))}</span>
+                                        <span class="obra-review-author"><c:out value="${r.username}" /></span>
                                         <c:if test="${r.score != null}">
                                             <span class="obra-review-score"><c:out value="${r.score}" />/10</span>
                                         </c:if>
@@ -360,76 +364,86 @@
 
                 <%-- CALIFICAR + RESEÑAR --%>
                 <c:if test="${selectedProduction != null}">
-                    <div class="obra-interact-panel">
-                        <div class="obra-participation-rating">
+                    <sec:authorize access="isAuthenticated()">
+                        <div class="obra-interact-panel">
+                            <div class="obra-participation-rating">
+                                <div class="obra-interact-head">
+                                    <h3 class="obra-interact-title">Tu reseña y puntuación</h3>
+                                    <span class="obra-rating-value">
+                                        <c:choose>
+                                            <c:when test="${userStars != null}">
+                                                <span data-feedback-user-score><fmt:formatNumber value="${userStars}" maxFractionDigits="1" />/10</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span data-feedback-user-score>--/10</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </span>
+                                </div>
+
+                                <p class="obra-review-signed-in-as">Participás como <strong><c:out value="${currentUserEmail}" /></strong>.</p>
+
+                                <c:if test="${param.feedback == 'saved'}">
+                                    <p class="obra-inline-feedback obra-inline-feedback-success">
+                                        Puntuación y reseña guardadas.
+                                    </p>
+                                </c:if>
+
+                                <c:if test="${param.error == 'invalid_feedback'}">
+                                    <p class="obra-inline-feedback obra-inline-feedback-warning">
+                                        Elegí un puntaje válido para guardar tu participación.
+                                    </p>
+                                </c:if>
+
+                                <c:if test="${param.error == 'missing_score'}">
+                                    <p class="obra-inline-feedback obra-inline-feedback-warning">
+                                        Elegí una calificación antes de guardar tu participación.
+                                    </p>
+                                </c:if>
+
+                                <p class="obra-inline-feedback obra-action-feedback-wrap-hidden" data-feedback-inline-message></p>
+
+                                <c:url var="feedbackActionUrl" value="/obras/${obra.id}/feedback" />
+                                <form action="${feedbackActionUrl}"
+                                      method="post"
+                                      accept-charset="UTF-8"
+                                      class="obra-rate-form-inner"
+                                      data-obra-feedback-form>
+                                    <input type="hidden" name="${_csrf.parameterName}" value="${fn:escapeXml(_csrf.token)}" />
+                                    <input type="hidden" name="produccionId" value="${selectedProduction.id}" />
+                                    <input type="hidden" name="email" value="${fn:escapeXml(currentUserEmail)}" />
+                                    <paw:starRating
+                                        name="score"
+                                        currentValue="${userStars}"
+                                        max="10"
+                                        groupLabel="Tu puntuación"
+                                        promptText="Sin calificar"
+                                        autosubmit="false" />
+                                    <textarea name="body"
+                                              rows="4"
+                                              class="obra-review-textarea"
+                                              placeholder="¿Qué te dejó esta obra? (opcional)"><c:out value="${userReview != null ? userReview.body : ''}" /></textarea>
+                                    <div class="obra-review-actions">
+                                        <span class="obra-review-help">La puntuación es obligatoria. La reseña es opcional y, si la dejás vacía, se elimina la anterior.</span>
+                                        <button type="submit" class="btn btn-primary btn-md obra-review-submit" data-feedback-submit><c:out value="${userReview != null || userStars != null ? 'Actualizar participación' : 'Guardar participación'}" /></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </sec:authorize>
+
+                    <sec:authorize access="isAnonymous()">
+                        <div class="obra-interact-panel obra-interact-panel-guest">
                             <div class="obra-interact-head">
                                 <h3 class="obra-interact-title">Tu reseña y puntuación</h3>
-                                <span class="obra-rating-value">
-                                    <c:choose>
-                                        <c:when test="${userStars != null}">
-                                            <span data-feedback-user-score><fmt:formatNumber value="${userStars}" maxFractionDigits="1" />/10</span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span data-feedback-user-score>--/10</span>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </span>
                             </div>
-
-                            <c:if test="${param.feedback == 'saved'}">
-                                <p class="obra-inline-feedback obra-inline-feedback-success">
-                                    Puntuación y reseña guardadas.
-                                </p>
-                            </c:if>
-
-                            <c:if test="${param.error == 'invalid_feedback'}">
-                                <p class="obra-inline-feedback obra-inline-feedback-warning">
-                                    Completá un mail válido y elegí un puntaje.
-                                </p>
-                            </c:if>
-
-                            <c:if test="${param.error == 'missing_score'}">
-                                <p class="obra-inline-feedback obra-inline-feedback-warning">
-                                    Elegí una calificación antes de guardar tu participación.
-                                </p>
-                            </c:if>
-
-                            <p class="obra-inline-feedback obra-action-feedback-wrap-hidden" data-feedback-inline-message></p>
-
-                            <c:url var="feedbackActionUrl" value="/obras/${obra.id}/feedback" />
-                            <form action="${feedbackActionUrl}"
-                                  method="post"
-                                  accept-charset="UTF-8"
-                                  class="obra-rate-form-inner"
-                                  data-obra-feedback-form>
-                                <input type="hidden" name="produccionId" value="${selectedProduction.id}" />
-                                <input type="email"
-                                       name="email"
-                                       class="obra-review-email"
-                                       placeholder="tu-mail@ejemplo.com"
-                                       value="${fn:escapeXml(reviewEmail)}"
-                                       maxlength="255"
-                                       required />
-                                <paw:starRating
-                                    name="score"
-                                    currentValue="${userStars}"
-                                    max="10"
-                                    groupLabel="Tu puntuación"
-                                    promptText="Sin calificar"
-                                    autosubmit="false" />
-                                <textarea name="body"
-                                          rows="4"
-                                          class="obra-review-textarea"
-                                          placeholder="¿Qué te dejó esta obra? (opcional)"><c:out value="${userReview != null ? userReview.body : ''}" /></textarea>
-                                <div class="obra-review-actions">
-                                    <span class="obra-review-help">La puntuación es obligatoria. La reseña es opcional y, si la dejás vacía, se elimina la anterior.</span>
-                                    <button type="submit" class="btn btn-primary btn-md obra-review-submit" data-feedback-submit>
-                                        ${userReview != null || userStars != null ? 'Actualizar participación' : 'Guardar participación'}
-                                    </button>
-                                </div>
-                            </form>
+                            <p class="obra-interact-guest-copy">Iniciá sesión para guardar puntuaciones, editar tu reseña y ver tu actividad desde el perfil.</p>
+                            <div class="obra-interact-auth-actions">
+                                <a href="${loginUrl}" class="btn btn-primary btn-md obra-review-submit">Iniciar sesión</a>
+                                <a href="${registerUrl}" class="btn btn-outline btn-md obra-sidebar-cta">Crear cuenta</a>
+                            </div>
                         </div>
-                    </div>
+                    </sec:authorize>
                 </c:if>
             </section>
 

@@ -1,0 +1,135 @@
+.auth-page {
+    padding: 2.5rem 1rem 4rem;
+}
+
+.auth-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(22rem, 30rem);
+    gap: 1.5rem;
+    max-width: 72rem;
+    margin: 0 auto;
+}
+
+.auth-panel {
+    min-width: 0;
+}
+
+.auth-panel-copy,
+.auth-card {
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background:
+        radial-gradient(circle at top left, rgba(186, 158, 255, 0.11), transparent 40%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02));
+    box-shadow: 0 28px 60px rgba(0, 0, 0, 0.28);
+}
+
+.auth-panel-copy {
+    padding: 2.1rem;
+}
+
+.auth-kicker {
+    margin: 0 0 0.8rem;
+    color: rgba(245, 166, 35, 0.9);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.auth-title {
+    margin: 0 0 1rem;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.05;
+}
+
+.auth-copy {
+    margin: 0;
+    max-width: 28rem;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 1rem;
+    line-height: 1.8;
+}
+
+.auth-card {
+    padding: 1.65rem;
+}
+
+.auth-form {
+    display: grid;
+    gap: 0.8rem;
+}
+
+.auth-label {
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.auth-input {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.9rem 1rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    font-size: 0.95rem;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.auth-input:focus {
+    outline: none;
+    border-color: rgba(186, 158, 255, 0.36);
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: 0 0 0 8px rgba(132, 85, 239, 0.08);
+}
+
+.auth-field-error {
+    color: #ffb4b9;
+    font-size: 0.82rem;
+}
+
+.auth-submit {
+    width: 100%;
+    margin-top: 0.4rem;
+}
+
+.auth-footer-copy {
+    margin: 1rem 0 0;
+    color: rgba(255, 255, 255, 0.65);
+    text-align: center;
+}
+
+.auth-inline-link {
+    color: #ba9eff;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.auth-inline-link:hover {
+    text-decoration: underline;
+}
+
+.auth-alert {
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 900px) {
+    .auth-shell {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .auth-page {
+        padding: 1.5rem 1rem 3rem;
+    }
+
+    .auth-panel-copy,
+    .auth-card {
+        padding: 1.2rem;
+    }
+}

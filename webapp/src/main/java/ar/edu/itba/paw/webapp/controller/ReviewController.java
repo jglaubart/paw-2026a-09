@@ -3,10 +3,12 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.ProductionService;
 import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
+import ar.edu.itba.paw.webapp.auth.PawAuthUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,9 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
 @Controller
 public class ReviewController {
 
@@ -36,33 +35,37 @@ public class ReviewController {
 
     @RequestMapping(value = "/productions/{id:\\d+}/review", method = RequestMethod.POST)
     public ModelAndView createReview(@PathVariable("id") final long productionId,
-                                     @RequestParam("email") final String email,
                                      @RequestParam("body") final String body,
-                                     @RequestParam(value = "obraId", required = false) final Long obraId) {
+                                     @RequestParam(value = "obraId", required = false) final Long obraId,
+                                     @AuthenticationPrincipal final PawAuthUser authUser) {
+        if (authUser == null) {
+            return new ModelAndView("redirect:/login");
+        }
+
         boolean reviewCreated = false;
 
-        if (email != null && email.contains("@") && body != null && !body.trim().isEmpty()) {
-            reviewService.createOrUpdateByEmail(email.trim().toLowerCase(), productionId, body.trim());
+        if (body != null && !body.trim().isEmpty()) {
+            reviewService.createOrUpdate(authUser.getUser().getId(), productionId, body.trim());
             reviewCreated = true;
         }
         if (obraId != null) {
-            final String normalizedEmail = email != null ? URLEncoder.encode(email.trim().toLowerCase(), StandardCharsets.UTF_8) : "";
             return new ModelAndView("redirect:/obras/" + obraId + "?produccionId=" + productionId
-                    + (reviewCreated ? "&review=saved&email=" + normalizedEmail : "&error=invalid_review"));
+                    + (reviewCreated ? "&review=saved" : "&error=invalid_review"));
         }
         return new ModelAndView("redirect:/productions/" + productionId + (reviewCreated ? "?review=saved" : "?error=invalid_review"));
     }
 
     @RequestMapping(value = "/obras/{id:\\d+}/review", method = RequestMethod.POST)
     public ModelAndView createObraReview(@PathVariable("id") final long obraId,
-                                         @RequestParam("email") final String email,
                                          @RequestParam("body") final String body,
-                                         @RequestParam(value = "produccionId", required = false) final Long produccionId) {
-        final String normalizedEmail = email != null ? email.trim().toLowerCase() : null;
-        final boolean valid = normalizedEmail != null && normalizedEmail.contains("@")
-                && body != null && !body.trim().isEmpty()
+                                         @RequestParam(value = "produccionId", required = false) final Long produccionId,
+                                         @AuthenticationPrincipal final PawAuthUser authUser) {
+        if (authUser == null) {
+            return new ModelAndView("redirect:/login");
+        }
+
+        final boolean valid = body != null && !body.trim().isEmpty()
                 && isValidSelectedProduction(obraId, produccionId);
-        final String encodedEmail = normalizedEmail != null ? URLEncoder.encode(normalizedEmail, StandardCharsets.UTF_8) : "";
         final String base = "redirect:/obras/" + obraId + (produccionId != null ? "?produccionId=" + produccionId : "?");
         final String separator = base.contains("?") && !base.endsWith("?") ? "&" : "";
 
@@ -70,26 +73,27 @@ public class ReviewController {
             return new ModelAndView(base + separator + "error=invalid_review");
         }
 
-        reviewService.createOrUpdateByEmailForObra(normalizedEmail, obraId, produccionId, body.trim());
-        return new ModelAndView(base + separator + "review=saved&email=" + encodedEmail);
+        reviewService.createOrUpdateForObra(authUser.getUser().getId(), obraId, produccionId, body.trim());
+        return new ModelAndView(base + separator + "review=saved");
     }
 
     @RequestMapping(value = "/obras/{id:\\d+}/feedback", method = RequestMethod.POST)
     public Object submitObraFeedback(@PathVariable("id") final long obraId,
-                                     @RequestParam("email") final String email,
                                      @RequestParam(value = "score", required = false) final String score,
                                      @RequestParam(value = "body", required = false) final String body,
                                      @RequestParam(value = "produccionId", required = false) final Long produccionId,
+                                     @AuthenticationPrincipal final PawAuthUser authUser,
                                      final HttpServletRequest request) {
-        final String normalizedEmail = email != null ? email.trim().toLowerCase() : null;
+        if (authUser == null) {
+            return unauthorizedResponse(request);
+        }
+
         final String normalizedRawScore = score != null ? score.trim() : null;
         final Integer normalizedScore = normalizedRawScore != null && !normalizedRawScore.isEmpty()
                 ? normalizeScore(normalizedRawScore)
                 : null;
         final boolean ajaxRequest = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
-        final boolean validEmail = normalizedEmail != null && normalizedEmail.contains("@");
         final boolean validProduction = isValidSelectedProduction(obraId, produccionId);
-        final String encodedEmail = normalizedEmail != null ? URLEncoder.encode(normalizedEmail, StandardCharsets.UTF_8) : "";
         final String base = "redirect:/obras/" + obraId + (produccionId != null ? "?produccionId=" + produccionId : "?");
         final String separator = base.contains("?") && !base.endsWith("?") ? "&" : "";
 
@@ -100,11 +104,8 @@ public class ReviewController {
             return new ModelAndView(base + separator + "error=missing_score");
         }
 
-        if (!validEmail || normalizedScore == null || !validProduction) {
+        if (normalizedScore == null || !validProduction) {
             if (ajaxRequest) {
-                if (!validEmail) {
-                    return new ResponseEntity<String>("invalid_email", HttpStatus.BAD_REQUEST);
-                }
                 if (normalizedScore == null) {
                     return new ResponseEntity<String>("invalid_score", HttpStatus.BAD_REQUEST);
                 }
@@ -113,11 +114,11 @@ public class ReviewController {
             return new ModelAndView(base + separator + "error=invalid_feedback");
         }
 
-        ratingService.rateObraByEmail(normalizedEmail, obraId, normalizedScore);
+        ratingService.rateObra(authUser.getUser().getId(), obraId, normalizedScore);
         if (body != null && !body.trim().isEmpty()) {
-            reviewService.createOrUpdateByEmailForObra(normalizedEmail, obraId, produccionId, body.trim());
+            reviewService.createOrUpdateForObra(authUser.getUser().getId(), obraId, produccionId, body.trim());
         } else {
-            reviewService.deleteByEmailAndObra(normalizedEmail, obraId);
+            reviewService.deleteByUserAndObra(authUser.getUser().getId(), obraId);
         }
 
         if (ajaxRequest) {
@@ -130,7 +131,7 @@ public class ReviewController {
             return new ResponseEntity<Void>(headers, HttpStatus.NO_CONTENT);
         }
 
-        return new ModelAndView(base + separator + "feedback=saved&email=" + encodedEmail);
+        return new ModelAndView(base + separator + "feedback=saved");
     }
 
     private Integer normalizeScore(final String rawScore) {
@@ -149,5 +150,12 @@ public class ReviewController {
 
     private boolean isValidSelectedProduction(final long obraId, final Long productionId) {
         return productionId != null && productionService.findSelectedByObraId(obraId, productionId).isPresent();
+    }
+
+    private Object unauthorizedResponse(final HttpServletRequest request) {
+        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+            return new ResponseEntity<String>("unauthorized", HttpStatus.UNAUTHORIZED);
+        }
+        return new ModelAndView("redirect:/login");
     }
 }

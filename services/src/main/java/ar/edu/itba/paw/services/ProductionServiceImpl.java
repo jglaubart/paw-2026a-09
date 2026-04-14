@@ -154,10 +154,10 @@ public class ProductionServiceImpl implements ProductionService {
     @Override
     public Production create(final String name, final long obraId, final Long productoraId,
                              final String synopsis, final String direction, final String theater,
-                             final LocalDate startDate, final LocalDate endDate, final String imageUrl,
+                             final LocalDate startDate, final LocalDate endDate, final Long imageId,
                              final String instagram, final String website) {
         return productionDao.create(name, obraId, productoraId, synopsis, direction, theater,
-                startDate, endDate, imageUrl, instagram, website);
+                startDate, endDate, imageId, instagram, website);
     }
 
     private List<ProductionCardSummary> summarizeByObra(final List<Production> productions) {

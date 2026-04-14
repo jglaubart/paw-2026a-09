@@ -77,6 +77,7 @@
             </c:if>
 
             <form action="${pageContext.request.contextPath}/subir-obra" method="post" enctype="multipart/form-data" class="petition-form-card" data-play-petition-form>
+                <input type="hidden" name="${_csrf.parameterName}" value="${fn:escapeXml(_csrf.token)}" />
                 <section class="petition-form-step">
                     <div class="petition-form-step-heading">
                         <span class="petition-form-step-number">1</span>
@@ -158,8 +159,8 @@
 
                         <div class="petition-form-field petition-form-field-full">
                             <label for="petitionerEmail">Email de contacto <span class="petition-form-required">*</span></label>
-                            <input id="petitionerEmail" name="petitionerEmail" type="email" value="${fn:escapeXml(form.petitionerEmail)}" placeholder="produccion@ejemplo.com" />
-                            <p class="petition-form-hint">Usamos este mail para confirmar la recepción y comunicar la decisión del equipo.</p>
+                            <input id="petitionerEmail" name="petitionerEmail" type="email" value="${fn:escapeXml(form.petitionerEmail)}" placeholder="produccion@ejemplo.com" readonly="readonly" />
+                            <p class="petition-form-hint">Usamos la cuenta con la que iniciaste sesión para confirmar la recepción y comunicar la decisión del equipo.</p>
                             <c:if test="${not empty errors['petitionerEmail']}"><span class="petition-form-error"><c:out value="${errors['petitionerEmail']}" /></span></c:if>
                         </div>
                     </div>
