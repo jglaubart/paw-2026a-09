@@ -557,20 +557,8 @@
     flex-wrap: wrap;
 }
 
-.obra-review-submit {
-    padding: 0.66rem 1rem;
-    border: 0;
-    border-radius: 999px;
-    background: linear-gradient(135deg, #ba9eff 0%, #8455ef 100%);
-    box-shadow: 0 18px 34px rgba(132, 85, 239, 0.24);
-    font-size: 0.76rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-
-.obra-review-submit:hover {
-    background: linear-gradient(135deg, #c6afff 0%, #9367f1 100%);
+.btn.obra-review-submit {
+    min-width: 11rem;
 }
 
 .obra-user-review-card {
@@ -877,7 +865,7 @@
         align-items: stretch;
     }
 
-    .obra-review-submit {
+    .btn.obra-review-submit {
         width: 100%;
     }
 

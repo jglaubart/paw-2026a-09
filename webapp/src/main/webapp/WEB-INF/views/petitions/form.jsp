@@ -20,12 +20,14 @@
 </head>
 <body>
 <c:url var="heroImageUrl" value="/images/Portadas/hamilton.jpg" />
+<c:url var="subirObraUrl" value="/subir-obra" />
 <c:set var="maxUploadMb" value="5" />
 
 <paw:navbar />
 
 <section class="petition-hero">
-    <div class="petition-hero-backdrop" style="background-image: linear-gradient(90deg, rgba(20,20,20,0.94) 0%, rgba(20,20,20,0.74) 45%, rgba(20,20,20,0.88) 100%), url('${heroImageUrl}');"></div>
+    <img class="petition-hero-bg" src="${heroImageUrl}" alt="" aria-hidden="true" />
+    <div class="petition-hero-gradient" aria-hidden="true"></div>
     <div class="petition-hero-content">
         <p class="petition-hero-kicker">Convocatoria Platea</p>
         <h1 class="petition-hero-title">Traé tu obra a la cartelera</h1>
@@ -76,7 +78,7 @@
                 </div>
             </c:if>
 
-            <form action="${pageContext.request.contextPath}/subir-obra" method="post" enctype="multipart/form-data" class="petition-form-card" data-play-petition-form>
+            <form action="${subirObraUrl}" method="post" enctype="multipart/form-data" class="petition-form-card" data-play-petition-form>
                 <input type="hidden" name="${_csrf.parameterName}" value="${fn:escapeXml(_csrf.token)}" />
                 <section class="petition-form-step">
                     <div class="petition-form-step-heading">
@@ -221,7 +223,7 @@
                         <p class="petition-form-actions-title">Una vez enviada, la revisamos manualmente.</p>
                         <p class="petition-form-actions-text">Si aprobamos la petición, generamos automáticamente la obra y su producción base dentro de Platea.</p>
                     </div>
-                    <button type="submit" class="btn btn-md petition-form-submit">Enviar petición</button>
+                    <paw:button text="Enviar petición" type="submit" variant="cta" cssClass="petition-form-submit" />
                 </div>
             </form>
         </section>

@@ -5,12 +5,22 @@
 <%@ attribute name="disabled" required="false" type="java.lang.Boolean" %>
 <%@ attribute name="ariaLabel" required="false" %>
 <%@ attribute name="href" required="false" %>
+<%@ attribute name="type" required="false" %>
+<%@ attribute name="variant" required="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <c:set var="btnSize" value="${not empty size ? size : 'md'}" />
 <c:set var="btnCssClass" value="${not empty cssClass ? cssClass : ''}" />
 <c:set var="btnDisabled" value="${disabled ne null ? disabled : false}" />
-<c:set var="classes" value="btn btn-${btnSize} ${btnCssClass}" />
+<c:set var="btnType" value="${not empty type ? type : 'button'}" />
+<c:set var="btnVariantClass" value="${variant == 'cta' ? 'btn-cta' : ''}" />
+<c:set var="classes" value="btn btn-${btnSize}" />
+<c:if test="${not empty btnVariantClass}">
+    <c:set var="classes" value="${classes} ${btnVariantClass}" />
+</c:if>
+<c:if test="${not empty btnCssClass}">
+    <c:set var="classes" value="${classes} ${btnCssClass}" />
+</c:if>
 
 <c:choose>
     <c:when test="${not empty href and not btnDisabled}">
@@ -21,7 +31,7 @@
         </a>
     </c:when>
     <c:otherwise>
-        <button type="button"
+        <button type="${btnType}"
                 class="${classes}"
                 <c:if test="${not empty ariaLabel}">aria-label="<c:out value="${ariaLabel}" />"</c:if>
                 <c:if test="${btnDisabled}">disabled</c:if>>

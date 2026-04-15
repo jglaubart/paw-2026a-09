@@ -20,8 +20,13 @@ public class UserDaoImpl implements UserDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    private static final RowMapper<User> USER_MAPPER = (rs, rowNum) ->
-            new User(rs.getLong("id"), rs.getString("email"), rs.getString("password"), rs.getString("role"), rs.getString("username"));
+    private static final RowMapper<User> USER_MAPPER = (rs, rowNum) -> {
+        final Object imgId = rs.getObject("image_id");
+        return new User(rs.getLong("id"), rs.getString("email"), rs.getString("password"),
+                rs.getString("role"), rs.getString("username"),
+                imgId != null ? rs.getLong("image_id") : null,
+                rs.getString("bio"));
+    };
 
     @Autowired
     public UserDaoImpl(final DataSource dataSource) {
@@ -34,7 +39,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public Optional<User> findById(final long id) {
         final List<User> users = jdbcTemplate.query(
-                "SELECT id, email, password, role, username FROM users WHERE id = ?",
+                "SELECT id, email, password, role, username, image_id, bio FROM users WHERE id = ?",
                 new Object[]{ id },
                 USER_MAPPER
         );
@@ -44,7 +49,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public Optional<User> findByEmail(final String email) {
         final List<User> users = jdbcTemplate.query(
-                "SELECT id, email, password, role, username FROM users WHERE email = ?",
+                "SELECT id, email, password, role, username, image_id, bio FROM users WHERE email = ?",
                 new Object[]{ email },
                 USER_MAPPER
         );
@@ -63,10 +68,47 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public Optional<User> findByUsername(final String username) {
+        final List<User> users = jdbcTemplate.query(
+                "SELECT id, email, password, role, username, image_id, bio FROM users WHERE username = ?",
+                new Object[]{ username },
+                USER_MAPPER
+        );
+        return users.isEmpty() ? Optional.empty() : Optional.of(users.get(0));
+    }
+
+    @Override
     public void updatePassword(final long userId, final String password) {
         jdbcTemplate.update(
                 "UPDATE users SET password = ? WHERE id = ?",
                 password,
+                userId
+        );
+    }
+
+    @Override
+    public void updateUsername(final long userId, final String username) {
+        jdbcTemplate.update(
+                "UPDATE users SET username = ? WHERE id = ?",
+                username,
+                userId
+        );
+    }
+
+    @Override
+    public void updateImage(final long userId, final long imageId) {
+        jdbcTemplate.update(
+                "UPDATE users SET image_id = ? WHERE id = ?",
+                imageId,
+                userId
+        );
+    }
+
+    @Override
+    public void updateBio(final long userId, final String bio) {
+        jdbcTemplate.update(
+                "UPDATE users SET bio = ? WHERE id = ?",
+                bio != null ? bio : "",
                 userId
         );
     }

@@ -7,6 +7,7 @@ public class Review implements Serializable {
     private long id;
     private long userId;
     private String username;
+    private String email;
     private long productionId;
     private long obraId;
     private String obraTitle;
@@ -17,13 +18,14 @@ public class Review implements Serializable {
 
     public Review() {}
 
-    public Review(final long id, final long userId, final String username,
+    public Review(final long id, final long userId, final String username, final String email,
                   final long productionId, final long obraId, final String obraTitle,
                   final Long productionImageId, final String body,
                   final Long ratingId, final Integer score) {
         this.id = id;
         this.userId = userId;
         this.username = username;
+        this.email = email;
         this.productionId = productionId;
         this.obraId = obraId;
         this.obraTitle = obraTitle;
@@ -36,6 +38,7 @@ public class Review implements Serializable {
     public long getId() { return id; }
     public long getUserId() { return userId; }
     public String getUsername() { return username; }
+    public String getEmail() { return email; }
     public long getProductionId() { return productionId; }
     public long getObraId() { return obraId; }
     public String getObraTitle() { return obraTitle; }

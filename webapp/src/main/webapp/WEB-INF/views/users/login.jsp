@@ -50,8 +50,8 @@
                 <form action="${loginActionUrl}" method="post" class="auth-form">
                     <input type="hidden" name="${_csrf.parameterName}" value="${fn:escapeXml(_csrf.token)}" />
 
-                    <label class="auth-label" for="email"><spring:message code="auth.field.email" /></label>
-                    <input id="email" name="email" type="email" class="auth-input" maxlength="255" required />
+                    <label class="auth-label" for="email"><spring:message code="auth.field.emailOrUsername" /></label>
+                    <input id="email" name="email" type="text" class="auth-input" maxlength="255" required autocomplete="username" />
 
                     <label class="auth-label" for="password"><spring:message code="auth.field.password" /></label>
                     <input id="password" name="password" type="password" class="auth-input" minlength="8" maxlength="72" required />

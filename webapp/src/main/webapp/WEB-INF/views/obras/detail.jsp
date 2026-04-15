@@ -342,10 +342,11 @@
                     <c:when test="${not empty reviews}">
                         <div class="obra-reviews-grid" data-feedback-reviews-grid>
                             <c:forEach var="r" items="${reviews}">
-                                <div class="obra-review-card" data-review-card data-review-username="${fn:escapeXml(r.username)}">
+                                <c:set var="reviewDisplayName" value="${not empty r.username ? r.username : r.email}" />
+                                <div class="obra-review-card" data-review-card data-review-username="${fn:escapeXml(reviewDisplayName)}">
                                     <div class="obra-review-header">
-                                        <span class="obra-review-avatar">${fn:toUpperCase(fn:substring(r.username, 0, 1))}</span>
-                                        <span class="obra-review-author"><c:out value="${r.username}" /></span>
+                                        <span class="obra-review-avatar">${fn:toUpperCase(fn:substring(reviewDisplayName, 0, 1))}</span>
+                                        <span class="obra-review-author"><c:out value="${reviewDisplayName}" /></span>
                                         <c:if test="${r.score != null}">
                                             <span class="obra-review-score"><c:out value="${r.score}" />/10</span>
                                         </c:if>
@@ -425,7 +426,7 @@
                                               placeholder="¿Qué te dejó esta obra? (opcional)"><c:out value="${userReview != null ? userReview.body : ''}" /></textarea>
                                     <div class="obra-review-actions">
                                         <span class="obra-review-help">La puntuación es obligatoria. La reseña es opcional y, si la dejás vacía, se elimina la anterior.</span>
-                                        <button type="submit" class="btn btn-primary btn-md obra-review-submit" data-feedback-submit><c:out value="${userReview != null || userStars != null ? 'Actualizar participación' : 'Guardar participación'}" /></button>
+                                        <button type="submit" class="btn btn-cta obra-review-submit" data-feedback-submit><c:out value="${userReview != null || userStars != null ? 'Actualizar participación' : 'Guardar participación'}" /></button>
                                     </div>
                                 </form>
                             </div>
@@ -439,7 +440,7 @@
                             </div>
                             <p class="obra-interact-guest-copy">Iniciá sesión para guardar puntuaciones, editar tu reseña y ver tu actividad desde el perfil.</p>
                             <div class="obra-interact-auth-actions">
-                                <a href="${loginUrl}" class="btn btn-primary btn-md obra-review-submit">Iniciar sesión</a>
+                                <a href="${loginUrl}" class="btn btn-cta obra-review-submit">Iniciar sesión</a>
                                 <a href="${registerUrl}" class="btn btn-outline btn-md obra-sidebar-cta">Crear cuenta</a>
                             </div>
                         </div>
