@@ -55,12 +55,12 @@
         <div class="navbar-auth">
             <sec:authorize access="isAnonymous()">
                 <a class="navbar-auth-link" href="${loginUrl}"><c:out value="${loginLabel}" /></a>
-                <paw:button text="${registerLabel}" size="md" cssClass="btn-primary navbar-register-button" href="${registerUrl}" />
+                <paw:button text="${registerLabel}" size="md" variant="cta" cssClass="navbar-register-button" href="${registerUrl}" />
             </sec:authorize>
             <sec:authorize access="isAuthenticated()">
                 <sec:authentication property="principal.user.username" var="currentUsername" />
                 <sec:authentication property="principal.user.email"    var="currentUserEmail" />
-                <paw:button text="${submitPlayLabel}" size="md" cssClass="btn-primary navbar-submit-button" href="${subirObraUrl}" />
+                <paw:button text="${submitPlayLabel}" size="md" variant="cta" cssClass="navbar-submit-button" href="${subirObraUrl}" />
                 <div class="navbar-user-menu" id="navbarUserMenu">
                     <button type="button"
                             class="navbar-user-btn"

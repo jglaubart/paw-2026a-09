@@ -6,11 +6,30 @@
     overflow: hidden;
 }
 
-.petition-hero-backdrop {
+.petition-hero-bg {
     position: absolute;
     inset: 0;
-    background-position: center;
-    background-size: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.petition-hero-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(20, 20, 20, 0.94) 0%, rgba(20, 20, 20, 0.74) 45%, rgba(20, 20, 20, 0.88) 100%);
+}
+
+.petition-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 8% 55%, rgba(186, 158, 255, 0.24) 0%, rgba(186, 158, 255, 0) 42%),
+        radial-gradient(ellipse at 92% 44%, rgba(248, 160, 16, 0.13) 0%, rgba(248, 160, 16, 0) 34%);
+    pointer-events: none;
+    z-index: 0;
 }
 
 .petition-hero-content {
@@ -24,7 +43,7 @@
 .petition-hero-kicker,
 .petition-form-kicker {
     margin: 0 0 0.75rem;
-    color: #f5a623;
+    color: var(--platea-secondary, #f8a010);
     font-size: 0.82rem;
     font-weight: 700;
     letter-spacing: 0.16em;
@@ -54,14 +73,17 @@
 }
 
 .petition-hero-pill {
-    padding: 0.65rem 0.95rem;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 0.55rem 0.95rem;
+    border: 1px solid rgba(186, 158, 255, 0.22);
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(132, 85, 239, 0.12);
     color: rgba(255, 255, 255, 0.92);
-    font-size: 0.82rem;
-    letter-spacing: 0.08em;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.10em;
     text-transform: uppercase;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .petition-form-page {
@@ -86,24 +108,39 @@
     gap: 1rem;
 }
 
+/* ── Shared structure ─────────────────────────────────────── */
 .petition-form-sidebar-card,
 .petition-form-card,
 .petition-form-step {
-    background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%),
-        rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 26px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 20px 50px rgba(0, 0, 0, 0.28);
 }
 
+/* ── Sidebar card — purple glow glassmorphism ──────────────── */
 .petition-form-sidebar-card {
     padding: 1.4rem;
+    background:
+        radial-gradient(circle at top right, rgba(186, 158, 255, 0.11) 0%, rgba(186, 158, 255, 0) 44%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%),
+        rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(186, 158, 255, 0.13);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 }
 
+/* ── Sidebar accent — stronger purple tint ─────────────────── */
 .petition-form-sidebar-card-accent {
-    border-color: rgba(124, 58, 237, 0.4);
-    background: linear-gradient(180deg, rgba(124, 58, 237, 0.18) 0%, rgba(124, 58, 237, 0.08) 100%);
+    border-color: rgba(186, 158, 255, 0.32);
+    background:
+        radial-gradient(circle at top right, rgba(186, 158, 255, 0.20) 0%, rgba(186, 158, 255, 0) 42%),
+        linear-gradient(180deg, rgba(132, 85, 239, 0.22) 0%, rgba(132, 85, 239, 0.08) 100%),
+        rgba(132, 85, 239, 0.04);
+    box-shadow:
+        inset 0 1px 0 rgba(186, 158, 255, 0.14),
+        0 20px 50px rgba(0, 0, 0, 0.28),
+        0 0 0 1px rgba(132, 85, 239, 0.06);
 }
 
 .petition-form-sidebar-card h2,
@@ -136,14 +173,45 @@
     margin-bottom: 1rem;
 }
 
+/* ── Outer form card — full navbar-style radial gradient ──── */
 .petition-form-card {
     display: grid;
     gap: 1.25rem;
     padding: 1.25rem;
+    background:
+        radial-gradient(circle at top right, rgba(186, 158, 255, 0.15) 0%, rgba(186, 158, 255, 0) 36%),
+        radial-gradient(circle at bottom left, rgba(248, 160, 16, 0.07) 0%, rgba(248, 160, 16, 0) 28%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.04) 100%),
+        rgba(14, 14, 14, 0.68);
+    border: 1px solid rgba(186, 158, 255, 0.20);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 }
 
+/* ── Step 1 — purple accent ────────────────────────────────── */
 .petition-form-step {
     padding: 1.5rem;
+    background:
+        radial-gradient(circle at top right, rgba(186, 158, 255, 0.09) 0%, rgba(186, 158, 255, 0) 46%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.025) 100%),
+        rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(186, 158, 255, 0.10);
+}
+
+/* ── Step 2 — gold/amber accent ────────────────────────────── */
+.petition-form-step + .petition-form-step {
+    background:
+        radial-gradient(circle at top right, rgba(248, 160, 16, 0.09) 0%, rgba(248, 160, 16, 0) 46%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.025) 100%),
+        rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(248, 160, 16, 0.11);
+}
+
+.petition-form-step + .petition-form-step .petition-form-step-number {
+    background: linear-gradient(135deg, var(--platea-secondary, #f8a010) 0%, var(--platea-secondary-dim, #e79400) 100%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.18),
+        0 0 24px rgba(248, 160, 16, 0.36);
 }
 
 .petition-form-step-heading {
@@ -166,13 +234,17 @@
 .petition-form-step-number {
     width: 2.3rem;
     height: 2.3rem;
+    flex-shrink: 0;
     border-radius: 999px;
-    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+    background: linear-gradient(135deg, var(--platea-primary-dim, #8455ef) 0%, var(--platea-primary, #ba9eff) 100%);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-weight: 800;
-    box-shadow: 0 0 24px rgba(124, 58, 237, 0.35);
+    color: #fff;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.18),
+        0 0 28px rgba(132, 85, 239, 0.48);
 }
 
 .petition-form-grid {
@@ -222,14 +294,19 @@
 .petition-form-field input:focus,
 .petition-form-field textarea:focus {
     outline: none;
-    border-color: rgba(124, 58, 237, 0.85);
-    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
+    border-color: rgba(186, 158, 255, 0.70);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 0 0 1px rgba(186, 158, 255, 0.12),
+        0 10px 22px rgba(132, 85, 239, 0.14);
     background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-1px);
 }
 
 .petition-form-upload-field input[type="file"] {
     padding: 0.85rem;
-    background: rgba(124, 58, 237, 0.08);
+    background: rgba(132, 85, 239, 0.08);
+    border-color: rgba(186, 158, 255, 0.18);
 }
 
 .petition-form-field textarea {
@@ -251,12 +328,22 @@
 }
 
 .petition-form-add-date {
-    border: 1px solid rgba(124, 58, 237, 0.34);
+    border: 1px solid rgba(186, 158, 255, 0.28);
     border-radius: 999px;
-    background: rgba(124, 58, 237, 0.12);
-    color: #e8ddff;
+    background: rgba(132, 85, 239, 0.12);
+    color: var(--platea-primary, #ba9eff);
     padding: 0.55rem 0.9rem;
     cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.petition-form-add-date:hover {
+    background: rgba(132, 85, 239, 0.22);
+    border-color: rgba(186, 158, 255, 0.44);
+    transform: translateY(-1px);
 }
 
 .petition-form-extra-dates {
@@ -294,8 +381,9 @@
 
 .petition-form-genre-option:hover {
     transform: translateY(-1px);
-    border-color: rgba(124, 58, 237, 0.35);
-    background: rgba(124, 58, 237, 0.08);
+    border-color: rgba(186, 158, 255, 0.32);
+    background: rgba(132, 85, 239, 0.10);
+    box-shadow: 0 8px 20px rgba(132, 85, 239, 0.14);
 }
 
 .petition-form-genre-option input {
@@ -305,9 +393,13 @@
 }
 
 .petition-form-genre-option:has(input:checked) {
-    border-color: rgba(124, 58, 237, 0.8);
-    background: rgba(124, 58, 237, 0.18);
-    box-shadow: inset 0 0 0 1px rgba(124, 58, 237, 0.18);
+    border-color: rgba(186, 158, 255, 0.65);
+    background:
+        radial-gradient(circle at top right, rgba(186, 158, 255, 0.16) 0%, rgba(186, 158, 255, 0) 60%),
+        rgba(132, 85, 239, 0.20);
+    box-shadow:
+        inset 0 1px 0 rgba(186, 158, 255, 0.12),
+        0 0 0 1px rgba(132, 85, 239, 0.08);
 }
 
 .petition-form-genre-option:has(input:checked) span {
@@ -350,15 +442,8 @@
     color: rgba(255, 255, 255, 0.68);
 }
 
-.petition-form-submit {
+.btn.petition-form-submit {
     min-width: 13rem;
-    border: none;
-    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
-    cursor: pointer;
-}
-
-.petition-form-submit:hover {
-    background: linear-gradient(135deg, #8b49f5 0%, #7c3aed 100%);
 }
 
 @media (max-width: 960px) {
@@ -392,7 +477,7 @@
         align-items: stretch;
     }
 
-    .petition-form-submit {
+    .btn.petition-form-submit {
         width: 100%;
     }
 }

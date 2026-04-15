@@ -30,14 +30,24 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import javax.sql.DataSource;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javax.imageio.ImageIO;
 import java.util.Properties;
 
 @ComponentScan({
@@ -195,7 +205,10 @@ public class WebConfig implements WebMvcConfigurer {
             runScript(dataSource, "migration_review_email_identity.sql");
             runScript(dataSource, "migration_reviews_per_obra.sql");
             runScript(dataSource, "migration_users_username.sql");
+            runScript(dataSource, "migration_users_image.sql");
+            runScript(dataSource, "migration_users_bio.sql");
             hashLegacyUserPasswords(jdbcTemplate, passwordEncoder);
+            seedDefaultAvatar(jdbcTemplate);
         };
     }
 
@@ -370,5 +383,67 @@ public class WebConfig implements WebMvcConfigurer {
 
     private boolean looksLikeBcryptHash(final String password) {
         return password.startsWith("$2a$") || password.startsWith("$2b$") || password.startsWith("$2y$");
+    }
+
+    private void seedDefaultAvatar(final JdbcTemplate jdbcTemplate) {
+        try {
+            final byte[] avatarBytes = generateDefaultAvatarPng();
+            final String sha256 = sha256Hex(avatarBytes);
+
+            jdbcTemplate.update(
+                    "INSERT INTO images (content_type, content, sha256) VALUES (?, ?, ?) ON CONFLICT (sha256) DO NOTHING",
+                    "image/png", avatarBytes, sha256
+            );
+
+            final Long defaultImageId = jdbcTemplate.queryForObject(
+                    "SELECT id FROM images WHERE sha256 = ?",
+                    new Object[]{ sha256 },
+                    Long.class
+            );
+
+            if (defaultImageId != null) {
+                jdbcTemplate.update(
+                        "UPDATE users SET image_id = ? WHERE image_id IS NULL",
+                        defaultImageId
+                );
+            }
+        } catch (final Exception e) {
+            // Non-fatal: log and continue so the app still starts
+            System.err.println("[Platea] Could not seed default avatar: " + e.getMessage());
+        }
+    }
+
+    private byte[] generateDefaultAvatarPng() throws IOException {
+        final int size = 100;
+        final BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D g = img.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // Purple circle background
+        g.setColor(new Color(124, 58, 237));
+        g.fillOval(0, 0, size, size);
+
+        // White person silhouette (head + body arc)
+        g.setColor(Color.WHITE);
+        // Head
+        g.fillOval(33, 18, 34, 34);
+        // Body / shoulders (clipped to circle)
+        g.fillOval(15, 58, 70, 50);
+
+        g.dispose();
+
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(img, "png", baos);
+        return baos.toByteArray();
+    }
+
+    private String sha256Hex(final byte[] data) throws NoSuchAlgorithmException {
+        final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        final byte[] hash = digest.digest(data);
+        final StringBuilder sb = new StringBuilder(64);
+        for (final byte b : hash) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
     }
 }

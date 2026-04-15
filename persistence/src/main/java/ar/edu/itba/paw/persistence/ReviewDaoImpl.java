@@ -26,6 +26,7 @@ public class ReviewDaoImpl implements ReviewDao {
                 rs.getLong("id"),
                 rs.getLong("user_id"),
                 rs.getString("user_username"),
+                rs.getString("user_email"),
                 rs.getLong("production_id"),
                 rs.getLong("obra_id"),
                 rs.getString("obra_title"),
@@ -38,7 +39,7 @@ public class ReviewDaoImpl implements ReviewDao {
 
     private static final String SELECT_WITH_JOIN =
             "SELECT r.id, r.body, r.rating_id, r.user_id, r.production_id, r.obra_id, " +
-            "u.username AS user_username, pr.score, " +
+            "u.username AS user_username, u.email AS user_email, pr.score, " +
             "o.title AS obra_title, p.image_id AS production_image_id " +
             "FROM production_reviews r " +
             "JOIN users u ON r.user_id = u.id " +

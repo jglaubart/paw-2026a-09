@@ -11,7 +11,7 @@ out/
 
 # OS files
 .DS_Store
-Thumbs.db
+Thumbs.dbm
 
 #Utils
 /utils/

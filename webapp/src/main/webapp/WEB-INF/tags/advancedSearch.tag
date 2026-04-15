@@ -3,6 +3,7 @@
 <%@ attribute name="error" required="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="paw" tagdir="/WEB-INF/tags" %>
 
 <c:url var="searchUrl" value="/search" />
 <c:set var="hasActiveFilters" value="${not empty param.genre or not empty param.theater or not empty param.location or not empty param.date or param.available == 'true'}" />
@@ -283,9 +284,11 @@
                                    data-search-inline-input />
                         </label>
 
-                        <button type="submit" class="btn btn-primary btn-sm search-form-submit search-form-submit-navbar">
-                            Buscar
-                        </button>
+                        <paw:button text="Buscar"
+                                    type="submit"
+                                    size="sm"
+                                    variant="cta"
+                                    cssClass="search-form-submit search-form-submit-navbar" />
                     </div>
                 </div>
             </div>

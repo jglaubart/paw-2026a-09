@@ -8,6 +8,7 @@
 <%@ attribute name="slides"      required="false" type="java.util.List" %>
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="paw" tagdir="/WEB-INF/tags" %>
 
 <c:set var="heroBadge" value="${not empty badge ? badge : 'DESTACADO'}" />
 <c:set var="hasSlides" value="${not empty slides and fn:length(slides) > 0}" />
@@ -68,9 +69,10 @@
                                 </c:if>
 
                                 <div class="hero-actions">
-                                    <a href="${slideDetailUrl}" class="btn btn-lg btn-primary hero-primary-action">
-                                        Ver Obra
-                                    </a>
+                                    <paw:button text="Ver Obra"
+                                                href="${slideDetailUrl}"
+                                                variant="cta"
+                                                cssClass="hero-primary-action" />
                                 </div>
                             </div>
                         </div>
@@ -122,9 +124,10 @@
 
                     <c:if test="${not empty resolvedTicketUrl}">
                         <div class="hero-actions">
-                            <a href="${resolvedTicketUrl}" class="btn btn-lg btn-primary">
-                                Reservar Entradas
-                            </a>
+                            <paw:button text="Ver Obra"
+                                        href="${resolvedTicketUrl}"
+                                        variant="cta"
+                                        cssClass="hero-primary-action" />
                         </div>
                     </c:if>
                 </div>

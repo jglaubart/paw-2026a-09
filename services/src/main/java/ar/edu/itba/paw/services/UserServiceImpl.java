@@ -35,6 +35,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> findByUsername(final String username) {
+        return userDao.findByUsername(username);
+    }
+
+    @Override
+    public void updateUsername(final long userId, final String username) {
+        userDao.updateUsername(userId, username != null ? username.trim() : "");
+    }
+
+    @Override
+    public void updateImage(final long userId, final long imageId) {
+        userDao.updateImage(userId, imageId);
+    }
+
+    @Override
+    public void updateBio(final long userId, final String bio) {
+        userDao.updateBio(userId, bio != null ? bio.trim() : "");
+    }
+
+    @Override
     public User create(final String email, final String password, final String username) {
         final String normalizedEmail = normalizeEmail(email);
         final String encodedPassword = passwordEncoder.encode(password);
