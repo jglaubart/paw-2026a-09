@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -21,6 +23,8 @@ import java.util.Optional;
 
 @Repository
 public class ProductionDaoImpl implements ProductionDao {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductionDaoImpl.class);
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -291,9 +295,14 @@ public class ProductionDaoImpl implements ProductionDao {
         params.put("image_id", imageId);
         params.put("instagram", instagram);
         params.put("website", website);
-        final Number key = jdbcInsert.executeAndReturnKey(params);
-        final String resolvedImageUrl = imageId != null ? "/images/" + imageId : null;
-        return new Production(key.longValue(), name, obraId, productoraId, synopsis, direction,
-                theater, startDate, endDate, resolvedImageUrl, instagram, website);
+        try {
+            final Number key = jdbcInsert.executeAndReturnKey(params);
+            final String resolvedImageUrl = imageId != null ? "/images/" + imageId : null;
+            return new Production(key.longValue(), name, obraId, productoraId, synopsis, direction,
+                    theater, startDate, endDate, resolvedImageUrl, instagram, website);
+        } catch (org.springframework.dao.DataAccessException e) {
+            LOGGER.debug("DataAccessException in ProductionDaoImpl.create for name: {}, obraId: {} - {}", name, obraId, e.getMessage());
+            throw e;
+        }
     }
 }

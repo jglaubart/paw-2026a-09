@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Specific loggers in DEBUG -->
+    <logger name="ar.edu.itba.paw" level="DEBUG" />
+    
+    <!-- Descomentar la siguiente línea (y comentar la de WARN) si necesitas ver todas las queries de SQL (muy ruidoso) -->
+    <!-- <logger name="org.springframework.jdbc" level="DEBUG" /> -->
+    <logger name="org.springframework.jdbc" level="WARN" />
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+</configuration>

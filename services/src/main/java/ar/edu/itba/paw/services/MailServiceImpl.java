@@ -2,6 +2,8 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.models.PlayPetition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -18,6 +20,8 @@ import java.util.Locale;
 
 @Service
 public class MailServiceImpl implements MailService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MailServiceImpl.class);
 
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine mailTemplateEngine;
@@ -131,7 +135,7 @@ public class MailServiceImpl implements MailService {
             helper.setText(html, true);
             mailSender.send(message);
         } catch (final MessagingException | RuntimeException e) {
-            System.err.println("[Platea] Could not send petition email to " + to + ": " + e.getMessage());
+            LOGGER.error("Could not send petition email to {}: {}", to, e.getMessage());
             throw new IllegalStateException("Could not send petition email", e);
         }
     }

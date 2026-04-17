@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -16,6 +18,8 @@ import java.util.Optional;
 
 @Repository
 public class UserDaoImpl implements UserDao {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserDaoImpl.class);
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -63,8 +67,13 @@ public class UserDaoImpl implements UserDao {
         params.put("password", password);
         params.put("role", "ROLE_USER");
         params.put("username", username != null ? username : "");
-        final Number key = jdbcInsert.executeAndReturnKey(params);
-        return new User(key.longValue(), email, password, "ROLE_USER", username != null ? username : "");
+        try {
+            final Number key = jdbcInsert.executeAndReturnKey(params);
+            return new User(key.longValue(), email, password, "ROLE_USER", username != null ? username : "");
+        } catch (org.springframework.dao.DataAccessException e) {
+            LOGGER.debug("DataAccessException in UserDaoImpl.create for email: {} - {}", email, e.getMessage());
+            throw e;
+        }
     }
 
     @Override

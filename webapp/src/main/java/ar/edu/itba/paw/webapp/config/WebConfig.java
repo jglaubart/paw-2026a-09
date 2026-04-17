@@ -2,6 +2,8 @@ package ar.edu.itba.paw.webapp.config;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -61,6 +63,8 @@ import java.util.Properties;
 @EnableAsync
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebConfig.class);
 
     public static final long MAX_UPLOAD_SIZE_BYTES = 5L * 1024 * 1024;
     private static final String SCHEMA_SCRIPT = "db/schema/schema.sql";
@@ -149,7 +153,7 @@ public class WebConfig implements WebMvcConfigurer {
         props.put("mail.smtp.writetimeout", "10000");
 
         if (sender.getPassword() == null || sender.getPassword().trim().isEmpty()) {
-            System.err.println("[Platea] SMTP password not configured. Set PLATEA_MAIL_PASSWORD to enable email delivery.");
+            LOGGER.warn("SMTP password not configured. Set PLATEA_MAIL_PASSWORD to enable email delivery.");
         }
         return sender;
     }
@@ -270,7 +274,7 @@ public class WebConfig implements WebMvcConfigurer {
                 try {
                     values = parseDotEnvStream(cp.getInputStream());
                 } catch (IOException e) {
-                    System.err.println("[Platea] Could not read .env from classpath: " + e.getMessage());
+                    LOGGER.error("Could not read .env from classpath: {}", e.getMessage());
                 }
             }
         }
@@ -435,7 +439,7 @@ public class WebConfig implements WebMvcConfigurer {
             }
         } catch (final Exception e) {
             // Non-fatal: log and continue so the app still starts
-            System.err.println("[Platea] Could not seed default avatar: " + e.getMessage());
+            LOGGER.error("Could not seed default avatar: {}", e.getMessage());
         }
     }
 
