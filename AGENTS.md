@@ -270,6 +270,7 @@ private static final long HARDCODED_USER_ID = 1L;  // ← use @AuthenticationPri
 - Use `@RequestParam` for query params, `@PathVariable` for path segments.
 - Path variable type validation via regex: `@RequestMapping("/{id:\\d+}")`.
 - Return `Optional<T>` from service/DAO methods — never `null`.
+- Exceptions & Errors: Never use silent redirects (e.g., `redirect:/`) when a resource is missing. Always use `.orElseThrow(() -> new ResourceNotFoundException("..."))`. Global exceptions are intercepted by `GlobalExceptionHandlerAdvice` and mapped to custom error pages inside `/WEB-INF/views/errors/` (400, 403, 404, 500).
 - All Spring beans (`@Controller`, `@Service`, `@Repository`) must be **stateless** — no mutable instance fields.
 
 ---
