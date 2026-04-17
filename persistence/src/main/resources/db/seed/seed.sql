@@ -354,4 +354,3 @@ INSERT INTO shows (production_id, show_date, show_time, theater, address, barrio
 ((SELECT id FROM productions WHERE name = 'I Love Stand Up — Stand up show'), '2026-04-12', '22:30', 'The Cavern Buenos Aires', 'Av. Corrientes 1660', 'San Nicolas', 'CABA', 'Buenos Aires'),
 ((SELECT id FROM productions WHERE name = 'Nada del Amor me produce envidia'), '2026-04-13', '20:00', 'Fundación SAGAI', '25 de Mayo 586', 'San Nicolas', 'CABA', 'Buenos Aires'),
 ((SELECT id FROM productions WHERE name = 'NoNiNaS Tango — Vida y obra de Astor Piazzolla'), '2026-03-27', '20:00', 'Centro Municipal de Arte', 'San Martín 797', NULL, 'Avellaneda', 'Buenos Aires');
-

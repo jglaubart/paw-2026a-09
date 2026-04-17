@@ -62,6 +62,24 @@ import java.util.Properties;
 public class WebConfig implements WebMvcConfigurer {
 
     public static final long MAX_UPLOAD_SIZE_BYTES = 5L * 1024 * 1024;
+    private static final String SCHEMA_SCRIPT = "db/schema/schema.sql";
+    private static final String SEED_SCRIPT = "db/seed/seed.sql";
+    private static final List<String> PRE_SEED_MIGRATION_SCRIPTS = List.of(
+            "db/migrations/migration_add_shows_location_columns.sql"
+    );
+    private static final List<String> POST_SEED_MIGRATION_SCRIPTS = List.of(
+            "db/migrations/migration_users_role.sql",
+            "db/migrations/migration_backfill_shows_location_from_seed_theaters.sql",
+            "db/migrations/migration_play_petitions.sql",
+            "db/migrations/migration_images_for_productions.sql",
+            "db/migrations/migration_drop_legacy_image_urls.sql",
+            "db/migrations/migration_backfill_play_ratings_from_production_ratings.sql",
+            "db/migrations/migration_review_email_identity.sql",
+            "db/migrations/migration_reviews_per_obra.sql",
+            "db/migrations/migration_users_username.sql",
+            "db/migrations/migration_users_image.sql",
+            "db/migrations/migration_users_bio.sql"
+    );
 
     static {
         loadDotEnvIntoSystemProperties();
@@ -183,8 +201,8 @@ public class WebConfig implements WebMvcConfigurer {
     public InitializingBean databaseInitializer(final DataSource dataSource,
                                                 final PasswordEncoder passwordEncoder) {
         return () -> {
-            runScript(dataSource, "schema.sql");
-            runScript(dataSource, "migration_add_shows_location_columns.sql");
+            runScript(dataSource, SCHEMA_SCRIPT);
+            runScripts(dataSource, PRE_SEED_MIGRATION_SCRIPTS);
 
             final JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
             final Integer productionsCount = jdbcTemplate.queryForObject(
@@ -193,28 +211,30 @@ public class WebConfig implements WebMvcConfigurer {
             );
 
             if (productionsCount != null && productionsCount == 0) {
-                runScript(dataSource, "seed.sql");
+                runScript(dataSource, SEED_SCRIPT);
             }
 
-            runScript(dataSource, "migration_users_role.sql");
-            runScript(dataSource, "migration_backfill_shows_location_from_seed_theaters.sql");
-            runScript(dataSource, "migration_play_petitions.sql");
-            runScript(dataSource, "migration_images_for_productions.sql");
-            runScript(dataSource, "migration_drop_legacy_image_urls.sql");
-            runScript(dataSource, "migration_backfill_play_ratings_from_production_ratings.sql");
-            runScript(dataSource, "migration_review_email_identity.sql");
-            runScript(dataSource, "migration_reviews_per_obra.sql");
-            runScript(dataSource, "migration_users_username.sql");
-            runScript(dataSource, "migration_users_image.sql");
-            runScript(dataSource, "migration_users_bio.sql");
+            runScripts(dataSource, POST_SEED_MIGRATION_SCRIPTS);
             hashLegacyUserPasswords(jdbcTemplate, passwordEncoder);
             seedDefaultAvatar(jdbcTemplate);
         };
     }
 
+    private void runScripts(final DataSource dataSource, final List<String> scripts) {
+        for (final String script : scripts) {
+            runScript(dataSource, script);
+        }
+    }
+
     private void runScript(final DataSource dataSource, final String resourcePath) {
+        final ClassPathResource scriptResource = new ClassPathResource(resourcePath);
+        if (!scriptResource.exists()) {
+            throw new IllegalStateException("Database script not found on classpath: " + resourcePath);
+        }
+
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(new ClassPathResource(resourcePath));
+        populator.setSqlScriptEncoding(StandardCharsets.UTF_8.name());
+        populator.addScript(scriptResource);
         populator.execute(dataSource);
     }
 

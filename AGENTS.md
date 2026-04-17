@@ -26,9 +26,14 @@ paw-2026a-09/
 │   └── src/main/
 │       ├── java/ar/edu/itba/paw/persistence/
 │       └── resources/
-│           ├── schema.sql
-│           ├── seed.sql
-│           └── migration_*.sql          ← incremental migrations
+│           └── db/
+│               ├── schema/
+│               │   └── schema.sql
+│               ├── seed/
+│               │   └── seed.sql
+│               ├── migrations/
+│               │   └── migration_*.sql  ← incremental migrations
+│               └── db-guide.md
 │
 └── webapp/                              ← WAR module (Spring MVC + JSP)
     ├── pom.xml
