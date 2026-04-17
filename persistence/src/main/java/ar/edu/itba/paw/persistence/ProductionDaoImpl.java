@@ -81,9 +81,17 @@ public class ProductionDaoImpl implements ProductionDao {
 
     @Override
     public List<Production> findAll(final int page, final int pageSize) {
+        final List<Long> obraIds = jdbcTemplate.queryForList(
+                "SELECT obra_id FROM productions GROUP BY obra_id ORDER BY MIN(name) LIMIT ? OFFSET ?",
+                Long.class, pageSize, (long) page * pageSize
+        );
+        if (obraIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        final String inSql = String.join(",", java.util.Collections.nCopies(obraIds.size(), "?"));
         return jdbcTemplate.query(
-                "SELECT * FROM productions ORDER BY name LIMIT ? OFFSET ?",
-                new Object[]{ pageSize, (long) page * pageSize },
+                "SELECT * FROM productions WHERE obra_id IN (" + inSql + ") ORDER BY name",
+                obraIds.toArray(),
                 PRODUCTION_MAPPER
         );
     }
@@ -99,10 +107,19 @@ public class ProductionDaoImpl implements ProductionDao {
 
     @Override
     public List<Production> findAvailable(final int page, final int pageSize) {
+        final List<Long> obraIds = jdbcTemplate.queryForList(
+                "SELECT obra_id FROM productions p WHERE p.start_date IS NOT NULL AND p.start_date <= CURRENT_DATE " +
+                "AND (p.end_date IS NULL OR p.end_date >= CURRENT_DATE) GROUP BY obra_id ORDER BY MIN(name) LIMIT ? OFFSET ?",
+                Long.class, pageSize, (long) page * pageSize
+        );
+        if (obraIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        final String inSql = String.join(",", java.util.Collections.nCopies(obraIds.size(), "?"));
         return jdbcTemplate.query(
                 "SELECT * FROM productions p WHERE p.start_date IS NOT NULL AND p.start_date <= CURRENT_DATE " +
-                "AND (p.end_date IS NULL OR p.end_date >= CURRENT_DATE) ORDER BY p.name LIMIT ? OFFSET ?",
-                new Object[]{ pageSize, (long) page * pageSize },
+                "AND (p.end_date IS NULL OR p.end_date >= CURRENT_DATE) AND obra_id IN (" + inSql + ") ORDER BY p.name",
+                obraIds.toArray(),
                 PRODUCTION_MAPPER
         );
     }
@@ -133,7 +150,7 @@ public class ProductionDaoImpl implements ProductionDao {
     @Override
     public List<Production> search(final ProductionSearchCriteria criteria, final int page, final int pageSize) {
         final StringBuilder sql = new StringBuilder(
-                "SELECT p.* FROM productions p " +
+                "SELECT p.obra_id FROM productions p " +
                 "JOIN obras o ON p.obra_id = o.id " +
                 "LEFT JOIN productoras pr ON p.productora_id = pr.id " +
                 "WHERE 1 = 1"
@@ -153,11 +170,42 @@ public class ProductionDaoImpl implements ProductionDao {
             sql.append(" )");
         }
 
-        sql.append(" ORDER BY p.name LIMIT ? OFFSET ?");
+        sql.append(" GROUP BY p.obra_id ORDER BY MIN(p.name) LIMIT ? OFFSET ?");
         params.add(pageSize);
         params.add((long) page * pageSize);
 
-        return jdbcTemplate.query(sql.toString(), params.toArray(), PRODUCTION_MAPPER);
+        final List<Long> obraIds = jdbcTemplate.queryForList(sql.toString(), Long.class, params.toArray());
+        
+        if (obraIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        final StringBuilder sqlHydrate = new StringBuilder(
+                "SELECT p.* FROM productions p " +
+                "JOIN obras o ON p.obra_id = o.id " +
+                "LEFT JOIN productoras pr ON p.productora_id = pr.id " +
+                "WHERE 1 = 1"
+        );
+        final List<Object> paramsHydrate = new ArrayList<>();
+
+        appendSharedSearchFilters(sqlHydrate, paramsHydrate, criteria);
+
+        if (criteria.getDate() != null) {
+            sqlHydrate.append(
+                    " AND EXISTS (" +
+                    "  SELECT 1 FROM shows s_date " +
+                    "  WHERE s_date.production_id = p.id"
+            );
+            sqlHydrate.append(" AND s_date.show_date = ?");
+            paramsHydrate.add(Date.valueOf(criteria.getDate()));
+            sqlHydrate.append(" )");
+        }
+        
+        final String inSql = String.join(",", java.util.Collections.nCopies(obraIds.size(), "?"));
+        sqlHydrate.append(" AND p.obra_id IN (" + inSql + ") ORDER BY p.name");
+        paramsHydrate.addAll(obraIds);
+
+        return jdbcTemplate.query(sqlHydrate.toString(), paramsHydrate.toArray(), PRODUCTION_MAPPER);
     }
 
     @Override
