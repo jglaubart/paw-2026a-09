@@ -31,6 +31,11 @@ public class ShowServiceImpl implements ShowService {
     }
 
     @Override
+    public List<Long> findProductionIdsWithShowToday() {
+        return showDao.findProductionIdsWithShowToday();
+    }
+
+    @Override
     public Show create(final long productionId, final LocalDate showDate,
                        final LocalTime showTime, final String theater) {
         return showDao.create(productionId, showDate, showTime, theater);

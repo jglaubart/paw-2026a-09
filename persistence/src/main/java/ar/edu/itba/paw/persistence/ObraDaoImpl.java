@@ -9,6 +9,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +51,23 @@ public class ObraDaoImpl implements ObraDao {
                 new Object[]{ pageSize, (long) page * pageSize },
                 OBRA_MAPPER
         );
+    }
+
+    @Override
+    public Map<Long, String> findTitlesByIds(final Collection<Long> obraIds) {
+        final Map<Long, String> titles = new HashMap<>();
+        if (obraIds == null || obraIds.isEmpty()) {
+            return titles;
+        }
+        final String inSql = String.join(",", Collections.nCopies(obraIds.size(), "?"));
+        jdbcTemplate.query(
+                "SELECT id, title FROM obras WHERE id IN (" + inSql + ")",
+                obraIds.toArray(),
+                (rs) -> {
+                    titles.put(rs.getLong("id"), rs.getString("title"));
+                }
+        );
+        return titles;
     }
 
     @Override

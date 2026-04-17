@@ -8,5 +8,6 @@ import java.util.List;
 public interface ShowService {
     List<Show> findByProductionId(long productionId);
     List<Show> findFutureByProductionId(long productionId);
+    List<Long> findProductionIdsWithShowToday();
     Show create(long productionId, LocalDate showDate, LocalTime showTime, String theater);
 }

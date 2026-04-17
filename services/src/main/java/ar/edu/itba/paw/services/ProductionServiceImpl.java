@@ -170,14 +170,15 @@ public class ProductionServiceImpl implements ProductionService {
             productionsByObraId.computeIfAbsent(production.getObraId(), ignored -> new ArrayList<>()).add(production);
         }
 
+        // Bulk fetch all obra titles in a single query instead of N separate findById calls
+        final Map<Long, String> obraTitles = obraDao.findTitlesByIds(productionsByObraId.keySet());
+
         final List<ProductionCardSummary> cards = new ArrayList<>(productionsByObraId.size());
         for (final Map.Entry<Long, List<Production>> entry : productionsByObraId.entrySet()) {
             final long obraId = entry.getKey();
             final List<Production> groupedProductions = entry.getValue();
             final Production representative = selectRepresentative(groupedProductions);
-            final String title = obraDao.findById(obraId)
-                    .map(obra -> obra.getTitle())
-                    .orElse(representative.getName());
+            final String title = obraTitles.getOrDefault(obraId, representative.getName());
 
             cards.add(new ProductionCardSummary(
                     obraId,

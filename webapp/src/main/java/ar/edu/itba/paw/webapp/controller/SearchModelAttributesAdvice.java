@@ -7,7 +7,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.List;
 
-@ControllerAdvice
+@ControllerAdvice(assignableTypes = {
+        HomeController.class,
+        ProductionController.class,
+        SearchController.class
+})
 public class SearchModelAttributesAdvice {
 
     private final ProductionService productionService;

@@ -76,6 +76,14 @@ public class ShowDaoImpl implements ShowDao {
     }
 
     @Override
+    public List<Long> findProductionIdsWithShowToday() {
+        return jdbcTemplate.queryForList(
+                "SELECT DISTINCT production_id FROM shows WHERE show_date = CURRENT_DATE",
+                Long.class
+        );
+    }
+
+    @Override
     public Show create(final long productionId, final LocalDate showDate,
                        final LocalTime showTime, final String theater) {
         final Map<String, Object> params = new HashMap<>();
