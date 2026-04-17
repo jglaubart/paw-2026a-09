@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.services.ProductionService;
 import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.ProductionCardSummary;
+import ar.edu.itba.paw.webapp.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,11 +33,8 @@ public class ProductionController {
 
     @RequestMapping(value = "/productions/{id:\\d+}", method = RequestMethod.GET)
     public ModelAndView detail(@PathVariable("id") final long id) {
-        final Optional<Production> productionOpt = productionService.findById(id);
-        if (!productionOpt.isPresent()) {
-            return new ModelAndView("redirect:/");
-        }
-        final Production production = productionOpt.get();
+        final Production production = productionService.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("La función o puesta de escena solicitada no fue encontrada."));
         return new ModelAndView("redirect:/obras/" + production.getObraId() + "?produccionId=" + id);
     }
 

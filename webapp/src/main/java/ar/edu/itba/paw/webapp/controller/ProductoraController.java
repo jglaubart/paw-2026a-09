@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaces.services.ProductoraService;
 import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.Productora;
+import ar.edu.itba.paw.webapp.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,11 +34,8 @@ public class ProductoraController {
 
     @RequestMapping(value = "/productoras/{id:\\d+}", method = RequestMethod.GET)
     public ModelAndView detail(@PathVariable("id") final long id) {
-        final Optional<Productora> productoraOpt = productoraService.findById(id);
-        if (!productoraOpt.isPresent()) {
-            return new ModelAndView("redirect:/");
-        }
-        final Productora productora = productoraOpt.get();
+        final Productora productora = productoraService.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("La compañía o productora teatral que buscás no se encuentra en Platea."));
         final List<Production> productions = productionService.findByProductoraId(id);
         final ModelAndView mav = new ModelAndView("productoras/detail");
         mav.addObject("productora", productora);

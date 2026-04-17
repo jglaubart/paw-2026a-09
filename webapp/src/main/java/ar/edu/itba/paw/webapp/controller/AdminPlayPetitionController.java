@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.PlayPetitionService;
 import ar.edu.itba.paw.models.PetitionStatus;
 import ar.edu.itba.paw.models.PlayPetition;
+import ar.edu.itba.paw.webapp.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,13 +56,11 @@ public class AdminPlayPetitionController {
     public ModelAndView detail(@PathVariable("id") final long id,
                                @RequestParam(value = "updated", required = false) final String updated,
                                @RequestParam(value = "error", required = false) final String error) {
-        final Optional<PlayPetition> petition = playPetitionService.findById(id);
-        if (!petition.isPresent()) {
-            return new ModelAndView("redirect:/admin?error=not_found");
-        }
+        final PlayPetition petition = playPetitionService.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("La petición de alta de obra solicitada no existe."));
 
         final ModelAndView mav = new ModelAndView("petitions/admin-detail");
-        mav.addObject("petition", petition.get());
+        mav.addObject("petition", petition);
         mav.addObject("updated", updated);
         mav.addObject("error", error);
         return mav;
