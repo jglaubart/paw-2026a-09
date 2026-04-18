@@ -415,6 +415,7 @@
 }
 
 .petition-form-field input,
+.petition-form-field select,
 .petition-form-field textarea {
     width: 100%;
     border: 1px solid rgba(255, 255, 255, 0.14);
@@ -431,6 +432,7 @@
 }
 
 .petition-form-field input:focus,
+.petition-form-field select:focus,
 .petition-form-field textarea:focus {
     outline: none;
     border-color: rgba(186, 158, 255, 0.70);
@@ -440,6 +442,10 @@
         0 10px 22px rgba(132, 85, 239, 0.14);
     background: rgba(255, 255, 255, 0.08);
     transform: translateY(-1px);
+}
+
+.petition-form-field select option {
+    color: #141414;
 }
 
 .petition-form-upload-field input[type="file"] {

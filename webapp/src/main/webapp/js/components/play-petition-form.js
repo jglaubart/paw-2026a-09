@@ -194,25 +194,22 @@
                     sourceProductionIdInput.value = payload.productionId || '';
                 }
                 if (existingCoverImageIdInput) {
-                    existingCoverImageIdInput.value = payload.coverImageId || existingCoverImageIdInput.value || '';
+                    existingCoverImageIdInput.value = payload.coverImageId || '';
                 }
                 setFieldValue('#title', payload.title);
                 setFieldValue('[data-prefill-synopsis]', payload.synopsis);
                 setFieldValue('[data-prefill-duration]', payload.durationMinutes);
                 setFieldValue('[data-prefill-language]', payload.language);
-                setFieldValue('[data-prefill-theater]', payload.theater);
-                setFieldValue('[data-prefill-theater-address]', payload.theaterAddress);
-                setFieldValue('[data-prefill-start-date]', payload.startDate);
-                setFieldValue('[data-prefill-end-date]', payload.endDate);
-                setFieldValue('[data-prefill-director]', payload.director);
-                setFieldValue('[data-prefill-ticket-url]', payload.ticketUrl);
                 setCheckboxes(payload.genreIds || []);
-                ensureAdditionalDateInputs(payload.additionalShowDates || []);
+                var prefillCoverImageUrl = payload.coverImageUrl;
+                if (!prefillCoverImageUrl && payload.coverImageId) {
+                    prefillCoverImageUrl = '/images/' + payload.coverImageId;
+                }
                 if (imageInput) {
                     imageInput.value = '';
                 }
                 syncSourceSummary();
-                syncCoverPreview(payload.coverImageUrl);
+                syncCoverPreview(prefillCoverImageUrl);
                 hideAutocomplete();
             })
             .finally(function () {

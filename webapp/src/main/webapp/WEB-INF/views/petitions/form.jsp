@@ -240,7 +240,14 @@
 
                         <div class="petition-form-field">
                             <label for="language">Idioma</label>
-                            <input id="language" name="language" type="text" value="${fn:escapeXml(form.language)}" placeholder="Castellano" class="${hasFeedbackLanguage ? 'petition-form-input-feedback' : ''}" data-prefill-language />
+                            <select id="language" name="language" class="${hasFeedbackLanguage ? 'petition-form-input-feedback' : ''}" data-prefill-language>
+                                <option value="Castellano" ${form.language eq 'Castellano' or empty form.language ? 'selected="selected"' : ''}>Castellano</option>
+                                <option value="Ingles" ${form.language eq 'Ingles' ? 'selected="selected"' : ''}>Ingles</option>
+                                <option value="Portugues" ${form.language eq 'Portugues' ? 'selected="selected"' : ''}>Portugues</option>
+                                <option value="Frances" ${form.language eq 'Frances' ? 'selected="selected"' : ''}>Frances</option>
+                                <option value="Italiano" ${form.language eq 'Italiano' ? 'selected="selected"' : ''}>Italiano</option>
+                                <option value="Aleman" ${form.language eq 'Aleman' ? 'selected="selected"' : ''}>Aleman</option>
+                            </select>
                             <c:if test="${hasFeedbackLanguage}"><div class="petition-form-review-note"><strong>Idioma observado:</strong> <c:out value="${fieldFeedback['language']}" /></div></c:if>
                         </div>
 

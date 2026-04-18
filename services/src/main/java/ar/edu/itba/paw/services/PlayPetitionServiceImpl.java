@@ -319,12 +319,15 @@ public class PlayPetitionServiceImpl implements PlayPetitionService {
         final List<Production> productions = productionDao.findByObraId(obraId);
         final Production representative = productions.isEmpty() ? null : selectRepresentative(productions);
         final List<Show> shows = representative != null ? showDao.findByProductionId(representative.getId()) : Collections.<Show>emptyList();
+        final String synopsis = hasText(obra.get().getSynopsis())
+                ? obra.get().getSynopsis()
+                : (representative != null ? trimToNull(representative.getSynopsis()) : null);
 
         return Optional.of(new PetitionObraPrefill(
                 obra.get().getId(),
                 representative != null ? representative.getId() : null,
                 obra.get().getTitle(),
-                obra.get().getSynopsis(),
+                synopsis,
                 mapGenreIds(obra.get().getGenre()),
                 representative != null && representative.getDurationMinutes() != null
                         ? String.valueOf(representative.getDurationMinutes())
