@@ -476,20 +476,101 @@
 
 .obra-interact-panel-guest {
     display: grid;
-    gap: 0.9rem;
+    grid-template-columns: minmax(0, 1fr) minmax(13.5rem, 15.25rem);
+    gap: 1.2rem;
+    align-items: center;
+    padding: 1.35rem 1.45rem;
+    background:
+        radial-gradient(circle at top left, rgba(186, 158, 255, 0.14), transparent 38%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018));
+}
+
+.obra-interact-guest-body {
+    min-width: 0;
+}
+
+.obra-interact-guest-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.obra-interact-guest-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    flex-shrink: 0;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, rgba(186, 158, 255, 0.2), rgba(132, 85, 239, 0.1));
+    color: #f3ebff;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 12px 28px rgba(132, 85, 239, 0.16);
+}
+
+.obra-interact-guest-copy-block {
+    display: grid;
+    gap: 0.45rem;
+    min-width: 0;
+}
+
+.obra-interact-panel-guest .obra-interact-title {
+    font-size: 1.16rem;
+    letter-spacing: -0.02em;
 }
 
 .obra-interact-guest-copy {
     margin: 0;
-    color: rgba(255, 255, 255, 0.7);
+    max-width: 34rem;
+    color: rgba(255, 255, 255, 0.64);
+    font-size: 0.94rem;
     line-height: 1.7;
 }
 
 .obra-interact-auth-actions {
-    display: flex;
+    display: grid;
+    gap: 0.75rem;
+    padding: 0.9rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.btn.obra-interact-guest-login,
+.btn.obra-interact-guest-register {
+    display: inline-flex;
     align-items: center;
-    gap: 0.8rem;
-    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    min-height: 3rem;
+    min-width: 0;
+    border-radius: 16px;
+    text-align: center;
+}
+
+.btn.obra-interact-guest-login {
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+}
+
+.btn.obra-interact-guest-register {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.025);
+    color: rgba(247, 242, 255, 0.88);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+}
+
+.btn.obra-interact-guest-register:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.18);
+    color: #fff;
+    opacity: 1;
 }
 
 .obra-review-textarea {
@@ -861,12 +942,26 @@
     }
 
     .obra-interact-auth-actions {
-        flex-direction: column;
-        align-items: stretch;
+        padding: 0.8rem;
     }
 
     .btn.obra-review-submit {
         width: 100%;
+    }
+
+    .obra-interact-panel-guest {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .obra-interact-guest-head {
+        gap: 0.9rem;
+    }
+
+    .obra-interact-guest-mark {
+        width: 2.8rem;
+        height: 2.8rem;
+        border-radius: 16px;
     }
 
     .obra-content {

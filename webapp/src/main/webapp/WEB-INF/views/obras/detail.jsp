@@ -435,13 +435,24 @@
 
                     <sec:authorize access="isAnonymous()">
                         <div class="obra-interact-panel obra-interact-panel-guest">
-                            <div class="obra-interact-head">
-                                <h3 class="obra-interact-title">Tu reseña y puntuación</h3>
+                            <div class="obra-interact-guest-body">
+                                <div class="obra-interact-guest-head">
+                                    <span class="obra-interact-guest-mark" aria-hidden="true">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M7 10V8a5 5 0 0 1 10 0v2"/>
+                                            <rect x="4" y="10" width="16" height="10" rx="3"/>
+                                            <path d="M12 14v2"/>
+                                        </svg>
+                                    </span>
+                                    <div class="obra-interact-guest-copy-block">
+                                        <h3 class="obra-interact-title">Tu reseña y puntuación</h3>
+                                        <p class="obra-interact-guest-copy">Iniciá sesión para guardar puntuaciones, editar tu reseña y ver tu actividad desde el perfil.</p>
+                                    </div>
+                                </div>
                             </div>
-                            <p class="obra-interact-guest-copy">Iniciá sesión para guardar puntuaciones, editar tu reseña y ver tu actividad desde el perfil.</p>
                             <div class="obra-interact-auth-actions">
-                                <a href="${loginUrl}" class="btn btn-cta obra-review-submit">Iniciar sesión</a>
-                                <a href="${registerUrl}" class="btn btn-outline btn-md obra-sidebar-cta">Crear cuenta</a>
+                                <a href="${loginUrl}" class="btn btn-cta obra-interact-guest-login">Iniciar sesión</a>
+                                <a href="${registerUrl}" class="btn btn-outline btn-md obra-interact-guest-register">Crear cuenta</a>
                             </div>
                         </div>
                     </sec:authorize>
