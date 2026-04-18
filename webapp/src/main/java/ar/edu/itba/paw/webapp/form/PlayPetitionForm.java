@@ -7,6 +7,10 @@ import java.util.List;
 
 public class PlayPetitionForm {
 
+    private String petitionId;
+    private String sourceObraId;
+    private String sourceProductionId;
+    private String existingCoverImageId;
     private String title;
     private String synopsis;
     private String durationMinutes;
@@ -23,6 +27,14 @@ public class PlayPetitionForm {
     private String ticketUrl;
     private String language;
 
+    public String getPetitionId() { return petitionId; }
+    public void setPetitionId(final String petitionId) { this.petitionId = petitionId; }
+    public String getSourceObraId() { return sourceObraId; }
+    public void setSourceObraId(final String sourceObraId) { this.sourceObraId = sourceObraId; }
+    public String getSourceProductionId() { return sourceProductionId; }
+    public void setSourceProductionId(final String sourceProductionId) { this.sourceProductionId = sourceProductionId; }
+    public String getExistingCoverImageId() { return existingCoverImageId; }
+    public void setExistingCoverImageId(final String existingCoverImageId) { this.existingCoverImageId = existingCoverImageId; }
     public String getTitle() { return title; }
     public void setTitle(final String title) { this.title = title; }
     public String getSynopsis() { return synopsis; }

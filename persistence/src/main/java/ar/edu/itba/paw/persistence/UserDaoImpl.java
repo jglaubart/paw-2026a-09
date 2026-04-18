@@ -33,6 +33,7 @@ public class UserDaoImpl implements UserDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName("users")
+                .usingColumns("email", "password", "role", "username", "bio")
                 .usingGeneratedKeyColumns("id");
     }
 
@@ -63,8 +64,9 @@ public class UserDaoImpl implements UserDao {
         params.put("password", password);
         params.put("role", "ROLE_USER");
         params.put("username", username != null ? username : "");
+        params.put("bio", "");
         final Number key = jdbcInsert.executeAndReturnKey(params);
-        return new User(key.longValue(), email, password, "ROLE_USER", username != null ? username : "");
+        return new User(key.longValue(), email, password, "ROLE_USER", username != null ? username : "", null, "");
     }
 
     @Override

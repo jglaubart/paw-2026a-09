@@ -207,6 +207,7 @@ public class WebConfig implements WebMvcConfigurer {
             runScript(dataSource, "migration_users_username.sql");
             runScript(dataSource, "migration_users_image.sql");
             runScript(dataSource, "migration_users_bio.sql");
+            runScript(dataSource, "migration_play_petitions_revision_workflow.sql");
             hashLegacyUserPasswords(jdbcTemplate, passwordEncoder);
             seedDefaultAvatar(jdbcTemplate);
         };

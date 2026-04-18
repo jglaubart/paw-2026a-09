@@ -26,7 +26,7 @@
     <main class="user-list-page">
 
         <header class="user-list-header">
-            <h1 class="user-list-title">Ya las vi</h1>
+            <h1 class="user-list-title">Historial</h1>
             <p class="user-list-subtitle">Obras que marcaste como vistas</p>
         </header>
 

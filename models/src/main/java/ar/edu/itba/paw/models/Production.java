@@ -14,7 +14,10 @@ public class Production implements Serializable {
     private String theater;
     private LocalDate startDate;
     private LocalDate endDate;
+    private Long imageId;
     private String imageUrl;
+    private Integer durationMinutes;
+    private String language;
     private String instagram;
     private String website;
 
@@ -30,7 +33,10 @@ public class Production implements Serializable {
             final String theater,
             final LocalDate startDate,
             final LocalDate endDate,
+            final Long imageId,
             final String imageUrl,
+            final Integer durationMinutes,
+            final String language,
             final String instagram,
             final String website) {
         this.id = id;
@@ -42,7 +48,10 @@ public class Production implements Serializable {
         this.theater = theater;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.imageId = imageId;
         this.imageUrl = imageUrl;
+        this.durationMinutes = durationMinutes;
+        this.language = language;
         this.instagram = instagram;
         this.website = website;
     }
@@ -56,7 +65,10 @@ public class Production implements Serializable {
     public String getTheater() { return theater; }
     public LocalDate getStartDate() { return startDate; }
     public LocalDate getEndDate() { return endDate; }
+    public Long getImageId() { return imageId; }
     public String getImageUrl() { return imageUrl; }
+    public Integer getDurationMinutes() { return durationMinutes; }
+    public String getLanguage() { return language; }
     public String getInstagram() { return instagram; }
     public String getWebsite() { return website; }
 }

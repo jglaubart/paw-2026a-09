@@ -24,6 +24,8 @@ public class WatchlistDaoImpl implements WatchlistDao {
         final long imageId = rs.getLong("image_id");
         final boolean imageIdNull = rs.wasNull();
         final String resolvedImageUrl = imageIdNull ? null : "/images/" + imageId;
+        final int durationMinutesRaw = rs.getInt("duration_minutes");
+        final Integer durationMinutes = rs.wasNull() ? null : durationMinutesRaw;
         return new Production(
                 rs.getLong("id"),
                 rs.getString("name"),
@@ -34,7 +36,10 @@ public class WatchlistDaoImpl implements WatchlistDao {
                 rs.getString("theater"),
                 startDate != null ? startDate.toLocalDate() : null,
                 endDate   != null ? endDate.toLocalDate()   : null,
+                imageIdNull ? null : imageId,
                 resolvedImageUrl,
+                durationMinutes,
+                rs.getString("language"),
                 rs.getString("instagram"),
                 rs.getString("website")
         );

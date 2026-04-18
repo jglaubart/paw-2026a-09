@@ -71,15 +71,15 @@ public class MailServiceImpl implements MailService {
 
     @Async
     @Override
-    public void sendPetitionRejected(final PlayPetition petition) {
+    public void sendPetitionChangesRequested(final PlayPetition petition) {
         final Locale locale = resolveLocale();
         final Context context = baseContext(petition, locale);
         context.setVariable("ctaUrl", publicBaseUrl + "/subir-obra");
-        context.setVariable("ctaLabel", messageSource.getMessage("mail.petition.rejected.cta", null, locale));
+        context.setVariable("ctaLabel", messageSource.getMessage("mail.petition.changes-requested.cta", null, locale));
         sendHtmlMail(
                 petition.getPetitionerEmail(),
-                messageSource.getMessage("mail.petition.rejected.subject", new Object[]{ petition.getTitle() }, locale),
-                "petition-rejected",
+                messageSource.getMessage("mail.petition.changes-requested.subject", new Object[]{ petition.getTitle() }, locale),
+                "petition-changes-requested",
                 context
         );
     }

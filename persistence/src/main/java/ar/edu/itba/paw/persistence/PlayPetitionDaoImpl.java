@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.PlayPetitionDao;
+import ar.edu.itba.paw.models.PetitionFieldFeedback;
 import ar.edu.itba.paw.models.PetitionStatus;
 import ar.edu.itba.paw.models.PlayPetition;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,12 @@ public class PlayPetitionDaoImpl implements PlayPetitionDao {
         final Long createdProductionId = rs.wasNull() ? null : createdProductionIdRaw;
         final long coverImageIdRaw = rs.getLong("cover_image_id");
         final Long coverImageId = rs.wasNull() ? null : coverImageIdRaw;
+        final long petitionerUserIdRaw = rs.getLong("petitioner_user_id");
+        final Long petitionerUserId = rs.wasNull() ? null : petitionerUserIdRaw;
+        final long sourceObraIdRaw = rs.getLong("source_obra_id");
+        final Long sourceObraId = rs.wasNull() ? null : sourceObraIdRaw;
+        final long sourceProductionIdRaw = rs.getLong("source_production_id");
+        final Long sourceProductionId = rs.wasNull() ? null : sourceProductionIdRaw;
 
         return new PlayPetition(
                 rs.getLong("id"),
@@ -43,6 +50,7 @@ public class PlayPetitionDaoImpl implements PlayPetitionDao {
                 endDateSql != null ? endDateSql.toLocalDate() : null,
                 coverImageId,
                 rs.getString("director"),
+                petitionerUserId,
                 rs.getString("petitioner_email"),
                 rs.getString("schedule"),
                 rs.getString("ticket_url"),
@@ -51,12 +59,18 @@ public class PlayPetitionDaoImpl implements PlayPetitionDao {
                 rs.getString("admin_notes"),
                 rs.getTimestamp("created_at").toLocalDateTime(),
                 resolvedAtTs != null ? resolvedAtTs.toLocalDateTime() : null,
+                sourceObraId,
+                sourceProductionId,
                 createdObraId,
                 createdProductionId,
+                Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList()
         );
     };
+
+    private static final RowMapper<PetitionFieldFeedback> FIELD_FEEDBACK_MAPPER = (rs, rowNum) ->
+            new PetitionFieldFeedback(rs.getLong("petition_id"), rs.getString("field_key"), rs.getString("comment"));
 
     @Autowired
     public PlayPetitionDaoImpl(final DataSource dataSource) {
@@ -70,9 +84,12 @@ public class PlayPetitionDaoImpl implements PlayPetitionDao {
     public PlayPetition create(final String title, final String synopsis, final int durationMinutes,
                                final String theater, final String theaterAddress, final LocalDate startDate,
                                final LocalDate endDate, final Long coverImageId, final String director,
-                               final String petitionerEmail, final String schedule, final String ticketUrl,
-                               final String language) {
+                               final long petitionerUserId, final String petitionerEmail,
+                               final String schedule, final String ticketUrl,
+                               final String language, final Long sourceObraId,
+                               final Long sourceProductionId) {
 
+        final LocalDateTime createdAt = LocalDateTime.now();
         final Map<String, Object> params = new HashMap<>();
         params.put("title", title);
         params.put("synopsis", synopsis);
@@ -83,20 +100,54 @@ public class PlayPetitionDaoImpl implements PlayPetitionDao {
         params.put("end_date", endDate != null ? Date.valueOf(endDate) : null);
         params.put("cover_image_id", coverImageId);
         params.put("director", director);
+        params.put("petitioner_user_id", petitionerUserId);
         params.put("petitioner_email", petitionerEmail);
         params.put("schedule", schedule);
         params.put("ticket_url", ticketUrl);
         params.put("language", language);
         params.put("status", PetitionStatus.PENDING.name());
-        params.put("created_at", Timestamp.valueOf(LocalDateTime.now()));
+        params.put("created_at", Timestamp.valueOf(createdAt));
+        params.put("source_obra_id", sourceObraId);
+        params.put("source_production_id", sourceProductionId);
 
         final Number key = petitionInsert.executeAndReturnKey(params);
 
         return new PlayPetition(
                 key.longValue(), title, synopsis, durationMinutes, theater, theaterAddress,
-                startDate, endDate, coverImageId, director, petitionerEmail, schedule,
+                startDate, endDate, coverImageId, director, petitionerUserId, petitionerEmail, schedule,
                 ticketUrl, language, PetitionStatus.PENDING, null,
-                LocalDateTime.now(), null, null, null, Collections.emptyList(), Collections.emptyList()
+                createdAt, null, sourceObraId, sourceProductionId,
+                null, null, Collections.emptyList(), Collections.emptyList(), Collections.emptyList()
+        );
+    }
+
+    @Override
+    public void updateDraft(final long petitionId, final String title, final String synopsis,
+                            final int durationMinutes, final String theater, final String theaterAddress,
+                            final LocalDate startDate, final LocalDate endDate, final Long coverImageId,
+                            final String director, final long petitionerUserId,
+                            final String petitionerEmail, final String schedule,
+                            final String ticketUrl, final String language,
+                            final Long sourceObraId, final Long sourceProductionId) {
+        jdbcTemplate.update(
+                "UPDATE play_petitions SET title = ?, synopsis = ?, duration_minutes = ?, theater = ?, theater_address = ?, start_date = ?, end_date = ?, cover_image_id = ?, director = ?, petitioner_user_id = ?, petitioner_email = ?, schedule = ?, ticket_url = ?, language = ?, source_obra_id = ?, source_production_id = ? WHERE id = ?",
+                title,
+                synopsis,
+                durationMinutes,
+                theater,
+                theaterAddress,
+                Date.valueOf(startDate),
+                endDate != null ? Date.valueOf(endDate) : null,
+                coverImageId,
+                director,
+                petitionerUserId,
+                petitionerEmail,
+                schedule,
+                ticketUrl,
+                language,
+                sourceObraId,
+                sourceProductionId,
+                petitionId
         );
     }
 
@@ -114,6 +165,12 @@ public class PlayPetitionDaoImpl implements PlayPetitionDao {
     }
 
     @Override
+    public void replaceGenres(final long petitionId, final List<Long> genreIds) {
+        jdbcTemplate.update("DELETE FROM petition_genres WHERE petition_id = ?", petitionId);
+        addGenres(petitionId, genreIds);
+    }
+
+    @Override
     public void addShowDates(final long petitionId, final List<LocalDate> dates) {
         if (dates == null || dates.isEmpty()) {
             return;
@@ -124,6 +181,12 @@ public class PlayPetitionDaoImpl implements PlayPetitionDao {
             batchArgs.add(new Object[]{ petitionId, Date.valueOf(date) });
         }
         jdbcTemplate.batchUpdate(sql, batchArgs);
+    }
+
+    @Override
+    public void replaceShowDates(final long petitionId, final List<LocalDate> dates) {
+        jdbcTemplate.update("DELETE FROM petition_show_dates WHERE petition_id = ?", petitionId);
+        addShowDates(petitionId, dates);
     }
 
     @Override
@@ -141,6 +204,32 @@ public class PlayPetitionDaoImpl implements PlayPetitionDao {
     }
 
     @Override
+    public List<PetitionFieldFeedback> findFieldFeedback(final long petitionId) {
+        return jdbcTemplate.query(
+                "SELECT petition_id, field_key, comment FROM petition_field_feedback WHERE petition_id = ? ORDER BY field_key",
+                new Object[]{ petitionId },
+                FIELD_FEEDBACK_MAPPER
+        );
+    }
+
+    @Override
+    public void replaceFieldFeedback(final long petitionId, final Map<String, String> fieldFeedback) {
+        jdbcTemplate.update("DELETE FROM petition_field_feedback WHERE petition_id = ?", petitionId);
+        if (fieldFeedback == null || fieldFeedback.isEmpty()) {
+            return;
+        }
+
+        final List<Object[]> batchArgs = new ArrayList<>();
+        for (final Map.Entry<String, String> entry : fieldFeedback.entrySet()) {
+            batchArgs.add(new Object[]{ petitionId, entry.getKey(), entry.getValue() });
+        }
+        jdbcTemplate.batchUpdate(
+                "INSERT INTO petition_field_feedback (petition_id, field_key, comment, created_at, updated_at) VALUES (?, ?, ?, NOW(), NOW())",
+                batchArgs
+        );
+    }
+
+    @Override
     public Optional<PlayPetition> findById(final long id) {
         final List<PlayPetition> results = jdbcTemplate.query(
                 "SELECT * FROM play_petitions WHERE id = ?",
@@ -148,6 +237,36 @@ public class PlayPetitionDaoImpl implements PlayPetitionDao {
                 PETITION_MAPPER
         );
         return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
+    }
+
+    @Override
+    public Optional<PlayPetition> findByIdAndPetitionerUserId(final long id, final long petitionerUserId) {
+        final List<PlayPetition> results = jdbcTemplate.query(
+                "SELECT * FROM play_petitions WHERE id = ? AND petitioner_user_id = ?",
+                new Object[]{ id, petitionerUserId },
+                PETITION_MAPPER
+        );
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
+    }
+
+    @Override
+    public Optional<PlayPetition> findLatestByPetitionerUserIdAndStatus(final long petitionerUserId,
+                                                                         final PetitionStatus status) {
+        final List<PlayPetition> results = jdbcTemplate.query(
+                "SELECT * FROM play_petitions WHERE petitioner_user_id = ? AND status = ? ORDER BY created_at DESC, id DESC LIMIT 1",
+                new Object[]{ petitionerUserId, status.name() },
+                PETITION_MAPPER
+        );
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
+    }
+
+    @Override
+    public List<PlayPetition> findByPetitionerUserId(final long petitionerUserId) {
+        return jdbcTemplate.query(
+                "SELECT * FROM play_petitions WHERE petitioner_user_id = ? ORDER BY created_at DESC, id DESC",
+                new Object[]{ petitionerUserId },
+                PETITION_MAPPER
+        );
     }
 
     @Override
@@ -170,6 +289,14 @@ public class PlayPetitionDaoImpl implements PlayPetitionDao {
 
     @Override
     public void updateStatus(final long id, final PetitionStatus status, final String adminNotes) {
+        if (status == PetitionStatus.PENDING) {
+            jdbcTemplate.update(
+                    "UPDATE play_petitions SET status = ?, admin_notes = ?, resolved_at = NULL WHERE id = ?",
+                    status.name(), adminNotes, id
+            );
+            return;
+        }
+
         jdbcTemplate.update(
                 "UPDATE play_petitions SET status = ?, admin_notes = ?, resolved_at = NOW() WHERE id = ?",
                 status.name(), adminNotes, id

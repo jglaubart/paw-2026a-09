@@ -24,5 +24,6 @@ public interface ProductionDao {
     List<String> findAvailableLocations();
     Production create(String name, long obraId, Long productoraId, String synopsis,
                       String direction, String theater, LocalDate startDate, LocalDate endDate,
-                      Long imageId, String instagram, String website);
+                      Long imageId, Integer durationMinutes, String language,
+                      String instagram, String website);
 }

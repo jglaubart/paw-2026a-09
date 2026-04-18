@@ -155,9 +155,10 @@ public class ProductionServiceImpl implements ProductionService {
     public Production create(final String name, final long obraId, final Long productoraId,
                              final String synopsis, final String direction, final String theater,
                              final LocalDate startDate, final LocalDate endDate, final Long imageId,
+                             final Integer durationMinutes, final String language,
                              final String instagram, final String website) {
         return productionDao.create(name, obraId, productoraId, synopsis, direction, theater,
-                startDate, endDate, imageId, instagram, website);
+                startDate, endDate, imageId, durationMinutes, language, instagram, website);
     }
 
     private List<ProductionCardSummary> summarizeByObra(final List<Production> productions) {

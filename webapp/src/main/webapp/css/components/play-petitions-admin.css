@@ -215,6 +215,11 @@
     color: #40c781;
 }
 
+.petition-admin-status-changes_requested {
+    background: rgba(245, 166, 35, 0.18);
+    color: #ffbf5a;
+}
+
 .petition-admin-status-rejected {
     background: rgba(229, 9, 20, 0.18);
     color: #ff7b84;
@@ -270,13 +275,17 @@
 
 .petition-admin-decision-form textarea {
     width: 100%;
-    min-height: 12rem;
+    min-height: 5.5rem;
     border-radius: 18px;
-    padding: 1rem;
+    padding: 0.75rem 0.9rem;
     resize: vertical;
     border: 1px solid rgba(255, 255, 255, 0.14);
     background: rgba(255, 255, 255, 0.06);
     color: #fff;
+}
+
+.petition-admin-notes {
+    min-height: 7.5rem !important;
 }
 
 .petition-admin-decision-form textarea:focus {
@@ -285,9 +294,85 @@
     box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
 }
 
+.petition-admin-review-grid {
+    display: grid;
+    gap: 0.9rem;
+}
+
+.petition-admin-review-item {
+    display: grid;
+    gap: 0.55rem;
+    padding: 1rem;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.petition-admin-review-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-weight: 700;
+}
+
+.petition-admin-review-value {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.68);
+    line-height: 1.5;
+}
+
+.petition-admin-review-comment {
+    display: grid;
+    gap: 0.35rem;
+}
+
+.petition-admin-review-comment-label {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.petition-admin-review-comment textarea {
+    min-height: 3.75rem;
+    resize: none;
+}
+
+.petition-admin-review-comment textarea:disabled {
+    opacity: 0.45;
+}
+
+.petition-admin-review-comment-hidden {
+    display: none;
+}
+
+.petition-admin-feedback-list {
+    display: grid;
+    gap: 0.8rem;
+}
+
+.petition-admin-feedback-item {
+    padding: 0.9rem 1rem;
+    border-radius: 16px;
+    border: 1px solid rgba(245, 166, 35, 0.16);
+    background: rgba(245, 166, 35, 0.08);
+}
+
+.petition-admin-feedback-item strong {
+    display: block;
+    margin-bottom: 0.35rem;
+}
+
+.petition-admin-feedback-item p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.5;
+}
+
 .petition-admin-card-link,
 .petition-admin-approve,
-.petition-admin-reject {
+.petition-admin-reject,
+.petition-admin-request-changes {
     border: none;
     cursor: pointer;
 }
@@ -298,6 +383,10 @@
 
 .petition-admin-reject {
     background: linear-gradient(135deg, #e50914 0%, #b91c1c 100%);
+}
+
+.petition-admin-request-changes {
+    background: linear-gradient(135deg, #f5a623 0%, #d97706 100%);
 }
 
 .petition-admin-resolution {

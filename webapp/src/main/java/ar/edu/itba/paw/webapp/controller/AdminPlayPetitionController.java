@@ -1,18 +1,23 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.PlayPetitionService;
+import ar.edu.itba.paw.models.PetitionFieldFeedback;
 import ar.edu.itba.paw.models.PetitionStatus;
 import ar.edu.itba.paw.models.PlayPetition;
+import ar.edu.itba.paw.webapp.form.AdminPlayPetitionReviewForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -45,8 +50,8 @@ public class AdminPlayPetitionController {
         mav.addObject("updated", updated);
         mav.addObject("error", error);
         mav.addObject("pendingCount", playPetitionService.countByStatus(PetitionStatus.PENDING));
+        mav.addObject("changesRequestedCount", playPetitionService.countByStatus(PetitionStatus.CHANGES_REQUESTED));
         mav.addObject("approvedCount", playPetitionService.countByStatus(PetitionStatus.APPROVED));
-        mav.addObject("rejectedCount", playPetitionService.countByStatus(PetitionStatus.REJECTED));
         mav.addObject("totalCount", playPetitionService.countAll());
         return mav;
     }
@@ -64,25 +69,31 @@ public class AdminPlayPetitionController {
         mav.addObject("petition", petition.get());
         mav.addObject("updated", updated);
         mav.addObject("error", error);
+        mav.addObject("reviewForm", reviewFormFromPetition(petition.get()));
+        mav.addObject("fieldFeedback", toFieldFeedbackMap(petition.get()));
+        mav.addObject("selectedIssueFieldsCsv", selectedIssueFieldsCsv(petition.get()));
         return mav;
     }
 
     @RequestMapping(value = "/{id:\\d+}/decision", method = RequestMethod.POST)
     public ModelAndView decide(@PathVariable("id") final long id,
                                @RequestParam("action") final String action,
-                               @RequestParam(value = "adminNotes", required = false) final String adminNotes) {
+                               @ModelAttribute("reviewForm") final AdminPlayPetitionReviewForm reviewForm) {
         try {
             if ("approve".equals(action)) {
-                playPetitionService.approve(id, adminNotes);
+                playPetitionService.approve(id, reviewForm.getAdminNotes());
                 return new ModelAndView("redirect:/admin/" + id + "?updated=approved");
             }
-            if ("reject".equals(action)) {
-                playPetitionService.reject(id, adminNotes);
-                return new ModelAndView("redirect:/admin/" + id + "?updated=rejected");
+            if ("request_changes".equals(action)) {
+                playPetitionService.requestChanges(id, reviewForm.getAdminNotes(), extractFieldFeedback(reviewForm));
+                return new ModelAndView("redirect:/admin/" + id + "?updated=changes_requested");
             }
             return new ModelAndView("redirect:/admin/" + id + "?error=invalid_action");
         } catch (final IllegalArgumentException e) {
-            return new ModelAndView("redirect:/admin/" + id + "?error=not_found");
+            if (e.getMessage() != null && e.getMessage().toLowerCase(Locale.ROOT).contains("not found")) {
+                return new ModelAndView("redirect:/admin/" + id + "?error=not_found");
+            }
+            return new ModelAndView("redirect:/admin/" + id + "?error=invalid_review");
         } catch (final IllegalStateException e) {
             return new ModelAndView("redirect:/admin/" + id + "?error=already_resolved");
         }
@@ -97,5 +108,62 @@ public class AdminPlayPetitionController {
         } catch (final IllegalArgumentException e) {
             return null;
         }
+    }
+
+    private Map<String, String> extractFieldFeedback(final AdminPlayPetitionReviewForm reviewForm) {
+        final Map<String, String> feedback = new LinkedHashMap<>();
+        if (reviewForm.getIssueFields() == null) {
+            return feedback;
+        }
+        for (final String fieldKey : reviewForm.getIssueFields()) {
+            if (fieldKey == null) {
+                continue;
+            }
+            final String normalizedKey = fieldKey.trim();
+            final String comment = reviewForm.getFieldComments() != null ? reviewForm.getFieldComments().get(normalizedKey) : null;
+            if (comment == null || comment.trim().isEmpty()) {
+                throw new IllegalArgumentException("missing_field_comment");
+            }
+            feedback.put(normalizedKey, comment.trim());
+        }
+        return feedback;
+    }
+
+    private AdminPlayPetitionReviewForm reviewFormFromPetition(final PlayPetition petition) {
+        final AdminPlayPetitionReviewForm form = new AdminPlayPetitionReviewForm();
+        form.setAdminNotes(petition.getAdminNotes());
+        final Map<String, String> fieldComments = new LinkedHashMap<>();
+        final List<String> issueFields = new java.util.ArrayList<>();
+        if (petition.getFieldFeedback() != null) {
+            for (final PetitionFieldFeedback item : petition.getFieldFeedback()) {
+                issueFields.add(item.getFieldKey());
+                fieldComments.put(item.getFieldKey(), item.getComment());
+            }
+        }
+        form.setIssueFields(issueFields);
+        form.setFieldComments(fieldComments);
+        return form;
+    }
+
+    private Map<String, String> toFieldFeedbackMap(final PlayPetition petition) {
+        final Map<String, String> feedback = new LinkedHashMap<>();
+        if (petition.getFieldFeedback() == null) {
+            return feedback;
+        }
+        for (final PetitionFieldFeedback item : petition.getFieldFeedback()) {
+            feedback.put(item.getFieldKey(), item.getComment());
+        }
+        return feedback;
+    }
+
+    private String selectedIssueFieldsCsv(final PlayPetition petition) {
+        final StringBuilder builder = new StringBuilder(",");
+        if (petition.getFieldFeedback() == null) {
+            return builder.toString();
+        }
+        for (final PetitionFieldFeedback item : petition.getFieldFeedback()) {
+            builder.append(item.getFieldKey()).append(',');
+        }
+        return builder.toString();
     }
 }

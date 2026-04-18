@@ -27,12 +27,12 @@
     <div class="petition-admin-hero-content">
         <p class="petition-admin-kicker">Developer access</p>
         <h1>Backoffice de peticiones</h1>
-        <p class="petition-admin-hero-copy">Un panel interno para revisar postulaciones, detectar faltantes y convertir las aprobadas en contenido publicado sin salir del universo visual de Platea.</p>
+        <p class="petition-admin-hero-copy">Un panel interno para revisar postulaciones, pedir cambios por campo y convertir las aprobadas en contenido publicado sin duplicar obras existentes.</p>
         <div class="petition-admin-stats petition-admin-stats-hero">
             <span>Total <strong><c:out value="${totalCount}" /></strong></span>
             <span>Pendientes <strong><c:out value="${pendingCount}" /></strong></span>
+            <span>Con cambios <strong><c:out value="${changesRequestedCount}" /></strong></span>
             <span>Aprobadas <strong><c:out value="${approvedCount}" /></strong></span>
-            <span>Rechazadas <strong><c:out value="${rejectedCount}" /></strong></span>
         </div>
     </div>
 </section>
@@ -43,14 +43,14 @@
             <div>
                 <p class="petition-admin-toolbar-label">Filtro rápido</p>
                 <div class="petition-admin-filters">
-                    <c:url var="filterAllUrl"      value="/admin" />
-                    <c:url var="filterPendingUrl"  value="/admin?status=PENDING" />
+                    <c:url var="filterAllUrl" value="/admin" />
+                    <c:url var="filterPendingUrl" value="/admin?status=PENDING" />
+                    <c:url var="filterChangesUrl" value="/admin?status=CHANGES_REQUESTED" />
                     <c:url var="filterApprovedUrl" value="/admin?status=APPROVED" />
-                    <c:url var="filterRejectedUrl" value="/admin?status=REJECTED" />
                     <a class="petition-admin-filter ${selectedStatus eq 'ALL' ? 'petition-admin-filter-active' : ''}" href="${filterAllUrl}">Todas</a>
                     <a class="petition-admin-filter ${selectedStatus eq 'PENDING' ? 'petition-admin-filter-active' : ''}" href="${filterPendingUrl}">Pendientes</a>
+                    <a class="petition-admin-filter ${selectedStatus eq 'CHANGES_REQUESTED' ? 'petition-admin-filter-active' : ''}" href="${filterChangesUrl}">Con cambios</a>
                     <a class="petition-admin-filter ${selectedStatus eq 'APPROVED' ? 'petition-admin-filter-active' : ''}" href="${filterApprovedUrl}">Aprobadas</a>
-                    <a class="petition-admin-filter ${selectedStatus eq 'REJECTED' ? 'petition-admin-filter-active' : ''}" href="${filterRejectedUrl}">Rechazadas</a>
                 </div>
             </div>
         </div>
@@ -60,9 +60,9 @@
                 <paw:alert variant="success" message="La petición fue aprobada." showClose="false" />
             </div>
         </c:if>
-        <c:if test="${updated eq 'rejected'}">
+        <c:if test="${updated eq 'changes_requested'}">
             <div class="petition-admin-alert">
-                <paw:alert variant="warning" message="La petición fue rechazada." showClose="false" />
+                <paw:alert variant="warning" message="Se solicitaron cambios y el draft quedó abierto para el submitter." showClose="false" />
             </div>
         </c:if>
         <c:if test="${error eq 'not_found'}">
