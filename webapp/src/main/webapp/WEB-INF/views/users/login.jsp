@@ -27,44 +27,44 @@
 
 <paw:navbar />
 
-<main class="auth-page">
+<main class="auth-page auth-page-login">
     <section class="auth-shell">
-        <aside class="auth-panel auth-panel-copy">
-            <p class="auth-kicker"><spring:message code="auth.login.kicker" /></p>
-            <h1 class="auth-title"><spring:message code="auth.login.title" /></h1>
-            <p class="auth-copy"><spring:message code="auth.login.copy" /></p>
-        </aside>
-
-        <section class="auth-panel auth-panel-form">
-            <div class="auth-card">
-                <c:if test="${registered}">
-                    <div class="auth-alert"><paw:alert variant="success" message="${registeredMessage}" showClose="false" /></div>
-                </c:if>
-                <c:if test="${hasError}">
-                    <div class="auth-alert"><paw:alert variant="error" message="${errorMessage}" showClose="false" /></div>
-                </c:if>
-                <c:if test="${loggedOut}">
-                    <div class="auth-alert"><paw:alert variant="info" message="${loggedOutMessage}" showClose="false" /></div>
-                </c:if>
-
-                <form action="${loginActionUrl}" method="post" class="auth-form">
-                    <input type="hidden" name="${_csrf.parameterName}" value="${fn:escapeXml(_csrf.token)}" />
-
-                    <label class="auth-label" for="email"><spring:message code="auth.field.emailOrUsername" /></label>
-                    <input id="email" name="email" type="text" class="auth-input" maxlength="255" required autocomplete="username" />
-
-                    <label class="auth-label" for="password"><spring:message code="auth.field.password" /></label>
-                    <input id="password" name="password" type="password" class="auth-input" minlength="8" maxlength="72" required />
-
-                    <button type="submit" class="btn btn-primary btn-md auth-submit"><spring:message code="auth.login.submit" /></button>
-                </form>
-
-                <p class="auth-footer-copy">
-                    <spring:message code="auth.login.noAccount" />
-                    <a href="${registerUrl}" class="auth-inline-link"><spring:message code="auth.login.registerLink" /></a>
-                </p>
+        <div class="auth-card">
+            <div class="auth-card-header">
+                <h1 class="auth-card-title"><spring:message code="auth.login.title" /></h1>
             </div>
-        </section>
+
+            <c:if test="${registered}">
+                <div class="auth-alert"><paw:alert variant="success" message="${registeredMessage}" showClose="false" /></div>
+            </c:if>
+            <c:if test="${hasError}">
+                <div class="auth-alert"><paw:alert variant="error" message="${errorMessage}" showClose="false" /></div>
+            </c:if>
+            <c:if test="${loggedOut}">
+                <div class="auth-alert"><paw:alert variant="info" message="${loggedOutMessage}" showClose="false" /></div>
+            </c:if>
+
+            <form action="${loginActionUrl}" method="post" class="auth-form">
+                <input type="hidden" name="${_csrf.parameterName}" value="${fn:escapeXml(_csrf.token)}" />
+
+                <div class="auth-field">
+                    <label class="auth-label" for="email"><spring:message code="auth.field.emailOrUsername" /></label>
+                    <input id="email" name="email" type="text" class="auth-input" maxlength="255" required autocomplete="username" autofocus />
+                </div>
+
+                <div class="auth-field">
+                    <label class="auth-label" for="password"><spring:message code="auth.field.password" /></label>
+                    <input id="password" name="password" type="password" class="auth-input" minlength="8" maxlength="72" required autocomplete="current-password" />
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-md auth-submit"><spring:message code="auth.login.submit" /></button>
+            </form>
+
+            <p class="auth-footer-copy">
+                <spring:message code="auth.login.noAccount" />
+                <a href="${registerUrl}" class="auth-inline-link"><spring:message code="auth.login.registerLink" /></a>
+            </p>
+        </div>
     </section>
 </main>
 </body>
