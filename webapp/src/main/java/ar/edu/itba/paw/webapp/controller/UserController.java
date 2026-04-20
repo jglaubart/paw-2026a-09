@@ -238,7 +238,6 @@ public class UserController {
             return savedRequest.getRedirectUrl();
         }
 
-        final String contextPath = request.getContextPath();
-        return (contextPath != null ? contextPath : "") + "/users/me";
+        return "/users/me";
     }
 }
