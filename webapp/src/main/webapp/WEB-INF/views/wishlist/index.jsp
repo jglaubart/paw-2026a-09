@@ -40,9 +40,9 @@
                             <c:param name="produccionId" value="${p.id}" />
                         </c:url>
                         <paw:productionCard
-                            title="${fn:escapeXml(p.name)}"
+                            title="${p.name}"
                             imageUrl="${not empty p.imageUrl ? p.imageUrl : ''}"
-                            venue="${fn:escapeXml(p.theater)}"
+                            venue="${p.theater}"
                             rating="${productionRatings[p.id]}"
                             detailUrl="${detailUrl}"
                         />

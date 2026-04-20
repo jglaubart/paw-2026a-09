@@ -40,8 +40,8 @@
     </c:if>
 
     <paw:hero
-        title="${fn:escapeXml(production.name)}"
-        description="${fn:escapeXml(production.synopsis)}"
+        title="${production.name}"
+        description="${production.synopsis}"
         imageUrl="${imgUrl}"
         badge="PRODUCCIÓN"
     />

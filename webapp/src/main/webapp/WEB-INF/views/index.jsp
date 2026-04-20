@@ -32,8 +32,8 @@
         <c:when test="${featuredProduction != null}">
             <c:set var="heroImageUrl" value="${not empty featuredProduction.imageUrl ? featuredProduction.imageUrl : '/images/Portadas/hamlet.jpg'}" />
             <paw:hero
-                title="${fn:escapeXml(featuredProduction.name)}"
-                description="${fn:escapeXml(featuredProduction.synopsis)}"
+                title="${featuredProduction.name}"
+                description="${featuredProduction.synopsis}"
                 imageUrl="${heroImageUrl}"
                 badge="DESTACADO"
             />
@@ -56,9 +56,9 @@
                         <c:param name="produccionId" value="${p.id}" />
                     </c:url>
                     <paw:productionCard
-                        title="${fn:escapeXml(p.name)}"
+                        title="${p.name}"
                         imageUrl="${not empty p.imageUrl ? p.imageUrl : '/images/Portadas/hamlet.jpg'}"
-                        venue="${fn:escapeXml(p.theater)}"
+                        venue="${p.theater}"
                         rating="${productionRatings[p.id]}"
                         badge="HOY"
                         detailUrl="${detailUrl}"
@@ -74,9 +74,9 @@
                         <c:param name="produccionId" value="${card.representativeProductionId}" />
                     </c:url>
                     <paw:productionCard
-                        title="${fn:escapeXml(card.title)}"
+                        title="${card.title}"
                         imageUrl="${not empty card.imageUrl ? card.imageUrl : '/images/Portadas/hamlet.jpg'}"
-                        venue="${fn:escapeXml(card.theaterSummary)}"
+                        venue="${card.theaterSummary}"
                         rating="${productionRatings[card.representativeProductionId]}"
                         detailUrl="${detailUrl}"
                     />
@@ -91,9 +91,9 @@
                         <c:param name="produccionId" value="${card.representativeProductionId}" />
                     </c:url>
                     <paw:productionCard
-                        title="${fn:escapeXml(card.title)}"
+                        title="${card.title}"
                         imageUrl="${not empty card.imageUrl ? card.imageUrl : '/images/Portadas/principito.jpg'}"
-                        venue="${fn:escapeXml(card.theaterSummary)}"
+                        venue="${card.theaterSummary}"
                         rating="${productionRatings[card.representativeProductionId]}"
                         detailUrl="${detailUrl}"
                     />
