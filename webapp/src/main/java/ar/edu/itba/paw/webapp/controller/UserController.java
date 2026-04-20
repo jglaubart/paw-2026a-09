@@ -6,6 +6,7 @@ import ar.edu.itba.paw.interfaces.services.ReviewService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.WatchlistService;
 import ar.edu.itba.paw.interfaces.services.exception.UserAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.services.exception.UsernameAlreadyExistsException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.Review;
@@ -121,6 +122,9 @@ public class UserController {
             session.setAttribute(PENDING_USER_ID_ATTR, created.getId());
             session.setAttribute(PENDING_EMAIL_ATTR, created.getEmail());
             return new ModelAndView("redirect:/register/verify");
+        } catch (final UsernameAlreadyExistsException e) {
+            errors.rejectValue("username", "auth.register.username.taken");
+            return registerView(errors);
         } catch (final UserAlreadyExistsException e) {
             errors.rejectValue("email", "auth.register.email.taken");
             return registerView(errors);
