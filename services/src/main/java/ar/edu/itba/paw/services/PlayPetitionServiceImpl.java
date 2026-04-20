@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.persistence.GenreDao;
 import ar.edu.itba.paw.interfaces.persistence.ObraDao;
 import ar.edu.itba.paw.interfaces.persistence.PlayPetitionDao;
 import ar.edu.itba.paw.interfaces.persistence.ProductionDao;
+import ar.edu.itba.paw.interfaces.persistence.ProductoraMemberDao;
 import ar.edu.itba.paw.interfaces.persistence.ShowDao;
 import ar.edu.itba.paw.interfaces.services.ImageService;
 import ar.edu.itba.paw.interfaces.services.MailService;
@@ -18,6 +19,7 @@ import ar.edu.itba.paw.models.PetitionStatus;
 import ar.edu.itba.paw.models.PlayPetition;
 import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.ProductionSearchCriteria;
+import ar.edu.itba.paw.models.ProductoraMember;
 import ar.edu.itba.paw.models.Show;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,6 +73,7 @@ public class PlayPetitionServiceImpl implements PlayPetitionService {
     private final ProductionDao productionDao;
     private final ShowDao showDao;
     private final MailService mailService;
+    private final ProductoraMemberDao productoraMemberDao;
 
     @Autowired
     public PlayPetitionServiceImpl(final PlayPetitionDao playPetitionDao,
@@ -79,7 +82,8 @@ public class PlayPetitionServiceImpl implements PlayPetitionService {
                                    final ObraDao obraDao,
                                    final ProductionDao productionDao,
                                    final ShowDao showDao,
-                                   final MailService mailService) {
+                                   final MailService mailService,
+                                   final ProductoraMemberDao productoraMemberDao) {
         this.playPetitionDao = playPetitionDao;
         this.genreDao = genreDao;
         this.imageService = imageService;
@@ -87,6 +91,7 @@ public class PlayPetitionServiceImpl implements PlayPetitionService {
         this.productionDao = productionDao;
         this.showDao = showDao;
         this.mailService = mailService;
+        this.productoraMemberDao = productoraMemberDao;
     }
 
     @Override
@@ -221,10 +226,11 @@ public class PlayPetitionServiceImpl implements PlayPetitionService {
                 ? obraDao.findById(petition.getSourceObraId()).orElseThrow(() -> new IllegalArgumentException("Petition source obra not found"))
                 : obraDao.create(petition.getTitle(), petition.getSynopsis(), joinGenres(petition.getGenres()));
 
+        final Long productoraId = resolveProductoraId(petition.getPetitionerUserId());
         final Production production = productionDao.create(
                 petition.getTitle(),
                 obra.getId(),
-                null,
+                productoraId,
                 petition.getSynopsis(),
                 petition.getDirector(),
                 petition.getTheater(),
@@ -513,6 +519,17 @@ public class PlayPetitionServiceImpl implements PlayPetitionService {
         }
         Collections.sort(normalized);
         return normalized;
+    }
+
+    private Long resolveProductoraId(final Long petitionerUserId) {
+        if (petitionerUserId == null) {
+            return null;
+        }
+        final List<ProductoraMember> memberships = productoraMemberDao.findByUser(petitionerUserId);
+        if (memberships.isEmpty()) {
+            return null;
+        }
+        return memberships.get(0).getProductoraId();
     }
 
     private String joinGenres(final List<Genre> genres) {

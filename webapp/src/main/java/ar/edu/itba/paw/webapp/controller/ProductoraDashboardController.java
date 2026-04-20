@@ -3,6 +3,8 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.ProductoraService;
 import ar.edu.itba.paw.models.Productora;
 import ar.edu.itba.paw.models.ProductoraMember;
+import ar.edu.itba.paw.models.Production;
+import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.webapp.auth.PawAuthUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -47,10 +49,16 @@ public class ProductoraDashboardController {
         final Productora productora = productoraService.findById(productoraId)
                 .orElseThrow(() -> new IllegalArgumentException("Productora not found: " + productoraId));
         final List<ProductoraMember> members = productoraService.listMembers(productoraId);
+        final List<Production> productions = productoraService.findProductionsByProductora(productoraId);
+        final ProductoraService.ProductoraDashboardStats stats = productoraService.getDashboardStats(productoraId);
+        final List<Review> recentReviews = productoraService.findRecentReviewsByProductora(productoraId, 5);
 
         final ModelAndView mav = new ModelAndView("productora/dashboard-layout");
         mav.addObject("productora", productora);
         mav.addObject("members", members);
+        mav.addObject("productions", productions);
+        mav.addObject("stats", stats);
+        mav.addObject("recentReviews", recentReviews);
         mav.addObject("activeTab", tab);
         mav.addObject("currentUserId", userId);
         return mav;
