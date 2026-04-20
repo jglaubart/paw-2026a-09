@@ -6,6 +6,7 @@ import ar.edu.itba.paw.interfaces.services.ReviewService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.WatchlistService;
 import ar.edu.itba.paw.interfaces.services.exception.UserAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.services.exception.UsernameAlreadyExistsException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.Review;
@@ -110,6 +111,9 @@ public class UserController {
             userService.create(form.getEmail(), form.getPassword(), form.getUsername());
             authenticateUser(form.getEmail());
             return new ModelAndView("redirect:" + resolvePostRegisterTarget(request, response));
+        } catch (final UsernameAlreadyExistsException e) {
+            errors.rejectValue("username", "auth.register.username.taken");
+            return registerView(errors);
         } catch (final UserAlreadyExistsException e) {
             errors.rejectValue("email", "auth.register.email.taken");
             return registerView(errors);

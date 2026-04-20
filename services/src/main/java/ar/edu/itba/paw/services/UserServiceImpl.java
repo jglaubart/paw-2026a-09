@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.exception.UserAlreadyExistsException;
+import ar.edu.itba.paw.interfaces.services.exception.UsernameAlreadyExistsException;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -57,11 +58,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public User create(final String email, final String password, final String username) {
         final String normalizedEmail = normalizeEmail(email);
+        final String normalizedUsername = username != null ? username.trim() : "";
         final String encodedPassword = passwordEncoder.encode(password);
+
+        if (!normalizedUsername.isEmpty()) {
+            final Optional<User> existingByUsername = userDao.findByUsername(normalizedUsername);
+            if (existingByUsername.isPresent() && !existingByUsername.get().getEmail().equalsIgnoreCase(normalizedEmail)) {
+                throw new UsernameAlreadyExistsException(normalizedUsername);
+            }
+        }
+
         final Optional<User> existingUser = userDao.findByEmail(normalizedEmail);
 
         if (!existingUser.isPresent()) {
-            return userDao.create(normalizedEmail, encodedPassword, username != null ? username.trim() : "");
+            return userDao.create(normalizedEmail, encodedPassword, normalizedUsername);
         }
 
         final User user = existingUser.get();
