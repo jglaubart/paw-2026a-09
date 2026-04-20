@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body style="margin:0;background:#141414;color:#ffffff;font-family:'Segoe UI',Arial,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:32px 16px;background:#141414;">
+    <tr>
+        <td align="center">
+            <table role="presentation" width="560" cellpadding="0" cellspacing="0"
+                   style="max-width:560px;width:100%;background:linear-gradient(180deg,#1d1d1d 0%,#161616 100%);border:1px solid rgba(255,255,255,0.1);border-radius:24px;overflow:hidden;box-shadow:0 24px 56px rgba(0,0,0,0.45);">
+
+                <tr>
+                    <td style="padding:26px 32px;background:#000000;border-bottom:1px solid rgba(255,255,255,0.06);">
+                        <div style="color:#ba9eff;font-size:22px;font-weight:800;letter-spacing:0.28em;">PLATEA</div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding:38px 40px 12px;">
+                        <p style="margin:0 0 14px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.18em;font-size:11px;font-weight:700;"
+                           th:text="#{mail.productora.rejected.kicker}">Solicitud no aprobada</p>
+                        <h1 style="margin:0 0 18px;font-size:28px;line-height:1.15;color:#ffffff;letter-spacing:-0.02em;"
+                            th:text="#{mail.productora.rejected.title(${username})}">Hola, tu solicitud no fue aprobada</h1>
+                        <p style="margin:0 0 10px;color:rgba(255,255,255,0.78);font-size:15px;line-height:1.55;"
+                           th:text="#{mail.productora.rejected.body}">Revisamos tu solicitud.</p>
+                    </td>
+                </tr>
+
+                <tr th:if="${adminNotes != null and !#strings.isEmpty(adminNotes)}">
+                    <td style="padding:8px 40px 24px;">
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+                               style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-left:3px solid rgba(255,255,255,0.3);border-radius:12px;">
+                            <tr>
+                                <td style="padding:16px 20px;">
+                                    <p style="margin:0 0 6px;color:rgba(255,255,255,0.5);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;"
+                                       th:text="#{mail.productora.rejected.notes('')}">Notas del equipo</p>
+                                    <p style="margin:0;color:rgba(255,255,255,0.82);font-size:14px;line-height:1.55;"
+                                       th:text="${adminNotes}">Notas</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding:8px 40px 32px;">
+                        <p style="margin:0;color:rgba(255,255,255,0.48);font-size:12px;line-height:1.55;">Si crees que es un error o queres saber mas, responde este email.</p>
+                    </td>
+                </tr>
+
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
