@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfaces.persistence.PlayRatingDao;
 import ar.edu.itba.paw.interfaces.persistence.ProductionDao;
 import ar.edu.itba.paw.interfaces.persistence.ProductionRatingDao;
+import ar.edu.itba.paw.interfaces.persistence.SeenDao;
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.models.PlayRating;
@@ -24,23 +25,30 @@ public class RatingServiceImpl implements RatingService {
     private final ProductionDao productionDao;
     private final ProductionRatingDao productionRatingDao;
     private final UserDao userDao;
+    private final SeenDao seenDao;
 
     @Autowired
     public RatingServiceImpl(final PlayRatingDao playRatingDao,
                              final ProductionDao productionDao,
                              final ProductionRatingDao productionRatingDao,
-                             final UserDao userDao) {
+                             final UserDao userDao,
+                             final SeenDao seenDao) {
         this.playRatingDao = playRatingDao;
         this.productionDao = productionDao;
         this.productionRatingDao = productionRatingDao;
         this.userDao = userDao;
+        this.seenDao = seenDao;
     }
 
     @Override
     public PlayRating rateObra(final long userId, final long obraId, final int score) {
-        return playRatingDao.findByUserAndObra(userId, obraId)
+        final PlayRating rating = playRatingDao.findByUserAndObra(userId, obraId)
                 .map(existing -> playRatingDao.update(userId, obraId, score))
                 .orElseGet(() -> playRatingDao.create(userId, obraId, score));
+        if (!seenDao.hasSeen(userId, obraId)) {
+            seenDao.markSeen(userId, obraId);
+        }
+        return rating;
     }
 
     @Override
@@ -99,6 +107,25 @@ public class RatingServiceImpl implements RatingService {
             final Double avg = averages.get(productionId);
             final String ratingLabel = avg != null ? String.format(Locale.US, "%.1f", avg) : "N/A";
             labels.put(productionId, ratingLabel);
+        }
+        return labels;
+    }
+
+    @Override
+    public Map<Long, String> getUserObraRatingLabels(final long userId, final Collection<Long> obraIds) {
+        final Map<Long, String> labels = new HashMap<>();
+        if (obraIds == null || obraIds.isEmpty()) {
+            return labels;
+        }
+
+        final Map<Long, Integer> scores = playRatingDao.findScoresByUserAndObraIds(userId, obraIds);
+
+        for (final Map.Entry<Long, Integer> entry : scores.entrySet()) {
+            final Integer rawScore = entry.getValue();
+            if (rawScore == null) {
+                continue;
+            }
+            labels.put(entry.getKey(), String.format(Locale.US, "%.1f", rawScore / 2.0));
         }
         return labels;
     }
