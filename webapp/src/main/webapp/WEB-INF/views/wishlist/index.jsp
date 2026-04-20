@@ -40,11 +40,11 @@
     <c:forEach var="p" items="${wishlist}">
         <c:set var="startStr" value="" />
         <c:set var="endStr" value="" />
-        <c:if test="${not empty p.startDate}">
-            <fmt:formatDate value="${p.startDate}" pattern="yyyy-MM-dd" var="startStr" />
+        <c:if test="${not empty wishlistStartDates[p.id]}">
+            <fmt:formatDate value="${wishlistStartDates[p.id]}" pattern="yyyy-MM-dd" var="startStr" />
         </c:if>
-        <c:if test="${not empty p.endDate}">
-            <fmt:formatDate value="${p.endDate}" pattern="yyyy-MM-dd" var="endStr" />
+        <c:if test="${not empty wishlistEndDates[p.id]}">
+            <fmt:formatDate value="${wishlistEndDates[p.id]}" pattern="yyyy-MM-dd" var="endStr" />
         </c:if>
         <c:choose>
             <c:when test="${not empty endStr and endStr < todayStr}">
@@ -61,7 +61,7 @@
 
     <main class="user-list-page">
 
-        <header class="user-list-hero ${wishlistCount == 0 ? 'user-list-hero-empty' : ''}">
+        <section class="user-list-hero ${wishlistCount == 0 ? 'user-list-hero-empty' : ''}">
             <div class="user-list-hero-main">
                 <span class="user-list-kicker">Tu watchlist</span>
                 <h1 class="user-list-title">Producciones que <em>querés ver</em></h1>
@@ -107,10 +107,10 @@
 
                     <c:set var="upcomingShown" value="0" />
                     <c:forEach var="p" items="${wishlist}">
-                        <c:if test="${upcomingShown < 3 and not empty p.startDate}">
+                        <c:if test="${upcomingShown < 3 and not empty wishlistStartDates[p.id]}">
                             <c:set var="endStr" value="" />
-                            <c:if test="${not empty p.endDate}">
-                                <fmt:formatDate value="${p.endDate}" pattern="yyyy-MM-dd" var="endStr" />
+                            <c:if test="${not empty wishlistEndDates[p.id]}">
+                                <fmt:formatDate value="${wishlistEndDates[p.id]}" pattern="yyyy-MM-dd" var="endStr" />
                             </c:if>
                             <c:set var="isActive" value="${empty endStr or endStr >= todayStr}" />
                             <c:if test="${isActive}">
@@ -119,8 +119,8 @@
                                 </c:url>
                                 <a href="${upcomingUrl}" class="user-list-upcoming-row">
                                     <span class="user-list-upcoming-date" aria-hidden="true">
-                                        <span class="user-list-upcoming-date-day"><fmt:formatDate value="${p.startDate}" pattern="dd" /></span>
-                                        <span class="user-list-upcoming-date-month"><fmt:formatDate value="${p.startDate}" pattern="MMM" /></span>
+                                        <span class="user-list-upcoming-date-day"><fmt:formatDate value="${wishlistStartDates[p.id]}" pattern="dd" /></span>
+                                        <span class="user-list-upcoming-date-month"><fmt:formatDate value="${wishlistStartDates[p.id]}" pattern="MMM" /></span>
                                     </span>
                                     <span class="user-list-upcoming-body">
                                         <span class="user-list-upcoming-name"><c:out value="${p.name}" /></span>
@@ -139,7 +139,7 @@
                     </c:if>
                 </aside>
             </c:if>
-        </header>
+        </section>
 
         <c:choose>
             <c:when test="${wishlistCount > 0}">
@@ -152,11 +152,11 @@
 
                         <c:set var="startStr" value="" />
                         <c:set var="endStr" value="" />
-                        <c:if test="${not empty p.startDate}">
-                            <fmt:formatDate value="${p.startDate}" pattern="yyyy-MM-dd" var="startStr" />
+                        <c:if test="${not empty wishlistStartDates[p.id]}">
+                            <fmt:formatDate value="${wishlistStartDates[p.id]}" pattern="yyyy-MM-dd" var="startStr" />
                         </c:if>
-                        <c:if test="${not empty p.endDate}">
-                            <fmt:formatDate value="${p.endDate}" pattern="yyyy-MM-dd" var="endStr" />
+                        <c:if test="${not empty wishlistEndDates[p.id]}">
+                            <fmt:formatDate value="${wishlistEndDates[p.id]}" pattern="yyyy-MM-dd" var="endStr" />
                         </c:if>
                         <c:choose>
                             <c:when test="${not empty endStr and endStr < todayStr}">
@@ -194,19 +194,19 @@
                                         <c:if test="${not empty p.theater}">
                                             <span class="user-list-obra-theater"><c:out value="${p.theater}" /></span>
                                         </c:if>
-                                        <c:if test="${not empty p.theater and not empty p.startDate}">
+                                        <c:if test="${not empty p.theater and not empty wishlistStartDates[p.id]}">
                                             <span class="user-list-obra-dot" aria-hidden="true"></span>
                                         </c:if>
-                                        <c:if test="${not empty p.startDate}">
+                                        <c:if test="${not empty wishlistStartDates[p.id]}">
                                             <span class="user-list-obra-dates">
                                                 <c:choose>
-                                                    <c:when test="${not empty p.endDate}">
-                                                        <fmt:formatDate value="${p.startDate}" pattern="dd MMM" />
+                                                    <c:when test="${not empty wishlistEndDates[p.id]}">
+                                                        <fmt:formatDate value="${wishlistStartDates[p.id]}" pattern="dd MMM" />
                                                         <span aria-hidden="true"> — </span>
-                                                        <fmt:formatDate value="${p.endDate}"   pattern="dd MMM yyyy" />
+                                                        <fmt:formatDate value="${wishlistEndDates[p.id]}"   pattern="dd MMM yyyy" />
                                                     </c:when>
                                                     <c:otherwise>
-                                                        Desde <fmt:formatDate value="${p.startDate}" pattern="dd MMM yyyy" />
+                                                        Desde <fmt:formatDate value="${wishlistStartDates[p.id]}" pattern="dd MMM yyyy" />
                                                     </c:otherwise>
                                                 </c:choose>
                                             </span>

@@ -44,6 +44,7 @@
     padding: 0 0.25rem 1.75rem;
     border-bottom: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
     margin-bottom: 2rem;
+    background: transparent;
 }
 
 .user-list-hero-empty {

@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class WatchlistController {
@@ -34,8 +37,22 @@ public class WatchlistController {
         final long userId = authUser.getUser().getId();
         final ModelAndView mav = new ModelAndView("wishlist/index");
         final List<Production> productions = watchlistService.findByUser(userId);
+
+        final Map<Long, Date> startDates = new HashMap<>();
+        final Map<Long, Date> endDates = new HashMap<>();
+        for (final Production p : productions) {
+            if (p.getStartDate() != null) {
+                startDates.put(p.getId(), java.sql.Date.valueOf(p.getStartDate()));
+            }
+            if (p.getEndDate() != null) {
+                endDates.put(p.getId(), java.sql.Date.valueOf(p.getEndDate()));
+            }
+        }
+
         mav.addObject("wishlist", productions);
         mav.addObject("productionRatings", ratingService.getProductionRatingLabels(collectProductionIds(productions)));
+        mav.addObject("wishlistStartDates", startDates);
+        mav.addObject("wishlistEndDates", endDates);
         return mav;
     }
 
