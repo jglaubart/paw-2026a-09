@@ -1,0 +1,777 @@
+/* ── Productora feature (postulación + admin + dashboard) ───────────
+   Comparte el lenguaje visual del resto de la app autenticada:
+   tokens de glass, headers con kicker, serif editorial, gradient en
+   <em>. Los tags van con --platea-font-ui.
+   ────────────────────────────────────────────────────────────────── */
+
+.productora-entry,
+.productora-form-page,
+.productora-status,
+.productora-admin,
+.productora-admin-detail,
+.productora-dashboard {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 4rem;
+    font-family: var(--platea-font-ui, "Segoe UI", "Helvetica Neue", Arial, sans-serif);
+    color: var(--platea-text-primary, #f7f2ff);
+}
+
+.productora-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--platea-primary, #ba9eff);
+    margin-bottom: 0.6rem;
+}
+
+.productora-kicker::before {
+    content: "";
+    width: 1.4rem;
+    height: 1px;
+    background: var(--platea-primary, #ba9eff);
+    opacity: 0.6;
+}
+
+.productora-title,
+.productora-status-title,
+.productora-admin-title,
+.productora-dashboard-title,
+.productora-form-title,
+.productora-admin-detail-title {
+    font-family: var(--platea-font-editorial, Georgia, serif);
+    font-size: clamp(1.9rem, 4vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin: 0 0 0.6rem;
+}
+
+.productora-title em,
+.productora-status-title em {
+    font-style: italic;
+    background: linear-gradient(135deg, #d6c1ff, #9a7bff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.productora-lede,
+.productora-status-lede,
+.productora-admin-lede,
+.productora-dashboard-bio,
+.productora-dashboard-subtle {
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+    margin: 0 0 1rem;
+    max-width: 62ch;
+}
+
+.productora-fine {
+    font-size: 0.78rem;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+    letter-spacing: 0.04em;
+}
+
+.productora-cta-row {
+    display: flex;
+    gap: 0.75rem;
+    margin: 1.5rem 0 0.75rem;
+}
+
+/* ── Entry: pasos ──────────────────────────────────────────────── */
+
+.productora-steps {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+}
+
+.productora-steps-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+    margin-bottom: 1.25rem;
+}
+
+.productora-steps-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.25rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.productora-step {
+    display: flex;
+    gap: 1rem;
+    padding: 1.1rem 1.25rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 12px;
+}
+
+.productora-step-num {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: rgba(186, 158, 255, 0.12);
+    border: 1px solid rgba(186, 158, 255, 0.35);
+    color: var(--platea-primary, #ba9eff);
+    border-radius: 50%;
+    font-weight: 800;
+}
+
+.productora-step-name {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem;
+}
+
+.productora-step-desc {
+    font-size: 0.85rem;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+    margin: 0;
+}
+
+/* ── History (postulaciones anteriores) ─────────────────────────── */
+
+.productora-history {
+    margin-top: 2.5rem;
+}
+
+.productora-history-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+    margin-bottom: 0.75rem;
+}
+
+.productora-history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.productora-history-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 10px;
+}
+
+.productora-history-name {
+    font-weight: 600;
+    margin-right: 0.75rem;
+}
+
+.productora-history-status {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.productora-history-status-pending              { color: var(--platea-secondary, #f8a010); border-color: rgba(248,160,16,0.35); }
+.productora-history-status-changes_requested    { color: var(--platea-primary, #ba9eff);   border-color: rgba(186,158,255,0.35); }
+.productora-history-status-approved, .productora-history-status-owner   { color: #9be7a8; border-color: rgba(155,231,168,0.35); }
+.productora-history-status-rejected              { color: #f08080; border-color: rgba(240,128,128,0.35); }
+.productora-history-status-member                { color: var(--platea-text-muted, rgba(247,242,255,0.68)); border-color: rgba(255,255,255,0.12); }
+
+.productora-history-link {
+    font-size: 0.78rem;
+    color: var(--platea-primary, #ba9eff);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* ── Form ──────────────────────────────────────────────────────── */
+
+.productora-form-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 2rem;
+}
+
+.productora-form-back {
+    font-size: 0.72rem;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.productora-form-back:hover {
+    color: var(--platea-primary, #ba9eff);
+}
+
+.productora-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+}
+
+.productora-form-section {
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem 1.5rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+}
+
+.productora-form-legend {
+    padding: 0 0.35rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--platea-primary, #ba9eff);
+}
+
+.productora-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-top: 0.9rem;
+}
+
+.productora-form-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 0.9rem;
+}
+
+.productora-form-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+}
+
+.productora-form-input,
+.productora-form-textarea {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 0.65rem 0.85rem;
+    color: var(--platea-text-primary, #f7f2ff);
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+
+.productora-form-input:focus,
+.productora-form-textarea:focus {
+    outline: none;
+    border-color: rgba(186, 158, 255, 0.55);
+    box-shadow: 0 0 0 3px rgba(186, 158, 255, 0.14);
+}
+
+.productora-form-input-narrow {
+    max-width: 180px;
+}
+
+.productora-form-textarea {
+    min-height: 6rem;
+    resize: vertical;
+}
+
+.productora-form-error {
+    color: #f08080;
+    font-size: 0.78rem;
+}
+
+.productora-form-feedback {
+    color: var(--platea-secondary, #f8a010);
+    font-size: 0.78rem;
+    font-style: italic;
+}
+
+.productora-form-admin-notes {
+    background: rgba(186, 158, 255, 0.08);
+    border: 1px solid rgba(186, 158, 255, 0.25);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.productora-form-admin-notes strong {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--platea-primary, #ba9eff);
+    margin-bottom: 0.35rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.productora-form-admin-notes p {
+    margin: 0;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+}
+
+.productora-form-submit-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+/* ── Status page ───────────────────────────────────────────────── */
+
+.productora-status-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+    padding: 1.25rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 12px;
+}
+
+.productora-status-meta div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.productora-status-meta dt {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+}
+
+.productora-status-meta dd {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--platea-text-primary, #f7f2ff);
+}
+
+.productora-status-notes {
+    background: rgba(186, 158, 255, 0.08);
+    border: 1px solid rgba(186, 158, 255, 0.25);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+}
+
+.productora-status-notes h3 {
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--platea-primary, #ba9eff);
+    margin: 0 0 0.35rem;
+}
+
+.productora-status-notes p {
+    margin: 0;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+}
+
+.productora-status-cta {
+    margin-top: 1.5rem;
+}
+
+.productora-status-kicker-pending              { color: var(--platea-secondary, #f8a010); }
+.productora-status-kicker-pending::before      { background: var(--platea-secondary, #f8a010); }
+.productora-status-kicker-approved             { color: #9be7a8; }
+.productora-status-kicker-approved::before     { background: #9be7a8; }
+.productora-status-kicker-rejected             { color: #f08080; }
+.productora-status-kicker-rejected::before     { background: #f08080; }
+
+/* ── Admin list + tabs ─────────────────────────────────────────── */
+
+.productora-admin-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1.5rem;
+}
+
+.productora-admin-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.9rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 999px;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+    text-decoration: none;
+}
+
+.productora-admin-tab:hover {
+    color: var(--platea-text-primary, #f7f2ff);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.productora-admin-tab.is-active {
+    background: rgba(186, 158, 255, 0.14);
+    border-color: rgba(186, 158, 255, 0.45);
+    color: var(--platea-text-primary, #f7f2ff);
+}
+
+.productora-admin-tab-count {
+    font-size: 0.7rem;
+    opacity: 0.7;
+}
+
+.productora-admin-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.productora-admin-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1.1rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.productora-admin-row:hover {
+    background: var(--platea-surface-container, rgba(255, 255, 255, 0.07));
+    border-color: rgba(255, 255, 255, 0.16);
+}
+
+.productora-admin-row-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.productora-admin-row-name {
+    font-weight: 700;
+}
+
+.productora-admin-row-meta {
+    font-size: 0.78rem;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+}
+
+.productora-admin-row-arrow {
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+    font-weight: 700;
+}
+
+.productora-admin-empty {
+    padding: 3rem 1rem;
+    text-align: center;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+}
+
+/* ── Admin detail ──────────────────────────────────────────────── */
+
+.productora-admin-detail-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 1.75rem;
+}
+
+.productora-admin-detail-status {
+    align-self: flex-start;
+}
+
+.productora-admin-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 14px;
+}
+
+.productora-admin-detail-grid h3 {
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--platea-primary, #ba9eff);
+    margin: 0 0 0.75rem;
+}
+
+.productora-admin-dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.4rem 0.9rem;
+    margin: 0;
+}
+
+.productora-admin-dl dt {
+    font-size: 0.74rem;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.productora-admin-dl dd {
+    margin: 0;
+    font-size: 0.92rem;
+    color: var(--platea-text-primary, #f7f2ff);
+}
+
+.productora-admin-dl-long {
+    grid-column: 1 / -1;
+    line-height: 1.5;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.7));
+}
+
+.productora-admin-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.productora-admin-actions h3 {
+    grid-column: 1 / -1;
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--platea-primary, #ba9eff);
+    margin: 0;
+}
+
+.productora-admin-action-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: 1rem 1.1rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 12px;
+}
+
+.productora-admin-action-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-size: 0.78rem;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+}
+
+.productora-admin-action-form textarea,
+.productora-admin-action-form input[type="text"],
+.productora-admin-action-form input[type="email"] {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 0.55rem 0.7rem;
+    color: var(--platea-text-primary, #f7f2ff);
+    font-family: inherit;
+    font-size: 0.9rem;
+}
+
+.productora-admin-feedback-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 0.7rem 0.85rem;
+}
+
+.productora-admin-feedback-fields legend {
+    padding: 0 0.3rem;
+    font-size: 0.7rem;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+/* ── Dashboard ─────────────────────────────────────────────────── */
+
+.productora-dashboard-header {
+    margin-bottom: 1.5rem;
+}
+
+.productora-dashboard-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+}
+
+.productora-dashboard-tab {
+    padding: 0.6rem 1rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+    text-decoration: none;
+    border-radius: 8px;
+}
+
+.productora-dashboard-tab:hover {
+    color: var(--platea-text-primary, #f7f2ff);
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+}
+
+.productora-dashboard-tab.is-active {
+    background: rgba(186, 158, 255, 0.14);
+    color: var(--platea-text-primary, #f7f2ff);
+}
+
+.productora-dashboard-body h2 {
+    font-size: 1.5rem;
+    margin: 0 0 0.8rem;
+}
+
+.productora-dashboard-overview {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0 1.5rem;
+}
+
+.productora-dashboard-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 1rem 1.5rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 12px;
+    min-width: 160px;
+}
+
+.productora-dashboard-stat-num {
+    font-size: 1.5rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+.productora-dashboard-stat-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+}
+
+.productora-team-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.productora-team-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 10px;
+}
+
+.productora-team-row > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.productora-team-name {
+    font-weight: 600;
+}
+
+.productora-team-email {
+    font-size: 0.78rem;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+}
+
+.productora-team-role {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.productora-team-remove {
+    margin: 0;
+}
+
+.productora-team-add {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 12px;
+}
+
+.productora-team-add label {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-size: 0.78rem;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+}
+
+.productora-team-add input[type="email"] {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 0.55rem 0.75rem;
+    color: var(--platea-text-primary, #f7f2ff);
+    font-family: inherit;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 720px) {
+    .productora-form-field-row,
+    .productora-admin-feedback-fields {
+        grid-template-columns: 1fr;
+    }
+}

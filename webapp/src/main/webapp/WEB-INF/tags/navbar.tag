@@ -52,17 +52,23 @@
 <header class="navbar">
     <a class="navbar-logo" href="${logoTargetUrl}"><c:out value="${brandLabel}" /></a>
 
+    <c:url var="adminPostulacionesUrl" value="/admin/productoras/postulaciones" />
+    <c:url var="productoraDashboardUrl" value="/productoras/mia" />
+
     <nav class="navbar-nav" aria-label="Navegación principal">
         <c:choose>
             <c:when test="${isAdmin}">
                 <a class="navbar-link ${resolvedActiveSection == 'admin-obras' ? 'navbar-link-active' : ''}" href="${adminUrl}"><c:out value="${adminObrasLabel}" /></a>
-                <span class="navbar-link navbar-link-disabled" aria-disabled="true" title="${fn:escapeXml(adminProductorasTooltip)}"><c:out value="${adminProductorasLabel}" /></span>
+                <a class="navbar-link ${resolvedActiveSection == 'admin-productoras' ? 'navbar-link-active' : ''}" href="${adminPostulacionesUrl}"><c:out value="${adminProductorasLabel}" /></a>
             </c:when>
             <c:otherwise>
                 <a class="navbar-link ${resolvedActiveSection == 'cartelera' ? 'navbar-link-active' : ''}" href="${carteleraUrl}"><c:out value="${carteleraLabel}" /></a>
                 <sec:authorize access="isAuthenticated()">
                     <a class="navbar-link ${resolvedActiveSection == 'watchlist' ? 'navbar-link-active' : ''}" href="${watchlistUrl}"><spring:message code="navbar.watchlist" /></a>
                     <a class="navbar-link ${resolvedActiveSection == 'historial' ? 'navbar-link-active' : ''}" href="${historialUrl}"><spring:message code="navbar.historial" /></a>
+                    <c:if test="${navIsProductoraMember}">
+                        <a class="navbar-link ${resolvedActiveSection == 'productora-dashboard' ? 'navbar-link-active' : ''}" href="${productoraDashboardUrl}">Dashboard</a>
+                    </c:if>
                 </sec:authorize>
             </c:otherwise>
         </c:choose>
@@ -80,7 +86,7 @@
             <sec:authorize access="isAuthenticated()">
                 <sec:authentication property="principal.user.username" var="currentUsername" />
                 <sec:authentication property="principal.user.email"    var="currentUserEmail" />
-                <c:if test="${not isAdmin}">
+                <c:if test="${not isAdmin and navIsProductoraMember}">
                     <paw:button text="${submitPlayLabel}" size="md" variant="cta" cssClass="navbar-submit-button" href="${subirObraUrl}" />
                 </c:if>
                 <div class="navbar-user-menu" id="navbarUserMenu">
@@ -103,6 +109,15 @@
                                 <a class="navbar-dropdown-item" href="${profileUrl}" role="menuitem">
                                     <c:out value="${profileLabel}" />
                                 </a>
+                                <c:choose>
+                                    <c:when test="${navIsProductoraMember}">
+                                        <a class="navbar-dropdown-item" href="${productoraDashboardUrl}" role="menuitem">Mi productora</a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:url var="postularUrl" value="/productoras/postular" />
+                                        <a class="navbar-dropdown-item" href="${postularUrl}" role="menuitem">Postular productora</a>
+                                    </c:otherwise>
+                                </c:choose>
                                 <div class="navbar-dropdown-divider"></div>
                             </c:if>
                             <form action="${logoutUrl}" method="post" style="margin:0;">
