@@ -61,13 +61,14 @@
                             <c:out value="${ratingAverage}" /> promedio
                         </span>
                     </div>
-                    <c:forEach begin="1" end="5" var="tierReverse">
-                        <c:set var="tier" value="${6 - tierReverse}" />
+                    <c:forEach begin="1" end="10" var="tierReverse">
+                        <c:set var="tier" value="${11 - tierReverse}" />
                         <c:set var="tierCount" value="${ratingDistribution[tier - 1]}" />
                         <c:set var="tierPct" value="${ratingDistributionMax > 0 ? (tierCount * 100) / ratingDistributionMax : 0}" />
-                        <div class="user-list-breakdown-row ${tierCount == 0 ? 'is-dim' : ''}">
-                            <span class="user-list-breakdown-stars" aria-hidden="true">
-                                <c:forEach begin="1" end="${tier}" var="i">★</c:forEach>
+                        <div class="user-list-breakdown-row ${tierCount == 0 ? 'is-dim' : ''}" aria-label="${tier} de 10">
+                            <span class="user-list-breakdown-score" aria-hidden="true">
+                                <span class="user-list-breakdown-score-star">★</span>
+                                <span class="user-list-breakdown-score-num"><c:out value="${tier}" /></span>
                             </span>
                             <span class="user-list-breakdown-bar">
                                 <span class="user-list-breakdown-bar-fill" style="width: ${tierPct}%;"></span>

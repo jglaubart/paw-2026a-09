@@ -43,14 +43,14 @@ public class SeenController {
         }
         final Map<Long, Integer> userScores = ratingService.getUserObraScores(userId, obraIds);
 
-        final int[] distribution = new int[5];
+        final int[] distribution = new int[10];
         long sum = 0;
         for (final Integer rawScore : userScores.values()) {
             if (rawScore == null) {
                 continue;
             }
-            final int tier = Math.max(1, Math.min(5, (rawScore + 1) / 2));
-            distribution[tier - 1]++;
+            final int bucket = Math.max(1, Math.min(10, rawScore));
+            distribution[bucket - 1]++;
             sum += rawScore;
         }
         int maxTier = 0;
