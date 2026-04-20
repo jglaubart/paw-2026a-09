@@ -86,13 +86,22 @@
                     <c:forEach var="o" items="${seenObras}">
                         <c:url var="obraUrl" value="/obras/${o.id}" />
                         <c:set var="rawScore" value="${userObraScores[o.id]}" />
+                        <c:set var="coverUrl" value="${seenObraCovers[o.id]}" />
                         <li>
                             <a href="${obraUrl}" class="user-list-row">
                                 <span class="user-list-poster" aria-hidden="true">
-                                    <span class="user-list-poster-placeholder"></span>
-                                    <span class="user-list-poster-initial">
-                                        <c:out value="${fn:toUpperCase(fn:substring(o.title, 0, 1))}" />
-                                    </span>
+                                    <c:choose>
+                                        <c:when test="${not empty coverUrl}">
+                                            <c:url var="resolvedCoverUrl" value="${coverUrl}" />
+                                            <img class="user-list-obra-poster-img" src="${fn:escapeXml(resolvedCoverUrl)}" alt="" loading="lazy" />
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="user-list-poster-placeholder"></span>
+                                            <span class="user-list-poster-initial">
+                                                <c:out value="${fn:toUpperCase(fn:substring(o.title, 0, 1))}" />
+                                            </span>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </span>
                                 <div class="user-list-row-info">
                                     <span class="user-list-row-title"><c:out value="${o.title}" /></span>

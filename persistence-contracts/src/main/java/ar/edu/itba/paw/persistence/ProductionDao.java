@@ -4,7 +4,9 @@ import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.ProductionSearchCriteria;
 import ar.edu.itba.paw.models.SearchDateOption;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface ProductionDao {
@@ -14,6 +16,7 @@ public interface ProductionDao {
     List<Production> findAvailable();
     List<Production> findAvailable(int page, int pageSize);
     List<Production> findByObraId(long obraId);
+    Map<Long, String> findCoverImageUrlByObraIds(Collection<Long> obraIds);
     List<Production> findByProductoraId(long productoraId);
     List<Production> search(String query, int page, int pageSize);
     List<Production> search(ProductionSearchCriteria criteria, int page, int pageSize);

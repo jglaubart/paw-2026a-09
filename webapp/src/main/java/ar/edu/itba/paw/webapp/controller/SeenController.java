@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.interfaces.services.ProductionService;
 import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.interfaces.services.SeenService;
 import ar.edu.itba.paw.models.Obra;
@@ -23,12 +24,15 @@ public class SeenController {
 
     private final SeenService seenService;
     private final RatingService ratingService;
+    private final ProductionService productionService;
 
     @Autowired
     public SeenController(final SeenService seenService,
-                          final RatingService ratingService) {
+                          final RatingService ratingService,
+                          final ProductionService productionService) {
         this.seenService = seenService;
         this.ratingService = ratingService;
+        this.productionService = productionService;
     }
 
     @RequestMapping(value = "/historial", method = RequestMethod.GET)
@@ -63,7 +67,10 @@ public class SeenController {
                 ? "—"
                 : String.format(Locale.US, "%.1f", sum / (double) userScores.size());
 
+        final Map<Long, String> obraCovers = productionService.findCoverImageUrlByObraIds(obraIds);
+
         mav.addObject("seenObras", obras);
+        mav.addObject("seenObraCovers", obraCovers);
         mav.addObject("userObraScores", userScores);
         mav.addObject("ratingDistribution", distribution);
         mav.addObject("ratingDistributionMax", maxTier);

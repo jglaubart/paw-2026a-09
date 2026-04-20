@@ -5,7 +5,9 @@ import ar.edu.itba.paw.models.ProductionCardSummary;
 import ar.edu.itba.paw.models.ProductionSearchCriteria;
 import ar.edu.itba.paw.models.SearchDateOption;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface ProductionService {
@@ -19,6 +21,7 @@ public interface ProductionService {
     List<ProductionCardSummary> findAvailableCards();
     List<ProductionCardSummary> findAvailableCards(int page, int pageSize);
     List<Production> findByObraId(long obraId);
+    Map<Long, String> findCoverImageUrlByObraIds(Collection<Long> obraIds);
     Optional<Production> findSelectedByObraId(long obraId, Long preferredProductionId);
     List<Production> findByProductoraId(long productoraId);
     List<ProductionCardSummary> findByGenreCards(String genre, int page, int pageSize);

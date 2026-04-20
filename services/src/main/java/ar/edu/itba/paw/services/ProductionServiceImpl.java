@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -81,6 +82,11 @@ public class ProductionServiceImpl implements ProductionService {
     @Override
     public List<Production> findByObraId(final long obraId) {
         return productionDao.findByObraId(obraId);
+    }
+
+    @Override
+    public Map<Long, String> findCoverImageUrlByObraIds(final Collection<Long> obraIds) {
+        return productionDao.findCoverImageUrlByObraIds(obraIds);
     }
 
     @Override

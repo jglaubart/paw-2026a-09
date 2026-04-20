@@ -16,6 +16,8 @@ import javax.sql.DataSource;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -136,6 +138,28 @@ public class ProductionDaoImpl implements ProductionDao {
                 new Object[]{ obraId },
                 PRODUCTION_MAPPER
         );
+    }
+
+    @Override
+    public Map<Long, String> findCoverImageUrlByObraIds(final Collection<Long> obraIds) {
+        final Map<Long, String> result = new HashMap<>();
+        if (obraIds == null || obraIds.isEmpty()) {
+            return result;
+        }
+
+        final String inSql = String.join(",", Collections.nCopies(obraIds.size(), "?"));
+        final String sql = "SELECT DISTINCT ON (obra_id) obra_id, image_id " +
+                "FROM productions " +
+                "WHERE obra_id IN (" + inSql + ") AND image_id IS NOT NULL " +
+                "ORDER BY obra_id, start_date DESC NULLS LAST";
+
+        jdbcTemplate.query(sql, obraIds.toArray(), (rs) -> {
+            final long imageId = rs.getLong("image_id");
+            if (!rs.wasNull()) {
+                result.put(rs.getLong("obra_id"), "/images/" + imageId);
+            }
+        });
+        return result;
     }
 
     @Override
