@@ -21,6 +21,9 @@ public class ProductoraRequestForm {
     @Size(max = 255)
     private String contactEmail;
 
+    @Size(max = 50)
+    private String phone;
+
     @Size(max = 1500, message = "{productora.bio.size}")
     private String bio;
 
@@ -52,6 +55,9 @@ public class ProductoraRequestForm {
 
     public String getContactEmail() { return contactEmail; }
     public void setContactEmail(final String contactEmail) { this.contactEmail = contactEmail; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(final String phone) { this.phone = phone; }
 
     public String getBio() { return bio; }
     public void setBio(final String bio) { this.bio = bio; }

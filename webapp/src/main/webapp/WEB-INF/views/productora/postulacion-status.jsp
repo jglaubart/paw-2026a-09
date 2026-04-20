@@ -21,77 +21,92 @@
 
     <c:url var="carteleraUrl" value="/cartelera" />
     <c:url var="editUrl"      value="/productoras/postular/${request.id}/editar" />
+    <c:url var="simulateUrl"  value="/productoras/postular/simular-aprobacion" />
     <c:url var="dashboardUrl" value="/productoras/mia" />
+    <c:url var="newUrl"       value="/productoras/postular" />
 
-    <main class="productora-status">
+    <main class="prod-status">
 
         <c:choose>
-            <c:when test="${request != null}">
-                <span class="productora-kicker productora-status-kicker-${fn:toLowerCase(request.status)}">
-                    <c:choose>
-                        <c:when test="${request.status == 'PENDING'}">En revisión</c:when>
-                        <c:when test="${request.status == 'CHANGES_REQUESTED'}">El admin pidió cambios</c:when>
-                        <c:when test="${request.status == 'APPROVED'}">Aprobada</c:when>
-                        <c:otherwise>Rechazada</c:otherwise>
-                    </c:choose>
-                </span>
+            <c:when test="${request != null and (request.status == 'PENDING' or request.status == 'CHANGES_REQUESTED')}">
+                <div class="prod-status-card">
+                    <span class="prod-status-icon prod-status-icon-pending" aria-hidden="true">✓</span>
+                    <h1 class="prod-status-card-title">
+                        <c:choose>
+                            <c:when test="${request.status == 'PENDING'}">Solicitud enviada</c:when>
+                            <c:otherwise>El admin pidió cambios</c:otherwise>
+                        </c:choose>
+                    </h1>
+                    <p class="prod-status-card-lede">
+                        <c:choose>
+                            <c:when test="${request.status == 'PENDING'}">Recibimos tu postulación. Vamos a revisar la documentación y te avisamos por mail en 2-5 días hábiles.</c:when>
+                            <c:otherwise>Revisá las notas del admin y actualizá los campos marcados. Después podés reenviar tu postulación.</c:otherwise>
+                        </c:choose>
+                    </p>
 
-                <h1 class="productora-status-title">
-                    <c:choose>
-                        <c:when test="${request.status == 'PENDING'}">Tu postulación está en revisión</c:when>
-                        <c:when test="${request.status == 'CHANGES_REQUESTED'}">Pedimos que revises algunos datos</c:when>
-                        <c:when test="${request.status == 'APPROVED'}">¡Bienvenida a Platea!</c:when>
-                        <c:otherwise>Postulación rechazada</c:otherwise>
-                    </c:choose>
-                </h1>
+                    <c:if test="${not empty request.adminNotes}">
+                        <div class="prod-status-notes">
+                            <h3>Notas del administrador</h3>
+                            <p><c:out value="${request.adminNotes}" /></p>
+                        </div>
+                    </c:if>
 
-                <p class="productora-status-lede">
-                    <c:choose>
-                        <c:when test="${request.status == 'PENDING'}">Estamos revisando los datos de <strong><c:out value="${request.name}" /></strong>. Te escribimos apenas tengamos novedades.</c:when>
-                        <c:when test="${request.status == 'CHANGES_REQUESTED'}">Entrá al formulario para actualizar los campos señalados y reenviar tu postulación.</c:when>
-                        <c:when test="${request.status == 'APPROVED'}"><strong><c:out value="${request.name}" /></strong> ya está activa. Podés empezar a cargar obras desde tu dashboard.</c:when>
-                        <c:otherwise>Por el momento no pudimos aprobar tu postulación.</c:otherwise>
-                    </c:choose>
-                </p>
-
-                <dl class="productora-status-meta">
-                    <div>
-                        <dt>Enviada</dt>
-                        <dd><c:out value="${request.createdAt}" /></dd>
+                    <div class="prod-status-card-actions">
+                        <c:choose>
+                            <c:when test="${request.status == 'CHANGES_REQUESTED'}">
+                                <a href="${carteleraUrl}" class="btn btn-ghost btn-md">Volver a cartelera</a>
+                                <a href="${editUrl}" class="btn btn-primary btn-md">Editar y reenviar</a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="${carteleraUrl}" class="btn btn-ghost btn-md">Volver a cartelera</a>
+                                <form action="${simulateUrl}" method="post" class="prod-status-simulate-form">
+                                    <input type="hidden" name="${_csrf.parameterName}" value="${fn:escapeXml(_csrf.token)}" />
+                                    <button type="submit" class="btn btn-primary btn-md prod-status-simulate-btn">
+                                        <span aria-hidden="true">⚡</span> Simular aprobación (demo)
+                                    </button>
+                                </form>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
-                    <div>
-                        <dt>Email de contacto</dt>
-                        <dd><c:out value="${request.contactEmail}" /></dd>
-                    </div>
-                </dl>
-
-                <c:if test="${not empty request.adminNotes}">
-                    <div class="productora-status-notes">
-                        <h3>Notas del administrador</h3>
-                        <p><c:out value="${request.adminNotes}" /></p>
-                    </div>
-                </c:if>
-
-                <div class="productora-status-cta">
-                    <c:choose>
-                        <c:when test="${request.status == 'CHANGES_REQUESTED'}">
-                            <a href="${editUrl}" class="btn btn-primary btn-md">Editar y reenviar</a>
-                        </c:when>
-                        <c:when test="${request.status == 'APPROVED'}">
-                            <a href="${dashboardUrl}" class="btn btn-primary btn-md">Ir al dashboard</a>
-                        </c:when>
-                        <c:otherwise>
-                            <a href="${carteleraUrl}" class="btn btn-ghost btn-md">Volver al inicio</a>
-                        </c:otherwise>
-                    </c:choose>
                 </div>
             </c:when>
+
+            <c:when test="${request != null and request.status == 'APPROVED'}">
+                <div class="prod-status-card">
+                    <span class="prod-status-icon prod-status-icon-approved" aria-hidden="true">✓</span>
+                    <h1 class="prod-status-card-title">¡Bienvenida a Platea!</h1>
+                    <p class="prod-status-card-lede"><strong><c:out value="${request.name}" /></strong> ya está activa. Podés empezar a cargar obras desde tu dashboard.</p>
+                    <div class="prod-status-card-actions">
+                        <a href="${dashboardUrl}" class="btn btn-primary btn-md">Ir al dashboard</a>
+                    </div>
+                </div>
+            </c:when>
+
+            <c:when test="${request != null and request.status == 'REJECTED'}">
+                <div class="prod-status-card">
+                    <span class="prod-status-icon prod-status-icon-rejected" aria-hidden="true">✕</span>
+                    <h1 class="prod-status-card-title">Postulación rechazada</h1>
+                    <p class="prod-status-card-lede">Por el momento no pudimos aprobar tu postulación.</p>
+                    <c:if test="${not empty request.adminNotes}">
+                        <div class="prod-status-notes">
+                            <h3>Notas del administrador</h3>
+                            <p><c:out value="${request.adminNotes}" /></p>
+                        </div>
+                    </c:if>
+                    <div class="prod-status-card-actions">
+                        <a href="${carteleraUrl}" class="btn btn-ghost btn-md">Volver a cartelera</a>
+                    </div>
+                </div>
+            </c:when>
+
             <c:otherwise>
-                <h1 class="productora-status-title">No tenés una postulación activa</h1>
-                <p class="productora-status-lede">Podés iniciar una nueva postulación cuando quieras.</p>
-                <c:url var="newUrl" value="/productoras/postular" />
-                <div class="productora-status-cta">
-                    <a href="${newUrl}" class="btn btn-primary btn-md">Nueva postulación</a>
+                <div class="prod-status-card">
+                    <span class="prod-status-icon" aria-hidden="true">♡</span>
+                    <h1 class="prod-status-card-title">No tenés una postulación activa</h1>
+                    <p class="prod-status-card-lede">Podés iniciar una nueva postulación cuando quieras.</p>
+                    <div class="prod-status-card-actions">
+                        <a href="${newUrl}" class="btn btn-primary btn-md">Nueva postulación</a>
+                    </div>
                 </div>
             </c:otherwise>
         </c:choose>

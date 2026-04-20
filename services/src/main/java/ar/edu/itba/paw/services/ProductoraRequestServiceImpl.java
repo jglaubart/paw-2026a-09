@@ -38,7 +38,7 @@ public class ProductoraRequestServiceImpl implements ProductoraRequestService {
     }
 
     @Override
-    public ProductoraRequest submit(final long userId, final String contactEmail,
+    public ProductoraRequest submit(final long userId, final String contactEmail, final String phone,
                                     final String name, final String cuit, final String bio,
                                     final String instagram, final String website, final Long coverImageId,
                                     final String teamDescription, final Integer teamSize,
@@ -46,7 +46,7 @@ public class ProductoraRequestServiceImpl implements ProductoraRequestService {
         if (requestDao.findActiveByUser(userId).isPresent()) {
             throw new ProductoraRequestAlreadyActiveException(userId);
         }
-        final ProductoraRequest r = fillRequest(new ProductoraRequest(), userId, contactEmail, name, cuit, bio,
+        final ProductoraRequest r = fillRequest(new ProductoraRequest(), userId, contactEmail, phone, name, cuit, bio,
                 instagram, website, coverImageId, teamDescription, teamSize, previousWorks, supportingDocId);
         r.setCreatedAt(LocalDateTime.now());
         final ProductoraRequest saved = requestDao.create(r);
@@ -55,7 +55,7 @@ public class ProductoraRequestServiceImpl implements ProductoraRequestService {
     }
 
     @Override
-    public ProductoraRequest resubmit(final long requestId, final long userId, final String contactEmail,
+    public ProductoraRequest resubmit(final long requestId, final long userId, final String contactEmail, final String phone,
                                       final String name, final String cuit, final String bio,
                                       final String instagram, final String website, final Long coverImageId,
                                       final String teamDescription, final Integer teamSize,
@@ -68,7 +68,7 @@ public class ProductoraRequestServiceImpl implements ProductoraRequestService {
         if (!existing.getStatus().isEditable()) {
             throw new IllegalStateException("Request not editable in status " + existing.getStatus());
         }
-        fillRequest(existing, userId, contactEmail, name, cuit, bio, instagram, website, coverImageId,
+        fillRequest(existing, userId, contactEmail, phone, name, cuit, bio, instagram, website, coverImageId,
                 teamDescription, teamSize, previousWorks, supportingDocId);
         requestDao.updateContent(existing);
         requestDao.clearFieldFeedback(requestId);
@@ -145,13 +145,14 @@ public class ProductoraRequestServiceImpl implements ProductoraRequestService {
         return r;
     }
 
-    private ProductoraRequest fillRequest(final ProductoraRequest r, final long userId, final String contactEmail,
+    private ProductoraRequest fillRequest(final ProductoraRequest r, final long userId, final String contactEmail, final String phone,
                                           final String name, final String cuit, final String bio,
                                           final String instagram, final String website, final Long coverImageId,
                                           final String teamDescription, final Integer teamSize,
                                           final String previousWorks, final Long supportingDocId) {
         r.setUserId(userId);
         r.setContactEmail(contactEmail);
+        r.setPhone(phone);
         r.setName(name);
         r.setCuit(cuit);
         r.setBio(bio);

@@ -9,15 +9,19 @@
 .productora-status,
 .productora-admin,
 .productora-admin-detail,
-.productora-dashboard {
-    max-width: 1100px;
+.productora-dashboard,
+.prod-form,
+.prod-status,
+.prod-dash {
+    max-width: 1400px;
     margin: 0 auto;
     padding: 2.5rem 2rem 4rem;
     font-family: var(--platea-font-ui, "Segoe UI", "Helvetica Neue", Arial, sans-serif);
     color: var(--platea-text-primary, #f7f2ff);
 }
 
-.productora-kicker {
+.productora-kicker,
+.prod-kicker {
     display: inline-flex;
     align-items: center;
     gap: 0.55rem;
@@ -29,7 +33,8 @@
     margin-bottom: 0.6rem;
 }
 
-.productora-kicker::before {
+.productora-kicker::before,
+.prod-kicker::before {
     content: "";
     width: 1.4rem;
     height: 1px;
@@ -42,23 +47,821 @@
 .productora-admin-title,
 .productora-dashboard-title,
 .productora-form-title,
-.productora-admin-detail-title {
+.productora-admin-detail-title,
+.prod-form-hero {
     font-family: var(--platea-font-editorial, Georgia, serif);
-    font-size: clamp(1.9rem, 4vw, 2.8rem);
+    font-size: clamp(2rem, 4.5vw, 3rem);
     font-weight: 700;
     letter-spacing: -0.03em;
     line-height: 1.05;
     margin: 0 0 0.6rem;
 }
 
-.productora-title em,
-.productora-status-title em {
-    font-style: italic;
-    background: linear-gradient(135deg, #d6c1ff, #9a7bff);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+.prod-form-hero-sub {
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+    margin: 0 0 1.75rem;
+    max-width: 62ch;
 }
+
+/* ─────────── POSTULATION FORM (stepper + body) ─────────── */
+
+.prod-form-header {
+    margin-bottom: 2rem;
+}
+
+.prod-admin-notes {
+    background: rgba(248, 160, 16, 0.08);
+    border: 1px solid rgba(248, 160, 16, 0.35);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.prod-admin-notes strong {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--platea-secondary, #f8a010);
+    margin-bottom: 0.35rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.prod-admin-notes p {
+    margin: 0;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+}
+
+.prod-form-layout {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Sidebar stepper */
+.prod-stepper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 16px;
+    position: sticky;
+    top: 7rem;
+}
+
+.prod-stepper-step {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: 0.8rem;
+    align-items: center;
+    padding: 0.75rem 0.85rem;
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+    transition: background 0.15s ease;
+}
+
+.prod-stepper-step:hover {
+    background: rgba(186, 158, 255, 0.06);
+}
+
+.prod-stepper-step.is-active {
+    background: linear-gradient(135deg, rgba(186, 158, 255, 0.14), rgba(132, 85, 239, 0.06));
+    border: 1px solid rgba(186, 158, 255, 0.3);
+    color: var(--platea-text-primary, #f7f2ff);
+}
+
+.prod-stepper-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: rgba(186, 158, 255, 0.12);
+    border: 1px solid rgba(186, 158, 255, 0.35);
+    border-radius: 50%;
+    font-weight: 800;
+    color: var(--platea-primary, #ba9eff);
+    font-size: 0.9rem;
+}
+
+.prod-stepper-step.is-active .prod-stepper-num {
+    background: linear-gradient(135deg, #d6c1ff, #9a7bff);
+    color: #241348;
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(132, 85, 239, 0.4);
+}
+
+.prod-stepper-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+.prod-stepper-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--platea-text-primary, #f7f2ff);
+}
+
+.prod-stepper-sub {
+    font-size: 0.72rem;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+    letter-spacing: 0.01em;
+    line-height: 1.3;
+}
+
+.prod-stepper-footer {
+    margin-top: 0.5rem;
+    padding: 0.9rem 1rem;
+    background: var(--platea-surface-container, rgba(255, 255, 255, 0.06));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 12px;
+}
+
+.prod-stepper-footer h4 {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--platea-primary, #ba9eff);
+    margin: 0 0 0.45rem;
+}
+
+.prod-stepper-footer p {
+    font-size: 0.78rem;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Form body */
+.prod-form-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    padding: 2rem 2.25rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 18px;
+}
+
+.prod-form-progress {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.3rem;
+}
+
+.prod-form-progress-bar {
+    height: 3px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.prod-form-progress-bar.is-active {
+    background: linear-gradient(90deg, #d6c1ff, #9a7bff);
+    box-shadow: 0 0 10px rgba(132, 85, 239, 0.35);
+}
+
+.prod-form-step {
+    scroll-margin-top: 6rem;
+}
+
+.prod-form-step-title {
+    font-family: var(--platea-font-editorial, Georgia, serif);
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.4rem;
+}
+
+.prod-form-step-help {
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+    margin: 0 0 1.5rem;
+    font-size: 0.92rem;
+    line-height: 1.5;
+}
+
+.prod-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+}
+
+.prod-form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.prod-form-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.8));
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.prod-form-required {
+    color: var(--platea-secondary, #f8a010);
+}
+
+.prod-form-input,
+.prod-form-textarea {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 0.75rem 0.95rem;
+    color: var(--platea-text-primary, #f7f2ff);
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.prod-form-input:focus,
+.prod-form-textarea:focus {
+    outline: none;
+    border-color: rgba(186, 158, 255, 0.55);
+    box-shadow: 0 0 0 3px rgba(186, 158, 255, 0.18);
+}
+
+.prod-form-input::placeholder,
+.prod-form-textarea::placeholder {
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.35));
+}
+
+.prod-form-textarea {
+    min-height: 6rem;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+.prod-form-help {
+    font-size: 0.75rem;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+}
+
+.prod-form-error {
+    color: #f08080;
+    font-size: 0.78rem;
+}
+
+.prod-form-feedback {
+    color: var(--platea-secondary, #f8a010);
+    font-size: 0.78rem;
+    font-style: italic;
+}
+
+.prod-form-confirm-box {
+    padding: 1.2rem 1.4rem;
+    background: rgba(186, 158, 255, 0.06);
+    border: 1px dashed rgba(186, 158, 255, 0.3);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.prod-form-confirm-box p {
+    margin: 0;
+    font-size: 0.92rem;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+    line-height: 1.55;
+}
+
+.prod-form-submit-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+/* ─────────── STATUS CARD (solicitud enviada) ─────────── */
+
+.prod-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 10rem);
+}
+
+.prod-status-card {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 3rem 3rem 2.5rem;
+    text-align: center;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 20px;
+    backdrop-filter: blur(16px);
+}
+
+.prod-status-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 1.5rem;
+}
+
+.prod-status-icon-pending {
+    background: linear-gradient(135deg, #d6c1ff, #9a7bff);
+    color: #241348;
+    box-shadow: 0 12px 40px rgba(132, 85, 239, 0.45);
+}
+
+.prod-status-icon-approved {
+    background: linear-gradient(135deg, #9be7a8, #4fd36c);
+    color: #0a3814;
+    box-shadow: 0 12px 40px rgba(79, 211, 108, 0.35);
+}
+
+.prod-status-icon-rejected {
+    background: linear-gradient(135deg, #f08080, #d04040);
+    color: #fff;
+    box-shadow: 0 12px 40px rgba(208, 64, 64, 0.35);
+}
+
+.prod-status-card-title {
+    font-family: var(--platea-font-editorial, Georgia, serif);
+    font-size: clamp(1.8rem, 3vw, 2.2rem);
+    font-weight: 700;
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.02em;
+}
+
+.prod-status-card-lede {
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+    line-height: 1.55;
+    margin: 0 0 1.75rem;
+    font-size: 0.98rem;
+}
+
+.prod-status-notes {
+    padding: 1rem 1.25rem;
+    background: rgba(186, 158, 255, 0.08);
+    border: 1px solid rgba(186, 158, 255, 0.25);
+    border-radius: 10px;
+    text-align: left;
+    margin: 0 0 1.5rem;
+}
+
+.prod-status-notes h3 {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--platea-primary, #ba9eff);
+    margin: 0 0 0.35rem;
+}
+
+.prod-status-notes p {
+    margin: 0;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+    font-size: 0.9rem;
+}
+
+.prod-status-card-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.prod-status-simulate-form {
+    margin: 0;
+}
+
+.prod-status-simulate-btn {
+    background: linear-gradient(135deg, #b89bff, #8c63ff);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* ─────────── DASHBOARD ─────────── */
+
+.prod-dash {
+    max-width: 1400px;
+}
+
+.prod-dash-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem 0.25rem 1.75rem;
+    border-bottom: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    margin-bottom: 1.75rem;
+}
+
+.prod-dash-logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #d6c1ff, #9a7bff);
+    color: #241348;
+    font-family: var(--platea-font-editorial, Georgia, serif);
+    font-weight: 800;
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+    box-shadow: 0 14px 40px rgba(132, 85, 239, 0.36);
+}
+
+.prod-dash-title {
+    font-family: var(--platea-font-editorial, Georgia, serif);
+    font-size: clamp(2rem, 4vw, 2.6rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin: 0;
+}
+
+.prod-dash-meta {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-top: 0.4rem;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.5));
+    font-size: 0.82rem;
+    flex-wrap: wrap;
+}
+
+.prod-dash-meta-pill {
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 0.68rem;
+    color: var(--platea-primary, #ba9eff);
+}
+
+.prod-dash-meta-sep {
+    opacity: 0.5;
+}
+
+.prod-dash-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Sidebar */
+.prod-dash-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    position: sticky;
+    top: 7rem;
+}
+
+.prod-dash-sidebar-section {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+    margin: 1.1rem 0.5rem 0.5rem;
+}
+
+.prod-dash-sidebar-section:first-of-type {
+    margin-top: 0;
+}
+
+.prod-dash-sidebar-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.7rem 0.9rem;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+    font-size: 0.92rem;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.prod-dash-sidebar-item:hover {
+    color: var(--platea-text-primary, #f7f2ff);
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+}
+
+.prod-dash-sidebar-item.is-active {
+    background: rgba(186, 158, 255, 0.14);
+    color: var(--platea-text-primary, #f7f2ff);
+    box-shadow: inset 3px 0 0 var(--platea-primary, #ba9eff);
+}
+
+.prod-dash-sidebar-count {
+    padding: 0.1rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+    font-variant-numeric: tabular-nums;
+}
+
+/* Content */
+.prod-dash-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    min-width: 0;
+}
+
+.prod-dash-content-title {
+    font-family: var(--platea-font-editorial, Georgia, serif);
+    font-size: 1.7rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.5rem;
+}
+
+.prod-dash-subtle {
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+    font-size: 0.92rem;
+    line-height: 1.5;
+    margin: 0 0 1rem;
+    max-width: 62ch;
+}
+
+/* Stat cards */
+.prod-dash-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.prod-dash-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1rem 1.25rem 1.15rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+}
+
+.prod-dash-stat::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+}
+
+.prod-dash-stat-violet::before {
+    background: linear-gradient(90deg, #d6c1ff, #9a7bff);
+}
+
+.prod-dash-stat-amber::before {
+    background: linear-gradient(90deg, #ffcf5a, #f8a010);
+}
+
+.prod-dash-stat-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.5));
+}
+
+.prod-dash-stat-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+}
+
+.prod-dash-stat-scale {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+    margin-left: 0.2rem;
+}
+
+.prod-dash-stat-delta {
+    font-size: 0.78rem;
+    color: #9be7a8;
+    font-weight: 600;
+}
+
+/* Chart */
+.prod-dash-chart {
+    padding: 1.5rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 16px;
+}
+
+.prod-dash-chart-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.prod-dash-chart-title {
+    font-family: var(--platea-font-editorial, Georgia, serif);
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0 0 0.2rem;
+}
+
+.prod-dash-chart-sub {
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.5));
+    font-size: 0.82rem;
+    margin: 0;
+}
+
+.prod-dash-chart-range {
+    padding: 0.4rem 0.85rem;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+}
+
+.prod-dash-chart-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.4rem;
+    height: 160px;
+}
+
+.prod-dash-chart-bars span {
+    flex: 1;
+    background: linear-gradient(180deg, rgba(186, 158, 255, 0.55), rgba(132, 85, 239, 0.3));
+    border-radius: 6px 6px 2px 2px;
+    min-height: 8px;
+}
+
+.prod-dash-chart-axis {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.75rem;
+    font-size: 0.72rem;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+}
+
+/* Reviews */
+.prod-dash-reviews {
+    padding: 1.5rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 16px;
+}
+
+.prod-dash-reviews-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.prod-dash-reviews-head h3 {
+    font-family: var(--platea-font-editorial, Georgia, serif);
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.prod-dash-reviews-link {
+    color: var(--platea-primary, #ba9eff);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+/* Team tab */
+.prod-team-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.prod-team-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem 1.1rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 12px;
+}
+
+.prod-team-row > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+}
+
+.prod-team-name {
+    font-weight: 700;
+}
+
+.prod-team-email {
+    font-size: 0.78rem;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+}
+
+.prod-team-role {
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-weight: 700;
+}
+
+.prod-team-role-owner {
+    color: var(--platea-primary, #ba9eff);
+    border-color: rgba(186, 158, 255, 0.4);
+}
+
+.prod-team-role-member {
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+}
+
+.prod-team-remove {
+    margin: 0;
+}
+
+.prod-team-add {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+    padding: 1.1rem 1.25rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 12px;
+}
+
+.prod-team-add label {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-size: 0.78rem;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+}
+
+.prod-team-add input[type="email"] {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 0.65rem 0.85rem;
+    color: var(--platea-text-primary, #f7f2ff);
+    font-family: inherit;
+    font-size: 0.92rem;
+}
+
+.prod-dash-dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.5rem 1rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 14px;
+}
+
+.prod-dash-dl dt {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+}
+
+.prod-dash-dl dd {
+    margin: 0;
+    color: var(--platea-text-primary, #f7f2ff);
+}
+
+/* ─────────── LEGACY (landing, admin) — still used ─────────── */
 
 .productora-lede,
 .productora-status-lede,
@@ -75,7 +878,6 @@
 .productora-fine {
     font-size: 0.78rem;
     color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
-    letter-spacing: 0.04em;
 }
 
 .productora-cta-row {
@@ -83,8 +885,6 @@
     gap: 0.75rem;
     margin: 1.5rem 0 0.75rem;
 }
-
-/* ── Entry: pasos ──────────────────────────────────────────────── */
 
 .productora-steps {
     margin-top: 3rem;
@@ -145,8 +945,6 @@
     margin: 0;
 }
 
-/* ── History (postulaciones anteriores) ─────────────────────────── */
-
 .productora-history {
     margin-top: 2.5rem;
 }
@@ -179,10 +977,7 @@
     border-radius: 10px;
 }
 
-.productora-history-name {
-    font-weight: 600;
-    margin-right: 0.75rem;
-}
+.productora-history-name { font-weight: 600; margin-right: 0.75rem; }
 
 .productora-history-status {
     font-size: 0.7rem;
@@ -200,227 +995,16 @@
 .productora-history-status-rejected              { color: #f08080; border-color: rgba(240,128,128,0.35); }
 .productora-history-status-member                { color: var(--platea-text-muted, rgba(247,242,255,0.68)); border-color: rgba(255,255,255,0.12); }
 
-.productora-history-link {
-    font-size: 0.78rem;
-    color: var(--platea-primary, #ba9eff);
-    text-decoration: none;
-    font-weight: 600;
-}
+.productora-history-link { font-size: 0.78rem; color: var(--platea-primary, #ba9eff); text-decoration: none; font-weight: 600; }
 
-/* ── Form ──────────────────────────────────────────────────────── */
+/* ── ADMIN LIST/DETAIL (unchanged from before) ── */
 
-.productora-form-header {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    margin-bottom: 2rem;
-}
-
-.productora-form-back {
-    font-size: 0.72rem;
-    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    text-decoration: none;
-}
-
-.productora-form-back:hover {
-    color: var(--platea-primary, #ba9eff);
-}
-
-.productora-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.75rem;
-}
-
-.productora-form-section {
-    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
-    border-radius: 14px;
-    padding: 1.25rem 1.5rem 1.5rem;
-    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
-}
-
-.productora-form-legend {
-    padding: 0 0.35rem;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--platea-primary, #ba9eff);
-}
-
-.productora-form-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    margin-top: 0.9rem;
-}
-
-.productora-form-field-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-top: 0.9rem;
-}
-
-.productora-form-label {
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
-}
-
-.productora-form-input,
-.productora-form-textarea {
-    width: 100%;
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
-    padding: 0.65rem 0.85rem;
-    color: var(--platea-text-primary, #f7f2ff);
-    font-family: inherit;
-    font-size: 0.95rem;
-}
-
-.productora-form-input:focus,
-.productora-form-textarea:focus {
-    outline: none;
-    border-color: rgba(186, 158, 255, 0.55);
-    box-shadow: 0 0 0 3px rgba(186, 158, 255, 0.14);
-}
-
-.productora-form-input-narrow {
-    max-width: 180px;
-}
-
-.productora-form-textarea {
-    min-height: 6rem;
-    resize: vertical;
-}
-
-.productora-form-error {
-    color: #f08080;
-    font-size: 0.78rem;
-}
-
-.productora-form-feedback {
-    color: var(--platea-secondary, #f8a010);
-    font-size: 0.78rem;
-    font-style: italic;
-}
-
-.productora-form-admin-notes {
-    background: rgba(186, 158, 255, 0.08);
-    border: 1px solid rgba(186, 158, 255, 0.25);
-    border-radius: 10px;
-    padding: 1rem 1.25rem;
-    margin-bottom: 1.5rem;
-}
-
-.productora-form-admin-notes strong {
-    display: block;
-    font-size: 0.8rem;
-    color: var(--platea-primary, #ba9eff);
-    margin-bottom: 0.35rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-}
-
-.productora-form-admin-notes p {
-    margin: 0;
-    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
-}
-
-.productora-form-submit-row {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
-    margin-top: 0.5rem;
-}
-
-/* ── Status page ───────────────────────────────────────────────── */
-
-.productora-status-meta {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
-    margin: 2rem 0;
-    padding: 1.25rem;
-    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
-    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
-    border-radius: 12px;
-}
-
-.productora-status-meta div {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.productora-status-meta dt {
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
-}
-
-.productora-status-meta dd {
-    margin: 0;
-    font-size: 0.95rem;
-    color: var(--platea-text-primary, #f7f2ff);
-}
-
-.productora-status-notes {
-    background: rgba(186, 158, 255, 0.08);
-    border: 1px solid rgba(186, 158, 255, 0.25);
-    border-radius: 10px;
-    padding: 1rem 1.25rem;
-    margin: 1rem 0;
-}
-
-.productora-status-notes h3 {
-    font-size: 0.78rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--platea-primary, #ba9eff);
-    margin: 0 0 0.35rem;
-}
-
-.productora-status-notes p {
-    margin: 0;
-    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
-}
-
-.productora-status-cta {
-    margin-top: 1.5rem;
-}
-
-.productora-status-kicker-pending              { color: var(--platea-secondary, #f8a010); }
-.productora-status-kicker-pending::before      { background: var(--platea-secondary, #f8a010); }
-.productora-status-kicker-approved             { color: #9be7a8; }
-.productora-status-kicker-approved::before     { background: #9be7a8; }
-.productora-status-kicker-rejected             { color: #f08080; }
-.productora-status-kicker-rejected::before     { background: #f08080; }
-
-/* ── Admin list + tabs ─────────────────────────────────────────── */
-
-.productora-admin-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-bottom: 1.5rem;
-}
+.productora-admin-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
 
 .productora-admin-tab {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
+    display: inline-flex; align-items: center; gap: 0.5rem;
     padding: 0.55rem 0.9rem;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
     background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
     border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
     border-radius: 999px;
@@ -428,10 +1012,7 @@
     text-decoration: none;
 }
 
-.productora-admin-tab:hover {
-    color: var(--platea-text-primary, #f7f2ff);
-    border-color: rgba(255, 255, 255, 0.2);
-}
+.productora-admin-tab:hover { color: var(--platea-text-primary, #f7f2ff); border-color: rgba(255, 255, 255, 0.2); }
 
 .productora-admin-tab.is-active {
     background: rgba(186, 158, 255, 0.14);
@@ -439,155 +1020,63 @@
     color: var(--platea-text-primary, #f7f2ff);
 }
 
-.productora-admin-tab-count {
-    font-size: 0.7rem;
-    opacity: 0.7;
-}
+.productora-admin-tab-count { font-size: 0.7rem; opacity: 0.7; }
 
-.productora-admin-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
-}
+.productora-admin-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.55rem; }
 
 .productora-admin-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+    display: flex; align-items: center; gap: 1rem;
     padding: 0.9rem 1.1rem;
     background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
     border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
     border-radius: 12px;
-    text-decoration: none;
-    color: inherit;
+    text-decoration: none; color: inherit;
     transition: background 0.15s ease, border-color 0.15s ease;
 }
 
-.productora-admin-row:hover {
-    background: var(--platea-surface-container, rgba(255, 255, 255, 0.07));
-    border-color: rgba(255, 255, 255, 0.16);
-}
+.productora-admin-row:hover { background: var(--platea-surface-container, rgba(255, 255, 255, 0.07)); border-color: rgba(255, 255, 255, 0.16); }
 
-.productora-admin-row-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
+.productora-admin-row-main { flex: 1; display: flex; flex-direction: column; gap: 0.25rem; }
+.productora-admin-row-name { font-weight: 700; }
+.productora-admin-row-meta { font-size: 0.78rem; color: var(--platea-text-soft, rgba(247, 242, 255, 0.44)); }
+.productora-admin-row-arrow { color: var(--platea-text-soft, rgba(247, 242, 255, 0.44)); font-weight: 700; }
 
-.productora-admin-row-name {
-    font-weight: 700;
-}
+.productora-admin-empty { padding: 3rem 1rem; text-align: center; color: var(--platea-text-soft, rgba(247, 242, 255, 0.44)); }
 
-.productora-admin-row-meta {
-    font-size: 0.78rem;
-    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
-}
-
-.productora-admin-row-arrow {
-    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
-    font-weight: 700;
-}
-
-.productora-admin-empty {
-    padding: 3rem 1rem;
-    text-align: center;
-    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
-}
-
-/* ── Admin detail ──────────────────────────────────────────────── */
-
-.productora-admin-detail-header {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    margin-bottom: 1.75rem;
-}
-
-.productora-admin-detail-status {
-    align-self: flex-start;
-}
+.productora-admin-detail-header { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.75rem; }
+.productora-admin-detail-status { align-self: flex-start; }
 
 .productora-admin-detail-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.5rem;
-    padding: 1.5rem;
+    gap: 1.5rem; padding: 1.5rem;
     background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
     border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
     border-radius: 14px;
 }
 
 .productora-admin-detail-grid h3 {
-    font-size: 0.75rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--platea-primary, #ba9eff);
-    margin: 0 0 0.75rem;
+    font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--platea-primary, #ba9eff); margin: 0 0 0.75rem;
 }
 
-.productora-admin-dl {
-    display: grid;
-    grid-template-columns: max-content 1fr;
-    gap: 0.4rem 0.9rem;
-    margin: 0;
-}
+.productora-admin-dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.4rem 0.9rem; margin: 0; }
+.productora-admin-dl dt { font-size: 0.74rem; color: var(--platea-text-soft, rgba(247, 242, 255, 0.44)); font-weight: 600; letter-spacing: 0.02em; }
+.productora-admin-dl dd { margin: 0; font-size: 0.92rem; color: var(--platea-text-primary, #f7f2ff); }
+.productora-admin-dl-long { grid-column: 1 / -1; line-height: 1.5; color: var(--platea-text-muted, rgba(247, 242, 255, 0.7)); }
 
-.productora-admin-dl dt {
-    font-size: 0.74rem;
-    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
-    font-weight: 600;
-    letter-spacing: 0.02em;
-}
-
-.productora-admin-dl dd {
-    margin: 0;
-    font-size: 0.92rem;
-    color: var(--platea-text-primary, #f7f2ff);
-}
-
-.productora-admin-dl-long {
-    grid-column: 1 / -1;
-    line-height: 1.5;
-    color: var(--platea-text-muted, rgba(247, 242, 255, 0.7));
-}
-
-.productora-admin-actions {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1rem;
-    margin-top: 2rem;
-}
-
-.productora-admin-actions h3 {
-    grid-column: 1 / -1;
-    font-size: 0.8rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--platea-primary, #ba9eff);
-    margin: 0;
-}
+.productora-admin-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-top: 2rem; }
+.productora-admin-actions h3 { grid-column: 1 / -1; font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--platea-primary, #ba9eff); margin: 0; }
 
 .productora-admin-action-form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.65rem;
+    display: flex; flex-direction: column; gap: 0.65rem;
     padding: 1rem 1.1rem;
     background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
     border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
     border-radius: 12px;
 }
 
-.productora-admin-action-form label {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    font-size: 0.78rem;
-    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
-}
+.productora-admin-action-form label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.78rem; color: var(--platea-text-muted, rgba(247, 242, 255, 0.68)); }
 
 .productora-admin-action-form textarea,
 .productora-admin-action-form input[type="text"],
@@ -598,180 +1087,35 @@
     border-radius: 8px;
     padding: 0.55rem 0.7rem;
     color: var(--platea-text-primary, #f7f2ff);
-    font-family: inherit;
-    font-size: 0.9rem;
+    font-family: inherit; font-size: 0.9rem;
 }
 
 .productora-admin-feedback-fields {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;
     border: 1px dashed rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    padding: 0.7rem 0.85rem;
+    border-radius: 10px; padding: 0.7rem 0.85rem;
 }
 
 .productora-admin-feedback-fields legend {
     padding: 0 0.3rem;
-    font-size: 0.7rem;
-    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+    font-size: 0.7rem; color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+    letter-spacing: 0.14em; text-transform: uppercase;
 }
 
-/* ── Dashboard ─────────────────────────────────────────────────── */
+.productora-form-back { font-size: 0.72rem; color: var(--platea-text-soft, rgba(247, 242, 255, 0.44)); letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; }
+.productora-form-back:hover { color: var(--platea-primary, #ba9eff); }
 
-.productora-dashboard-header {
-    margin-bottom: 1.5rem;
-}
-
-.productora-dashboard-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-bottom: 1.75rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
-}
-
-.productora-dashboard-tab {
-    padding: 0.6rem 1rem;
-    font-size: 0.74rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
-    text-decoration: none;
-    border-radius: 8px;
-}
-
-.productora-dashboard-tab:hover {
-    color: var(--platea-text-primary, #f7f2ff);
-    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
-}
-
-.productora-dashboard-tab.is-active {
-    background: rgba(186, 158, 255, 0.14);
-    color: var(--platea-text-primary, #f7f2ff);
-}
-
-.productora-dashboard-body h2 {
-    font-size: 1.5rem;
-    margin: 0 0 0.8rem;
-}
-
-.productora-dashboard-overview {
-    display: flex;
-    gap: 1rem;
-    margin: 1rem 0 1.5rem;
-}
-
-.productora-dashboard-stat {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    padding: 1rem 1.5rem;
-    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
-    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
-    border-radius: 12px;
-    min-width: 160px;
-}
-
-.productora-dashboard-stat-num {
-    font-size: 1.5rem;
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-}
-
-.productora-dashboard-stat-label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
-}
-
-.productora-team-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
-}
-
-.productora-team-row {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.75rem 1rem;
-    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
-    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
-    border-radius: 10px;
-}
-
-.productora-team-row > div {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-}
-
-.productora-team-name {
-    font-weight: 600;
-}
-
-.productora-team-email {
-    font-size: 0.78rem;
-    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
-}
-
-.productora-team-role {
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 0.2rem 0.55rem;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.productora-team-remove {
-    margin: 0;
-}
-
-.productora-team-add {
-    display: flex;
-    align-items: flex-end;
-    gap: 0.75rem;
-    padding: 1rem 1.25rem;
-    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
-    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
-    border-radius: 12px;
-}
-
-.productora-team-add label {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    font-size: 0.78rem;
-    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
-}
-
-.productora-team-add input[type="email"] {
-    width: 100%;
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
-    padding: 0.55rem 0.75rem;
-    color: var(--platea-text-primary, #f7f2ff);
-    font-family: inherit;
-    font-size: 0.9rem;
-}
-
-@media (max-width: 720px) {
-    .productora-form-field-row,
-    .productora-admin-feedback-fields {
+/* Responsive */
+@media (max-width: 900px) {
+    .prod-form-layout,
+    .prod-dash-layout {
+        grid-template-columns: 1fr;
+    }
+    .prod-stepper,
+    .prod-dash-sidebar {
+        position: static;
+    }
+    .prod-form-grid-2 {
         grid-template-columns: 1fr;
     }
 }

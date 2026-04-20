@@ -10,13 +10,13 @@ import java.util.Optional;
 
 public interface ProductoraRequestService {
 
-    ProductoraRequest submit(long userId, String contactEmail,
+    ProductoraRequest submit(long userId, String contactEmail, String phone,
                              String name, String cuit, String bio,
                              String instagram, String website, Long coverImageId,
                              String teamDescription, Integer teamSize,
                              String previousWorks, Long supportingDocId);
 
-    ProductoraRequest resubmit(long requestId, long userId, String contactEmail,
+    ProductoraRequest resubmit(long requestId, long userId, String contactEmail, String phone,
                                String name, String cuit, String bio,
                                String instagram, String website, Long coverImageId,
                                String teamDescription, Integer teamSize,

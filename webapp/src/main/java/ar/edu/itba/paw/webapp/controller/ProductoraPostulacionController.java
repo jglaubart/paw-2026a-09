@@ -61,6 +61,7 @@ public class ProductoraPostulacionController {
             requestService.submit(
                     authUser.getUser().getId(),
                     form.getContactEmail(),
+                    form.getPhone(),
                     form.getName(),
                     form.getCuit(),
                     form.getBio(),
@@ -76,6 +77,16 @@ public class ProductoraPostulacionController {
             return new ModelAndView("redirect:/productoras/postular/estado");
         }
         return new ModelAndView("redirect:/productoras/postular/estado?sent=1");
+    }
+
+    @RequestMapping(value = "/simular-aprobacion", method = RequestMethod.POST)
+    public ModelAndView simulateApproval(@AuthenticationPrincipal final PawAuthUser authUser) {
+        final long userId = authUser.getUser().getId();
+        final Optional<ProductoraRequest> active = requestService.findActiveForUser(userId);
+        if (active.isPresent()) {
+            requestService.approve(active.get().getId(), "Aprobación simulada (demo)");
+        }
+        return new ModelAndView("redirect:/productoras/mia");
     }
 
     @RequestMapping(value = "/estado", method = RequestMethod.GET)
@@ -112,6 +123,7 @@ public class ProductoraPostulacionController {
                 id,
                 authUser.getUser().getId(),
                 form.getContactEmail(),
+                form.getPhone(),
                 form.getName(),
                 form.getCuit(),
                 form.getBio(),
@@ -150,6 +162,7 @@ public class ProductoraPostulacionController {
         f.setName(r.getName());
         f.setCuit(r.getCuit());
         f.setContactEmail(r.getContactEmail());
+        f.setPhone(r.getPhone());
         f.setBio(r.getBio());
         f.setInstagram(r.getInstagram());
         f.setWebsite(r.getWebsite());

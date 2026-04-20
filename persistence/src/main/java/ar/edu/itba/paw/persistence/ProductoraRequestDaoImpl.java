@@ -27,7 +27,7 @@ public class ProductoraRequestDaoImpl implements ProductoraRequestDao {
     private final SimpleJdbcInsert jdbcInsert;
 
     private static final String COLS =
-            "id, user_id, contact_email, name, cuit, bio, instagram, website, " +
+            "id, user_id, contact_email, phone, name, cuit, bio, instagram, website, " +
             "cover_image_id, team_description, team_size, previous_works, supporting_doc_id, " +
             "status, admin_notes, created_at, resolved_at, created_productora_id";
 
@@ -36,6 +36,7 @@ public class ProductoraRequestDaoImpl implements ProductoraRequestDao {
         r.setId(rs.getLong("id"));
         r.setUserId(rs.getLong("user_id"));
         r.setContactEmail(rs.getString("contact_email"));
+        r.setPhone(rs.getString("phone"));
         r.setName(rs.getString("name"));
         r.setCuit(rs.getString("cuit"));
         r.setBio(rs.getString("bio"));
@@ -136,6 +137,7 @@ public class ProductoraRequestDaoImpl implements ProductoraRequestDao {
         final Map<String, Object> params = new HashMap<>();
         params.put("user_id", request.getUserId());
         params.put("contact_email", request.getContactEmail());
+        params.put("phone", request.getPhone());
         params.put("name", request.getName());
         params.put("cuit", request.getCuit());
         params.put("bio", request.getBio());
@@ -158,12 +160,12 @@ public class ProductoraRequestDaoImpl implements ProductoraRequestDao {
     @Override
     public void updateContent(final ProductoraRequest request) {
         jdbcTemplate.update(
-                "UPDATE productora_requests SET contact_email = ?, name = ?, cuit = ?, bio = ?, " +
+                "UPDATE productora_requests SET contact_email = ?, phone = ?, name = ?, cuit = ?, bio = ?, " +
                         "instagram = ?, website = ?, cover_image_id = ?, team_description = ?, " +
                         "team_size = ?, previous_works = ?, supporting_doc_id = ?, " +
                         "status = 'PENDING', admin_notes = NULL, resolved_at = NULL " +
                         "WHERE id = ?",
-                request.getContactEmail(), request.getName(), request.getCuit(), request.getBio(),
+                request.getContactEmail(), request.getPhone(), request.getName(), request.getCuit(), request.getBio(),
                 request.getInstagram(), request.getWebsite(), request.getCoverImageId(),
                 request.getTeamDescription(), request.getTeamSize(), request.getPreviousWorks(),
                 request.getSupportingDocId(), request.getId()

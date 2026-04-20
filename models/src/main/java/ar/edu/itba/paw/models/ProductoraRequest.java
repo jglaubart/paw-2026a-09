@@ -11,6 +11,7 @@ public class ProductoraRequest implements Serializable {
 
     private long userId;
     private String contactEmail;
+    private String phone;
 
     private String name;
     private String cuit;
@@ -43,6 +44,9 @@ public class ProductoraRequest implements Serializable {
 
     public String getContactEmail() { return contactEmail; }
     public void setContactEmail(final String contactEmail) { this.contactEmail = contactEmail; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(final String phone) { this.phone = phone; }
 
     public String getName() { return name; }
     public void setName(final String name) { this.name = name; }
