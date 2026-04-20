@@ -16,4 +16,5 @@ public interface RatingService {
     Optional<Double> getObraAverageRating(long obraId);
     Optional<Double> getProductionAverageRating(long productionId);
     Map<Long, String> getProductionRatingLabels(Collection<Long> productionIds);
+    Map<Long, String> getUserObraRatingLabels(long userId, Collection<Long> obraIds);
 }

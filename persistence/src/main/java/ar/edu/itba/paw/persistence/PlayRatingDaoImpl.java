@@ -78,6 +78,30 @@ public class PlayRatingDaoImpl implements PlayRatingDao {
     }
 
     @Override
+    public Map<Long, Integer> findScoresByUserAndObraIds(final long userId, final Collection<Long> obraIds) {
+        final Map<Long, Integer> result = new HashMap<>();
+        if (obraIds == null || obraIds.isEmpty()) {
+            return result;
+        }
+
+        final String inSql = String.join(",", java.util.Collections.nCopies(obraIds.size(), "?"));
+        final String sql = "SELECT obra_id, score FROM play_ratings " +
+                "WHERE user_id = ? AND obra_id IN (" + inSql + ")";
+
+        final Object[] args = new Object[obraIds.size() + 1];
+        args[0] = userId;
+        int idx = 1;
+        for (final Long obraId : obraIds) {
+            args[idx++] = obraId;
+        }
+
+        jdbcTemplate.query(sql, args, (rs) -> {
+            result.put(rs.getLong("obra_id"), rs.getInt("score"));
+        });
+        return result;
+    }
+
+    @Override
     public PlayRating create(final long userId, final long obraId, final int score) {
         final Map<String, Object> params = new HashMap<>();
         params.put("user_id", userId);

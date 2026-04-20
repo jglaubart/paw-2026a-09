@@ -9,6 +9,7 @@ public interface PlayRatingDao {
     Optional<PlayRating> findByUserAndObra(long userId, long obraId);
     Optional<Double> findAverageByObra(long obraId);
     Map<Long, Double> findAveragesByProductionIds(Collection<Long> productionIds);
+    Map<Long, Integer> findScoresByUserAndObraIds(long userId, Collection<Long> obraIds);
     PlayRating create(long userId, long obraId, int score);
     PlayRating update(long userId, long obraId, int score);
 }
