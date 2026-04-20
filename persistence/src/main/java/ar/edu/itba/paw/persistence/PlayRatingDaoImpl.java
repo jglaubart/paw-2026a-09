@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,29 @@ public class PlayRatingDaoImpl implements PlayRatingDao {
                 Double.class
         );
         return Optional.ofNullable(avg);
+    }
+
+    @Override
+    public Map<Long, Double> findAveragesByProductionIds(final Collection<Long> productionIds) {
+        final Map<Long, Double> result = new HashMap<>();
+        if (productionIds == null || productionIds.isEmpty()) {
+            return result;
+        }
+
+        final String inSql = String.join(",", java.util.Collections.nCopies(productionIds.size(), "?"));
+        final String sql = "SELECT p.id AS production_id, AVG(pr.score) AS avg_score " +
+                "FROM productions p " +
+                "JOIN play_ratings pr ON p.obra_id = pr.obra_id " +
+                "WHERE p.id IN (" + inSql + ") " +
+                "GROUP BY p.id";
+
+        jdbcTemplate.query(sql, productionIds.toArray(), (rs) -> {
+            final double avgScore = rs.getDouble("avg_score");
+            if (!rs.wasNull()) {
+                result.put(rs.getLong("production_id"), avgScore);
+            }
+        });
+        return result;
     }
 
     @Override

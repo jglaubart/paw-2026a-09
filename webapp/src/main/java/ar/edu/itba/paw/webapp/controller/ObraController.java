@@ -12,6 +12,7 @@ import ar.edu.itba.paw.models.Obra;
 import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.webapp.auth.PawAuthUser;
+import ar.edu.itba.paw.webapp.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -63,11 +64,7 @@ public class ObraController {
     public ModelAndView detail(@PathVariable("id") final long id,
                                @RequestParam(value = "produccionId", required = false) final Long produccionId,
                                @AuthenticationPrincipal final PawAuthUser authUser) {
-        final Optional<Obra> obraOpt = obraService.findById(id);
-        if (!obraOpt.isPresent()) {
-            return new ModelAndView("redirect:/");
-        }
-        final Obra obra = obraOpt.get();
+        final Obra obra = obraService.findById(id).orElseThrow(() -> new ResourceNotFoundException("La obra que estás intentando ver no existe o fue retirada."));
         final ModelAndView mav = new ModelAndView("obras/detail");
         mav.addObject("obra", obra);
 
@@ -134,18 +131,14 @@ public class ObraController {
             return new ModelAndView("redirect:/obras/" + id + (produccionId != null ? "?produccionId=" + produccionId + "&share=invalid" : "?share=invalid"));
         }
 
-        final Optional<Obra> obraOpt = obraService.findById(id);
-        final Optional<Production> productionOpt = productionService.findSelectedByObraId(id, produccionId);
-        if (!obraOpt.isPresent() || !productionOpt.isPresent()) {
-            return new ModelAndView("redirect:/obras/" + id + (produccionId != null ? "?produccionId=" + produccionId + "&share=invalid" : "?share=invalid"));
-        }
+        final Obra obra = obraService.findById(id).orElseThrow(() -> new ResourceNotFoundException("No se puede compartir porque la obra o función no fue encontrada."));
+        final Production production = productionService.findSelectedByObraId(id, produccionId).orElseThrow(() -> new ResourceNotFoundException("No se puede compartir porque la obra o función no fue encontrada."));
 
-        final Production production = productionOpt.get();
         final String detailUrl = "/obras/" + id + "?produccionId=" + production.getId();
         mailService.sendSharedProduction(
                 recipientEmail.trim().toLowerCase(),
                 senderName.trim(),
-                obraOpt.get().getTitle(),
+                obra.getTitle(),
                 production.getName(),
                 production.getSynopsis(),
                 detailUrl

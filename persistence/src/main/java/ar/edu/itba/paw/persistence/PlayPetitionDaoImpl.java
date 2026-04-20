@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -19,6 +21,8 @@ import java.util.*;
 
 @Repository
 public class PlayPetitionDaoImpl implements PlayPetitionDao {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlayPetitionDaoImpl.class);
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert petitionInsert;
@@ -110,15 +114,20 @@ public class PlayPetitionDaoImpl implements PlayPetitionDao {
         params.put("source_obra_id", sourceObraId);
         params.put("source_production_id", sourceProductionId);
 
-        final Number key = petitionInsert.executeAndReturnKey(params);
+        try {
+            final Number key = petitionInsert.executeAndReturnKey(params);
 
-        return new PlayPetition(
-                key.longValue(), title, synopsis, durationMinutes, theater, theaterAddress,
-                startDate, endDate, coverImageId, director, petitionerUserId, petitionerEmail, schedule,
-                ticketUrl, language, PetitionStatus.PENDING, null,
-                createdAt, null, sourceObraId, sourceProductionId,
-                null, null, Collections.emptyList(), Collections.emptyList(), Collections.emptyList()
-        );
+            return new PlayPetition(
+                    key.longValue(), title, synopsis, durationMinutes, theater, theaterAddress,
+                    startDate, endDate, coverImageId, director, petitionerUserId, petitionerEmail, schedule,
+                    ticketUrl, language, PetitionStatus.PENDING, null,
+                    createdAt, null, sourceObraId, sourceProductionId,
+                    null, null, Collections.emptyList(), Collections.emptyList(), Collections.emptyList()
+            );
+        } catch (org.springframework.dao.DataAccessException e) {
+            LOGGER.debug("DataAccessException in PlayPetitionDaoImpl.create for title: {} - {}", title, e.getMessage());
+            throw e;
+        }
     }
 
     @Override
@@ -161,7 +170,12 @@ public class PlayPetitionDaoImpl implements PlayPetitionDao {
         for (final Long genreId : genreIds) {
             batchArgs.add(new Object[]{ petitionId, genreId });
         }
-        jdbcTemplate.batchUpdate(sql, batchArgs);
+        try {
+            jdbcTemplate.batchUpdate(sql, batchArgs);
+        } catch (org.springframework.dao.DataAccessException e) {
+            LOGGER.debug("DataAccessException in PlayPetitionDaoImpl.addGenres for petitionId: {} - {}", petitionId, e.getMessage());
+            throw e;
+        }
     }
 
     @Override
@@ -180,7 +194,12 @@ public class PlayPetitionDaoImpl implements PlayPetitionDao {
         for (final LocalDate date : dates) {
             batchArgs.add(new Object[]{ petitionId, Date.valueOf(date) });
         }
-        jdbcTemplate.batchUpdate(sql, batchArgs);
+        try {
+            jdbcTemplate.batchUpdate(sql, batchArgs);
+        } catch (org.springframework.dao.DataAccessException e) {
+            LOGGER.debug("DataAccessException in PlayPetitionDaoImpl.addShowDates for petitionId: {} - {}", petitionId, e.getMessage());
+            throw e;
+        }
     }
 
     @Override

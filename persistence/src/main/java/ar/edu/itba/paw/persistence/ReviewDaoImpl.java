@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -16,6 +18,8 @@ import java.util.Optional;
 
 @Repository
 public class ReviewDaoImpl implements ReviewDao {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReviewDaoImpl.class);
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -110,8 +114,13 @@ public class ReviewDaoImpl implements ReviewDao {
         params.put("production_id", productionId);
         params.put("obra_id", jdbcTemplate.queryForObject("SELECT obra_id FROM productions WHERE id = ?", new Object[]{ productionId }, Long.class));
         params.put("body", body);
-        final Number key = jdbcInsert.executeAndReturnKey(params);
-        return findByUserAndProduction(userId, productionId).orElseThrow();
+        try {
+            final Number key = jdbcInsert.executeAndReturnKey(params);
+            return findByUserAndProduction(userId, productionId).orElseThrow();
+        } catch (org.springframework.dao.DataAccessException e) {
+            LOGGER.debug("DataAccessException in ReviewDaoImpl.create for userId: {}, productionId: {} - {}", userId, productionId, e.getMessage());
+            throw e;
+        }
     }
 
     @Override
@@ -121,8 +130,13 @@ public class ReviewDaoImpl implements ReviewDao {
         params.put("production_id", productionId);
         params.put("obra_id", obraId);
         params.put("body", body);
-        jdbcInsert.executeAndReturnKey(params);
-        return findByUserAndObra(userId, obraId).orElseThrow();
+        try {
+            jdbcInsert.executeAndReturnKey(params);
+            return findByUserAndObra(userId, obraId).orElseThrow();
+        } catch (org.springframework.dao.DataAccessException e) {
+            LOGGER.debug("DataAccessException in ReviewDaoImpl.createForObra for userId: {}, obraId: {} - {}", userId, obraId, e.getMessage());
+            throw e;
+        }
     }
 
     @Override

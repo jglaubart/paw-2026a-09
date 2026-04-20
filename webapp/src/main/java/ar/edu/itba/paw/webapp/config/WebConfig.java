@@ -2,6 +2,8 @@ package ar.edu.itba.paw.webapp.config;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +26,7 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -65,7 +68,28 @@ import java.util.Properties;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebConfig.class);
+
     public static final long MAX_UPLOAD_SIZE_BYTES = 5L * 1024 * 1024;
+    private static final String SCHEMA_SCRIPT = "db/schema/schema.sql";
+    private static final String SEED_SCRIPT = "db/seed/seed.sql";
+    private static final List<String> PRE_SEED_MIGRATION_SCRIPTS = List.of(
+            "db/migrations/migration_add_shows_location_columns.sql"
+    );
+    private static final List<String> POST_SEED_MIGRATION_SCRIPTS = List.of(
+            "db/migrations/migration_users_role.sql",
+            "db/migrations/migration_backfill_shows_location_from_seed_theaters.sql",
+            "db/migrations/migration_play_petitions.sql",
+            "db/migrations/migration_images_for_productions.sql",
+            "db/migrations/migration_drop_legacy_image_urls.sql",
+            "db/migrations/migration_backfill_play_ratings_from_production_ratings.sql",
+            "db/migrations/migration_review_email_identity.sql",
+            "db/migrations/migration_reviews_per_obra.sql",
+            "db/migrations/migration_users_username.sql",
+            "db/migrations/migration_users_image.sql",
+            "db/migrations/migration_users_bio.sql",
+            "db/migrations/migration_play_petitions_revision_workflow.sql"
+    );
 
     private final AdminOnlyInterceptor adminOnlyInterceptor;
 
@@ -90,6 +114,11 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(adminOnlyInterceptor)
                 .excludePathPatterns("/admin/**", "/logout", "/css/**", "/js/**", "/images/**", "/favicon.png");
+    }
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/403").setViewName("errors/403");
     }
 
     @Bean
@@ -142,7 +171,7 @@ public class WebConfig implements WebMvcConfigurer {
         props.put("mail.smtp.writetimeout", "10000");
 
         if (sender.getPassword() == null || sender.getPassword().trim().isEmpty()) {
-            System.err.println("[Platea] SMTP password not configured. Set PLATEA_MAIL_PASSWORD to enable email delivery.");
+            LOGGER.warn("SMTP password not configured. Set PLATEA_MAIL_PASSWORD to enable email delivery.");
         }
         return sender;
     }
@@ -200,8 +229,8 @@ public class WebConfig implements WebMvcConfigurer {
     public InitializingBean databaseInitializer(final DataSource dataSource,
                                                 final PasswordEncoder passwordEncoder) {
         return () -> {
-            runScript(dataSource, "schema.sql");
-            runScript(dataSource, "migration_add_shows_location_columns.sql");
+            runScript(dataSource, SCHEMA_SCRIPT);
+            runScripts(dataSource, PRE_SEED_MIGRATION_SCRIPTS);
 
             final JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
             final Integer productionsCount = jdbcTemplate.queryForObject(
@@ -210,29 +239,30 @@ public class WebConfig implements WebMvcConfigurer {
             );
 
             if (productionsCount != null && productionsCount == 0) {
-                runScript(dataSource, "seed.sql");
+                runScript(dataSource, SEED_SCRIPT);
             }
 
-            runScript(dataSource, "migration_users_role.sql");
-            runScript(dataSource, "migration_backfill_shows_location_from_seed_theaters.sql");
-            runScript(dataSource, "migration_play_petitions.sql");
-            runScript(dataSource, "migration_images_for_productions.sql");
-            runScript(dataSource, "migration_drop_legacy_image_urls.sql");
-            runScript(dataSource, "migration_backfill_play_ratings_from_production_ratings.sql");
-            runScript(dataSource, "migration_review_email_identity.sql");
-            runScript(dataSource, "migration_reviews_per_obra.sql");
-            runScript(dataSource, "migration_users_username.sql");
-            runScript(dataSource, "migration_users_image.sql");
-            runScript(dataSource, "migration_users_bio.sql");
-            runScript(dataSource, "migration_play_petitions_revision_workflow.sql");
+            runScripts(dataSource, POST_SEED_MIGRATION_SCRIPTS);
             hashLegacyUserPasswords(jdbcTemplate, passwordEncoder);
             seedDefaultAvatar(jdbcTemplate);
         };
     }
 
+    private void runScripts(final DataSource dataSource, final List<String> scripts) {
+        for (final String script : scripts) {
+            runScript(dataSource, script);
+        }
+    }
+
     private void runScript(final DataSource dataSource, final String resourcePath) {
+        final ClassPathResource scriptResource = new ClassPathResource(resourcePath);
+        if (!scriptResource.exists()) {
+            throw new IllegalStateException("Database script not found on classpath: " + resourcePath);
+        }
+
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(new ClassPathResource(resourcePath));
+        populator.setSqlScriptEncoding(StandardCharsets.UTF_8.name());
+        populator.addScript(scriptResource);
         populator.execute(dataSource);
     }
 
@@ -262,7 +292,7 @@ public class WebConfig implements WebMvcConfigurer {
                 try {
                     values = parseDotEnvStream(cp.getInputStream());
                 } catch (IOException e) {
-                    System.err.println("[Platea] Could not read .env from classpath: " + e.getMessage());
+                    LOGGER.error("Could not read .env from classpath: {}", e.getMessage());
                 }
             }
         }
@@ -427,7 +457,7 @@ public class WebConfig implements WebMvcConfigurer {
             }
         } catch (final Exception e) {
             // Non-fatal: log and continue so the app still starts
-            System.err.println("[Platea] Could not seed default avatar: " + e.getMessage());
+            LOGGER.error("Could not seed default avatar: {}", e.getMessage());
         }
     }
 

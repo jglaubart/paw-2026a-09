@@ -86,14 +86,18 @@ public class RatingServiceImpl implements RatingService {
     @Override
     public Map<Long, String> getProductionRatingLabels(final Collection<Long> productionIds) {
         final Map<Long, String> labels = new HashMap<>();
+        if (productionIds == null || productionIds.isEmpty()) {
+            return labels;
+        }
+
+        final Map<Long, Double> averages = playRatingDao.findAveragesByProductionIds(productionIds);
+
         for (final Long productionId : productionIds) {
             if (productionId == null || labels.containsKey(productionId)) {
                 continue;
             }
-            final String ratingLabel = productionDao.findById(productionId)
-                    .flatMap(production -> playRatingDao.findAverageByObra(production.getObraId()))
-                    .map(avg -> String.format(Locale.US, "%.1f", avg))
-                    .orElse("N/A");
+            final Double avg = averages.get(productionId);
+            final String ratingLabel = avg != null ? String.format(Locale.US, "%.1f", avg) : "N/A";
             labels.put(productionId, ratingLabel);
         }
         return labels;

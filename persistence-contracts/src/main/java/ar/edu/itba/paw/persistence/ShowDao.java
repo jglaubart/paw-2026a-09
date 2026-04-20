@@ -10,5 +10,6 @@ public interface ShowDao {
     Optional<Show> findById(long id);
     List<Show> findByProductionId(long productionId);
     List<Show> findFutureByProductionId(long productionId);
+    List<Long> findProductionIdsWithShowToday();
     Show create(long productionId, LocalDate showDate, LocalTime showTime, String theater);
 }

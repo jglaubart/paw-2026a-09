@@ -112,6 +112,16 @@
       <groupId>org.glassfish</groupId>
       <artifactId>javax.el</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -137,6 +147,9 @@
         <plugin>
           <artifactId>maven-war-plugin</artifactId>
           <version>3.4.0</version>
+          <configuration>
+            <packagingExcludes>WEB-INF/classes/logback-test.xml</packagingExcludes>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-install-plugin</artifactId>

@@ -55,7 +55,7 @@ public class ProductionServiceImpl implements ProductionService {
 
     @Override
     public List<ProductionCardSummary> findAllCards(final int page, final int pageSize) {
-        return paginate(summarizeByObra(productionDao.findAll()), page, pageSize);
+        return summarizeByObra(productionDao.findAll(page, pageSize));
     }
 
     @Override
@@ -75,7 +75,7 @@ public class ProductionServiceImpl implements ProductionService {
 
     @Override
     public List<ProductionCardSummary> findAvailableCards(final int page, final int pageSize) {
-        return paginate(summarizeByObra(productionDao.findAvailable()), page, pageSize);
+        return summarizeByObra(productionDao.findAvailable(page, pageSize));
     }
 
     @Override
@@ -106,7 +106,7 @@ public class ProductionServiceImpl implements ProductionService {
 
     @Override
     public List<ProductionCardSummary> findByGenreCards(final String genre, final int page, final int pageSize) {
-        return paginate(summarizeByObra(productionDao.findByGenre(genre, 0, Integer.MAX_VALUE)), page, pageSize);
+        return summarizeByObra(productionDao.findByGenre(genre, page, pageSize));
     }
 
     @Override
@@ -121,7 +121,7 @@ public class ProductionServiceImpl implements ProductionService {
 
     @Override
     public List<ProductionCardSummary> searchCards(final ProductionSearchCriteria criteria, final int page, final int pageSize) {
-        return paginate(summarizeByObra(productionDao.search(criteria, 0, Integer.MAX_VALUE)), page, pageSize);
+        return summarizeByObra(productionDao.search(criteria, page, pageSize));
     }
 
     @Override
@@ -171,14 +171,15 @@ public class ProductionServiceImpl implements ProductionService {
             productionsByObraId.computeIfAbsent(production.getObraId(), ignored -> new ArrayList<>()).add(production);
         }
 
+        // Bulk fetch all obra titles in a single query instead of N separate findById calls
+        final Map<Long, String> obraTitles = obraDao.findTitlesByIds(productionsByObraId.keySet());
+
         final List<ProductionCardSummary> cards = new ArrayList<>(productionsByObraId.size());
         for (final Map.Entry<Long, List<Production>> entry : productionsByObraId.entrySet()) {
             final long obraId = entry.getKey();
             final List<Production> groupedProductions = entry.getValue();
             final Production representative = selectRepresentative(groupedProductions);
-            final String title = obraDao.findById(obraId)
-                    .map(obra -> obra.getTitle())
-                    .orElse(representative.getName());
+            final String title = obraTitles.getOrDefault(obraId, representative.getName());
 
             cards.add(new ProductionCardSummary(
                     obraId,
