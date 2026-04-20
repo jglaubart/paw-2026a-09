@@ -19,6 +19,7 @@ public class ProductoraDaoImpl implements ProductoraDao {
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+    private final SimpleJdbcInsert jdbcInsertApproved;
 
     private static final RowMapper<Productora> PRODUCTORA_MAPPER = (rs, rowNum) ->
             new Productora(
@@ -35,6 +36,12 @@ public class ProductoraDaoImpl implements ProductoraDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName("productoras")
+                .usingColumns("name", "bio", "image_id", "instagram", "website")
+                .usingGeneratedKeyColumns("id");
+        this.jdbcInsertApproved = new SimpleJdbcInsert(dataSource)
+                .withTableName("productoras")
+                .usingColumns("name", "bio", "image_id", "instagram", "website",
+                        "cuit", "contact_email", "status", "approved_at")
                 .usingGeneratedKeyColumns("id");
     }
 
@@ -83,7 +90,7 @@ public class ProductoraDaoImpl implements ProductoraDao {
         params.put("contact_email", contactEmail);
         params.put("status", "APPROVED");
         params.put("approved_at", new java.sql.Timestamp(System.currentTimeMillis()));
-        final Number key = jdbcInsert.executeAndReturnKey(params);
+        final Number key = jdbcInsertApproved.executeAndReturnKey(params);
         return new Productora(key.longValue(), name, bio, imageId != null ? "/images/" + imageId : null, instagram, website);
     }
 
