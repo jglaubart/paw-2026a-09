@@ -2,6 +2,7 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.models.PlayPetition;
+import ar.edu.itba.paw.models.ProductoraRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,6 +154,83 @@ public class MailServiceImpl implements MailService {
                 "share-production",
                 context
         );
+    }
+
+    @Async
+    @Override
+    public void sendProductoraRequestConfirmation(final ProductoraRequest request,
+                                                   final String recipientEmail,
+                                                   final String username) {
+        final Locale locale = resolveLocale();
+        final Context context = productoraContext(request, username, locale);
+        sendHtmlMail(
+                recipientEmail,
+                messageSource.getMessage("mail.productora.confirmation.subject", new Object[]{ request.getName() }, locale),
+                "productora-request-confirmation",
+                context
+        );
+    }
+
+    @Async
+    @Override
+    public void sendProductoraRequestApproved(final ProductoraRequest request,
+                                               final String recipientEmail,
+                                               final String username) {
+        final Locale locale = resolveLocale();
+        final Context context = productoraContext(request, username, locale);
+        final String dashboardUrl = request.getCreatedProductoraId() != null
+                ? publicBaseUrl + "/productoras/" + request.getCreatedProductoraId() + "/dashboard"
+                : publicBaseUrl + "/productoras/mia";
+        context.setVariable("ctaUrl", dashboardUrl);
+        context.setVariable("ctaLabel", messageSource.getMessage("mail.productora.approved.cta", null, locale));
+        sendHtmlMail(
+                recipientEmail,
+                messageSource.getMessage("mail.productora.approved.subject", new Object[]{ request.getName() }, locale),
+                "productora-request-approved",
+                context
+        );
+    }
+
+    @Async
+    @Override
+    public void sendProductoraRequestRejected(final ProductoraRequest request,
+                                               final String recipientEmail,
+                                               final String username) {
+        final Locale locale = resolveLocale();
+        final Context context = productoraContext(request, username, locale);
+        sendHtmlMail(
+                recipientEmail,
+                messageSource.getMessage("mail.productora.rejected.subject", new Object[]{ request.getName() }, locale),
+                "productora-request-rejected",
+                context
+        );
+    }
+
+    @Async
+    @Override
+    public void sendProductoraRequestChangesRequested(final ProductoraRequest request,
+                                                       final String recipientEmail,
+                                                       final String username) {
+        final Locale locale = resolveLocale();
+        final Context context = productoraContext(request, username, locale);
+        context.setVariable("ctaUrl", publicBaseUrl + "/productoras/postular/estado");
+        context.setVariable("ctaLabel", messageSource.getMessage("mail.productora.changes-requested.cta", null, locale));
+        sendHtmlMail(
+                recipientEmail,
+                messageSource.getMessage("mail.productora.changes-requested.subject", new Object[]{ request.getName() }, locale),
+                "productora-request-changes",
+                context
+        );
+    }
+
+    private Context productoraContext(final ProductoraRequest request, final String username, final Locale locale) {
+        final Context context = new Context(locale);
+        context.setVariable("username", username != null && !username.trim().isEmpty() ? username : "");
+        context.setVariable("productoraName", request.getName());
+        context.setVariable("requestId", request.getId());
+        context.setVariable("adminNotes", request.getAdminNotes());
+        context.setVariable("publicBaseUrl", publicBaseUrl);
+        return context;
     }
 
     private Locale resolveLocale() {

@@ -3,8 +3,11 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfaces.persistence.ProductoraDao;
 import ar.edu.itba.paw.interfaces.persistence.ProductoraMemberDao;
 import ar.edu.itba.paw.interfaces.persistence.ProductoraRequestDao;
+import ar.edu.itba.paw.interfaces.persistence.UserDao;
+import ar.edu.itba.paw.interfaces.services.MailService;
 import ar.edu.itba.paw.interfaces.services.ProductoraRequestService;
 import ar.edu.itba.paw.interfaces.services.exception.ProductoraRequestAlreadyActiveException;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.Productora;
 import ar.edu.itba.paw.models.ProductoraMemberRole;
 import ar.edu.itba.paw.models.ProductoraRequest;
@@ -27,14 +30,20 @@ public class ProductoraRequestServiceImpl implements ProductoraRequestService {
     private final ProductoraRequestDao requestDao;
     private final ProductoraDao productoraDao;
     private final ProductoraMemberDao memberDao;
+    private final UserDao userDao;
+    private final MailService mailService;
 
     @Autowired
     public ProductoraRequestServiceImpl(final ProductoraRequestDao requestDao,
                                         final ProductoraDao productoraDao,
-                                        final ProductoraMemberDao memberDao) {
+                                        final ProductoraMemberDao memberDao,
+                                        final UserDao userDao,
+                                        final MailService mailService) {
         this.requestDao = requestDao;
         this.productoraDao = productoraDao;
         this.memberDao = memberDao;
+        this.userDao = userDao;
+        this.mailService = mailService;
     }
 
     @Override
@@ -51,6 +60,7 @@ public class ProductoraRequestServiceImpl implements ProductoraRequestService {
         r.setCreatedAt(LocalDateTime.now());
         final ProductoraRequest saved = requestDao.create(r);
         LOGGER.info("ProductoraRequest {} submitted by user {}", saved.getId(), userId);
+        sendConfirmationMail(saved, userId);
         return saved;
     }
 
@@ -74,6 +84,7 @@ public class ProductoraRequestServiceImpl implements ProductoraRequestService {
         requestDao.clearFieldFeedback(requestId);
         existing.setStatus(ProductoraRequestStatus.PENDING);
         LOGGER.info("ProductoraRequest {} resubmitted by user {}", requestId, userId);
+        sendConfirmationMail(existing, userId);
         return existing;
     }
 
@@ -120,22 +131,58 @@ public class ProductoraRequestServiceImpl implements ProductoraRequestService {
         requestDao.updateStatus(requestId, ProductoraRequestStatus.APPROVED, adminNotes, created.getId());
         requestDao.clearFieldFeedback(requestId);
         LOGGER.info("ProductoraRequest {} approved: productora={} owner={}", requestId, created.getId(), req.getUserId());
+        req.setAdminNotes(adminNotes);
+        req.setCreatedProductoraId(created.getId());
+        sendMailToUser(req.getUserId(), (email, username) ->
+                mailService.sendProductoraRequestApproved(req, email, username));
         return created;
     }
 
     @Override
     public void reject(final long requestId, final String adminNotes) {
+        final ProductoraRequest req = requestDao.findById(requestId)
+                .orElseThrow(() -> new IllegalArgumentException("Request not found: " + requestId));
         requestDao.updateStatus(requestId, ProductoraRequestStatus.REJECTED, adminNotes, null);
         requestDao.clearFieldFeedback(requestId);
         LOGGER.info("ProductoraRequest {} rejected", requestId);
+        req.setAdminNotes(adminNotes);
+        sendMailToUser(req.getUserId(), (email, username) ->
+                mailService.sendProductoraRequestRejected(req, email, username));
     }
 
     @Override
     public void requestChanges(final long requestId, final String adminNotes,
                                final Map<String, String> fieldFeedback) {
+        final ProductoraRequest req = requestDao.findById(requestId)
+                .orElseThrow(() -> new IllegalArgumentException("Request not found: " + requestId));
         requestDao.updateStatus(requestId, ProductoraRequestStatus.CHANGES_REQUESTED, adminNotes, null);
         requestDao.replaceFieldFeedback(requestId, fieldFeedback);
         LOGGER.info("ProductoraRequest {} changes requested", requestId);
+        req.setAdminNotes(adminNotes);
+        sendMailToUser(req.getUserId(), (email, username) ->
+                mailService.sendProductoraRequestChangesRequested(req, email, username));
+    }
+
+    @FunctionalInterface
+    private interface MailAction {
+        void send(String email, String username);
+    }
+
+    private void sendMailToUser(final long userId, final MailAction action) {
+        userDao.findById(userId).ifPresent(user -> {
+            try {
+                final String displayName = user.getUsername() != null && !user.getUsername().trim().isEmpty()
+                        ? user.getUsername() : user.getEmail();
+                action.send(user.getEmail(), displayName);
+            } catch (final RuntimeException e) {
+                LOGGER.error("Failed to send productora mail to user {}: {}", userId, e.getMessage());
+            }
+        });
+    }
+
+    private void sendConfirmationMail(final ProductoraRequest request, final long userId) {
+        sendMailToUser(userId, (email, username) ->
+                mailService.sendProductoraRequestConfirmation(request, email, username));
     }
 
     private ProductoraRequest attachFeedback(final ProductoraRequest r) {
