@@ -112,6 +112,14 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
+    public Map<Long, Integer> getUserObraScores(final long userId, final Collection<Long> obraIds) {
+        if (obraIds == null || obraIds.isEmpty()) {
+            return new HashMap<>();
+        }
+        return playRatingDao.findScoresByUserAndObraIds(userId, obraIds);
+    }
+
+    @Override
     public Map<Long, String> getUserObraRatingLabels(final long userId, final Collection<Long> obraIds) {
         final Map<Long, String> labels = new HashMap<>();
         if (obraIds == null || obraIds.isEmpty()) {

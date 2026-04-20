@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @Controller
@@ -40,10 +41,34 @@ public class SeenController {
         for (final Obra obra : obras) {
             obraIds.add(obra.getId());
         }
-        final Map<Long, String> userRatings = ratingService.getUserObraRatingLabels(userId, obraIds);
+        final Map<Long, Integer> userScores = ratingService.getUserObraScores(userId, obraIds);
+
+        final int[] distribution = new int[5];
+        long sum = 0;
+        for (final Integer rawScore : userScores.values()) {
+            if (rawScore == null) {
+                continue;
+            }
+            final int tier = Math.max(1, Math.min(5, (rawScore + 1) / 2));
+            distribution[tier - 1]++;
+            sum += rawScore;
+        }
+        int maxTier = 0;
+        for (final int count : distribution) {
+            if (count > maxTier) {
+                maxTier = count;
+            }
+        }
+        final String ratingAverage = userScores.isEmpty()
+                ? "—"
+                : String.format(Locale.US, "%.1f", sum / (double) userScores.size());
 
         mav.addObject("seenObras", obras);
-        mav.addObject("userObraRatings", userRatings);
+        mav.addObject("userObraScores", userScores);
+        mav.addObject("ratingDistribution", distribution);
+        mav.addObject("ratingDistributionMax", maxTier);
+        mav.addObject("ratingAverage", ratingAverage);
+        mav.addObject("ratedCount", userScores.size());
         return mav;
     }
 
