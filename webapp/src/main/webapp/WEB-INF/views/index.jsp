@@ -52,7 +52,9 @@
         <c:if test="${not empty todayProductions}">
             <paw:sectionRow title="Para Hoy" subtitle="Obras con función hoy" cssClass="home-section-row" railNavigation="true">
                 <c:forEach var="p" items="${todayProductions}">
-                    <c:set var="detailUrl" value="/obras/${p.obraId}?produccionId=${p.id}" />
+                    <c:url var="detailUrl" value="/obras/${p.obraId}">
+                        <c:param name="produccionId" value="${p.id}" />
+                    </c:url>
                     <paw:productionCard
                         title="${fn:escapeXml(p.name)}"
                         imageUrl="${not empty p.imageUrl ? p.imageUrl : '/images/Portadas/hamlet.jpg'}"
@@ -68,7 +70,9 @@
         <c:if test="${not empty availableCards}">
             <paw:sectionRow title="En Cartelera" subtitle="Obras activas dentro de su periodo" cssClass="home-section-row" railNavigation="true">
                 <c:forEach var="card" items="${availableCards}">
-                    <c:set var="detailUrl" value="/obras/${card.obraId}?produccionId=${card.representativeProductionId}" />
+                    <c:url var="detailUrl" value="/obras/${card.obraId}">
+                        <c:param name="produccionId" value="${card.representativeProductionId}" />
+                    </c:url>
                     <paw:productionCard
                         title="${fn:escapeXml(card.title)}"
                         imageUrl="${not empty card.imageUrl ? card.imageUrl : '/images/Portadas/hamlet.jpg'}"
@@ -83,7 +87,9 @@
         <c:if test="${not empty allCards}">
             <paw:sectionRow title="Catálogo" subtitle="Todas las obras cargadas, activas o no" cssClass="home-section-row" railNavigation="true">
                 <c:forEach var="card" items="${allCards}">
-                    <c:set var="detailUrl" value="/obras/${card.obraId}?produccionId=${card.representativeProductionId}" />
+                    <c:url var="detailUrl" value="/obras/${card.obraId}">
+                        <c:param name="produccionId" value="${card.representativeProductionId}" />
+                    </c:url>
                     <paw:productionCard
                         title="${fn:escapeXml(card.title)}"
                         imageUrl="${not empty card.imageUrl ? card.imageUrl : '/images/Portadas/principito.jpg'}"

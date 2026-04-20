@@ -25,7 +25,7 @@
 
     <c:set var="imgUrl" value="${not empty production.imageUrl ? production.imageUrl : '/images/Portadas/hamlet.jpg'}" />
     <c:if test="${obra != null}">
-        <c:set var="obraUrl" value="/obras/${obra.id}" />
+        <c:url var="obraUrl" value="/obras/${obra.id}" />
     </c:if>
     <c:if test="${productora != null}">
         <c:url var="productoraUrl" value="/productoras/${productora.id}" />

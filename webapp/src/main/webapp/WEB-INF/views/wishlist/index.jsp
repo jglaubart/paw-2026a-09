@@ -36,7 +36,9 @@
             <c:when test="${not empty wishlist}">
                 <paw:sectionRow title="En tu watchlist" subtitle="${fn:length(wishlist)} produccion${fn:length(wishlist) != 1 ? 'es' : ''}">
                     <c:forEach var="p" items="${wishlist}">
-                        <c:set var="detailUrl" value="/obras/${p.obraId}?produccionId=${p.id}" />
+                        <c:url var="detailUrl" value="/obras/${p.obraId}">
+                            <c:param name="produccionId" value="${p.id}" />
+                        </c:url>
                         <paw:productionCard
                             title="${fn:escapeXml(p.name)}"
                             imageUrl="${not empty p.imageUrl ? p.imageUrl : ''}"

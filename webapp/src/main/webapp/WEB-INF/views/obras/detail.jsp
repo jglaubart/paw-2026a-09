@@ -232,7 +232,9 @@
                     </div>
                     <div class="obra-versions-grid">
                         <c:forEach var="p" items="${productions}">
-                            <c:set var="versionUrl" value="/obras/${obra.id}?produccionId=${p.id}" />
+                            <c:url var="versionUrl" value="/obras/${obra.id}">
+                                <c:param name="produccionId" value="${p.id}" />
+                            </c:url>
                             <a href="${versionUrl}" class="obra-version-item ${p.id eq selectedProduction.id ? 'obra-version-item-active' : ''}">
                                 <p class="obra-version-theater">
                                     <c:out value="${not empty p.theater ? p.theater : p.name}" />

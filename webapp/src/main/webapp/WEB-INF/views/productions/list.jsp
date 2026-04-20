@@ -41,7 +41,9 @@
 
                 <div class="section-row-cards production-list-row-cards">
                     <c:forEach var="card" items="${productionCards}">
-                        <c:set var="detailUrl" value="/obras/${card.obraId}?produccionId=${card.representativeProductionId}" />
+                        <c:url var="detailUrl" value="/obras/${card.obraId}">
+                            <c:param name="produccionId" value="${card.representativeProductionId}" />
+                        </c:url>
                         <paw:productionCard
                             title="${fn:escapeXml(card.title)}"
                             imageUrl="${not empty card.imageUrl ? card.imageUrl : '/images/Portadas/hamlet.jpg'}"

@@ -9,7 +9,14 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <c:if test="${not empty detailUrl}">
-    <c:url var="resolvedDetailUrl" value="${detailUrl}" />
+    <c:choose>
+        <c:when test="${fn:startsWith(detailUrl, 'http://') or fn:startsWith(detailUrl, 'https://') or fn:startsWith(detailUrl, '//') or (not empty pageContext.request.contextPath and fn:startsWith(detailUrl, pageContext.request.contextPath))}">
+            <c:set var="resolvedDetailUrl" value="${detailUrl}" />
+        </c:when>
+        <c:otherwise>
+            <c:url var="resolvedDetailUrl" value="${detailUrl}" />
+        </c:otherwise>
+    </c:choose>
 </c:if>
 <c:choose>
     <c:when test="${not empty imageUrl}">
