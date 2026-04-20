@@ -125,7 +125,7 @@ public class RatingServiceImpl implements RatingService {
             if (rawScore == null) {
                 continue;
             }
-            labels.put(entry.getKey(), String.format(Locale.US, "%.1f", rawScore / 2.0));
+            labels.put(entry.getKey(), Integer.toString(rawScore));
         }
         return labels;
     }

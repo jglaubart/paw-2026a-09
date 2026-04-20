@@ -224,6 +224,14 @@
 
 .user-list-rating-value {
     letter-spacing: 0.01em;
+    font-size: 0.95rem;
+}
+
+.user-list-rating-scale {
+    font-size: 0.72rem;
+    font-weight: 600;
+    opacity: 0.65;
+    letter-spacing: 0.02em;
 }
 
 /* ── CTA hint on each card ── */

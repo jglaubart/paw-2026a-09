@@ -63,9 +63,10 @@
                                 </div>
                                 <div class="user-list-obra-meta">
                                     <c:if test="${not empty obraRating}">
-                                        <span class="user-list-rating" aria-label="Tu puntuación: ${obraRating} sobre 5">
+                                        <span class="user-list-rating" aria-label="Tu puntuación: ${obraRating} sobre 10">
                                             <span class="user-list-rating-star" aria-hidden="true">★</span>
                                             <span class="user-list-rating-value"><c:out value="${obraRating}" /></span>
+                                            <span class="user-list-rating-scale" aria-hidden="true">/ 10</span>
                                         </span>
                                     </c:if>
                                     <span class="user-list-obra-cta" aria-hidden="true">
