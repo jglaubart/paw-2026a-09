@@ -28,21 +28,19 @@
     <main class="user-list-page">
 
         <header class="user-list-header">
-            <div class="user-list-header-lead">
-                <span class="user-list-kicker">Tu historial</span>
-                <h1 class="user-list-title">Obras que ya viste</h1>
-                <p class="user-list-subtitle">Repasá tu recorrido y tus puntuaciones en un solo lugar.</p>
-            </div>
+            <span class="user-list-kicker">Tu historial</span>
+            <h1 class="user-list-title">Obras que ya viste</h1>
+            <p class="user-list-subtitle">Repasá tu recorrido y tus puntuaciones. Cuando marcás una obra como vista o la puntuás desde su página, aparece acá automáticamente.</p>
             <c:if test="${seenCount > 0}">
-                <div class="user-list-stats" aria-label="Estadísticas del historial">
-                    <div class="user-list-stat">
+                <div class="user-list-stats" aria-label="Resumen del historial">
+                    <span class="user-list-stat">
                         <span class="user-list-stat-value"><c:out value="${seenCount}" /></span>
                         <span class="user-list-stat-label">Vistas</span>
-                    </div>
-                    <div class="user-list-stat">
+                    </span>
+                    <span class="user-list-stat">
                         <span class="user-list-stat-value"><c:out value="${ratedCount}" /></span>
                         <span class="user-list-stat-label">Puntuadas</span>
-                    </div>
+                    </span>
                 </div>
             </c:if>
         </header>
