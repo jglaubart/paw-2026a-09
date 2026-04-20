@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.config;
 
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
+import ar.edu.itba.paw.webapp.auth.RoleBasedAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,12 +17,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PawUserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
+    private final RoleBasedAuthenticationSuccessHandler authenticationSuccessHandler;
 
     @Autowired
     public WebSecurityConfig(final PawUserDetailsService userDetailsService,
-                             final PasswordEncoder passwordEncoder) {
+                             final PasswordEncoder passwordEncoder,
+                             final RoleBasedAuthenticationSuccessHandler authenticationSuccessHandler) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationSuccessHandler = authenticationSuccessHandler;
     }
 
     @Override
@@ -44,7 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .loginPage("/login")
                         .usernameParameter("email")
                         .passwordParameter("password")
-                        .defaultSuccessUrl("/", false)
+                        .successHandler(authenticationSuccessHandler)
                         .failureUrl("/login?error=1")
                         .permitAll()
                 .and()

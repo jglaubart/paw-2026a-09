@@ -17,9 +17,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import ar.edu.itba.paw.webapp.interceptor.AdminOnlyInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
@@ -53,6 +56,7 @@ import java.util.Properties;
 @ComponentScan({
     "ar.edu.itba.paw.webapp.controller",
     "ar.edu.itba.paw.webapp.auth",
+    "ar.edu.itba.paw.webapp.interceptor",
     "ar.edu.itba.paw.services",
     "ar.edu.itba.paw.persistence"
 })
@@ -62,6 +66,13 @@ import java.util.Properties;
 public class WebConfig implements WebMvcConfigurer {
 
     public static final long MAX_UPLOAD_SIZE_BYTES = 5L * 1024 * 1024;
+
+    private final AdminOnlyInterceptor adminOnlyInterceptor;
+
+    @Autowired
+    public WebConfig(final AdminOnlyInterceptor adminOnlyInterceptor) {
+        this.adminOnlyInterceptor = adminOnlyInterceptor;
+    }
 
     static {
         loadDotEnvIntoSystemProperties();
@@ -73,6 +84,12 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/js/**").addResourceLocations("/js/");
         registry.addResourceHandler("/images/**").addResourceLocations("/images/");
         registry.addResourceHandler("/favicon.png").addResourceLocations("/favicon.png");
+    }
+
+    @Override
+    public void addInterceptors(final InterceptorRegistry registry) {
+        registry.addInterceptor(adminOnlyInterceptor)
+                .excludePathPatterns("/admin/**", "/logout", "/css/**", "/js/**", "/images/**", "/favicon.png");
     }
 
     @Bean
