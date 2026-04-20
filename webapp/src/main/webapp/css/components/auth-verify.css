@@ -1,0 +1,123 @@
+.auth-page-verify .auth-shell {
+    width: min(100%, 32rem);
+}
+
+.auth-verify-subtitle {
+    margin: 0.9rem 0 0;
+    color: rgba(247, 242, 255, 0.72);
+    font-size: 0.98rem;
+    line-height: 1.55;
+}
+
+.auth-verify-subtitle strong {
+    color: #fff;
+    font-weight: 700;
+}
+
+.auth-verify-field {
+    gap: 0.75rem;
+}
+
+.auth-verify-code-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.auth-verify-code-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 1px solid transparent;
+    background: transparent;
+    color: transparent;
+    caret-color: transparent;
+    letter-spacing: 0;
+    font-size: 1rem;
+    z-index: 2;
+}
+
+.auth-verify-code-input:focus {
+    outline: none;
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+}
+
+.auth-verify-code-boxes {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    width: 100%;
+    pointer-events: none;
+}
+
+.auth-verify-code-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 4.6rem;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.045);
+    color: #ffffff;
+    font-size: 1.85rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.auth-verify-code-box.is-filled {
+    border-color: rgba(186, 158, 255, 0.45);
+    background: rgba(186, 158, 255, 0.12);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 24px rgba(132, 85, 239, 0.18);
+    transform: translateY(-1px);
+}
+
+.auth-verify-code-box.is-focus {
+    border-color: rgba(186, 158, 255, 0.65);
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: 0 0 0 6px rgba(132, 85, 239, 0.14);
+}
+
+.auth-verify-form {
+    margin-top: 0.6rem;
+}
+
+.auth-verify-resend-form {
+    margin: 1rem 0 0;
+    display: flex;
+    justify-content: center;
+}
+
+.auth-verify-resend-btn {
+    padding: 0.45rem 1rem;
+    border: none;
+    background: transparent;
+    color: var(--platea-primary, #ba9eff);
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: color 0.16s ease;
+}
+
+.auth-verify-resend-btn:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .auth-verify-code-boxes {
+        gap: 0.5rem;
+    }
+
+    .auth-verify-code-box {
+        height: 4rem;
+        font-size: 1.55rem;
+        border-radius: 14px;
+    }
+}

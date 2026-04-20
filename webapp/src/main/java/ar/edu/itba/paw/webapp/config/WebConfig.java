@@ -88,7 +88,8 @@ public class WebConfig implements WebMvcConfigurer {
             "db/migrations/migration_users_username.sql",
             "db/migrations/migration_users_image.sql",
             "db/migrations/migration_users_bio.sql",
-            "db/migrations/migration_play_petitions_revision_workflow.sql"
+            "db/migrations/migration_play_petitions_revision_workflow.sql",
+            "db/migrations/migration_users_email_verification.sql"
     );
 
     private final AdminOnlyInterceptor adminOnlyInterceptor;

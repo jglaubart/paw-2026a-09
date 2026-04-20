@@ -30,3 +30,9 @@ Thumbs.dbm
 .env
 .env.*
 !.env.example
+
+# Playwright MCP artifacts
+.playwright-mcp/
+
+# Ad-hoc screenshots at repo root
+/*.png

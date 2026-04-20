@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,12 +25,15 @@ public class UserDaoImpl implements UserDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
+    private static final String USER_COLUMNS = "id, email, password, role, username, image_id, bio, email_verified";
+
     private static final RowMapper<User> USER_MAPPER = (rs, rowNum) -> {
         final Object imgId = rs.getObject("image_id");
         return new User(rs.getLong("id"), rs.getString("email"), rs.getString("password"),
                 rs.getString("role"), rs.getString("username"),
                 imgId != null ? rs.getLong("image_id") : null,
-                rs.getString("bio"));
+                rs.getString("bio"),
+                rs.getBoolean("email_verified"));
     };
 
     @Autowired
@@ -37,14 +41,14 @@ public class UserDaoImpl implements UserDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName("users")
-                .usingColumns("email", "password", "role", "username", "bio")
+                .usingColumns("email", "password", "role", "username", "bio", "email_verified")
                 .usingGeneratedKeyColumns("id");
     }
 
     @Override
     public Optional<User> findById(final long id) {
         final List<User> users = jdbcTemplate.query(
-                "SELECT id, email, password, role, username, image_id, bio FROM users WHERE id = ?",
+                "SELECT " + USER_COLUMNS + " FROM users WHERE id = ?",
                 new Object[]{ id },
                 USER_MAPPER
         );
@@ -54,7 +58,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public Optional<User> findByEmail(final String email) {
         final List<User> users = jdbcTemplate.query(
-                "SELECT id, email, password, role, username, image_id, bio FROM users WHERE email = ?",
+                "SELECT " + USER_COLUMNS + " FROM users WHERE email = ?",
                 new Object[]{ email },
                 USER_MAPPER
         );
@@ -62,16 +66,18 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User create(final String email, final String password, final String username) {
+    public User create(final String email, final String password, final String username, final boolean emailVerified) {
         final Map<String, Object> params = new HashMap<>();
         params.put("email", email);
         params.put("password", password);
         params.put("role", "ROLE_USER");
         params.put("username", username != null ? username : "");
         params.put("bio", "");
+        params.put("email_verified", emailVerified);
         try {
             final Number key = jdbcInsert.executeAndReturnKey(params);
-            return new User(key.longValue(), email, password, "ROLE_USER", username != null ? username : "", null, "");
+            return new User(key.longValue(), email, password, "ROLE_USER",
+                    username != null ? username : "", null, "", emailVerified);
         } catch (org.springframework.dao.DataAccessException e) {
             LOGGER.debug("DataAccessException in UserDaoImpl.create for email: {} - {}", email, e.getMessage());
             throw e;
@@ -81,7 +87,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public Optional<User> findByUsername(final String username) {
         final List<User> users = jdbcTemplate.query(
-                "SELECT id, email, password, role, username, image_id, bio FROM users WHERE username = ?",
+                "SELECT " + USER_COLUMNS + " FROM users WHERE username = ?",
                 new Object[]{ username },
                 USER_MAPPER
         );
@@ -120,6 +126,42 @@ public class UserDaoImpl implements UserDao {
         jdbcTemplate.update(
                 "UPDATE users SET bio = ? WHERE id = ?",
                 bio != null ? bio : "",
+                userId
+        );
+    }
+
+    @Override
+    public void setVerificationCode(final long userId, final String code, final Timestamp expiresAt) {
+        jdbcTemplate.update(
+                "UPDATE users SET verification_code = ?, verification_code_expires_at = ?, email_verified = FALSE WHERE id = ?",
+                code, expiresAt, userId
+        );
+    }
+
+    @Override
+    public Optional<VerificationRecord> findVerification(final long userId) {
+        final List<VerificationRecord> records = jdbcTemplate.query(
+                "SELECT verification_code, verification_code_expires_at FROM users WHERE id = ?",
+                new Object[]{ userId },
+                (rs, rowNum) -> {
+                    final String code = rs.getString("verification_code");
+                    final Timestamp ts = rs.getTimestamp("verification_code_expires_at");
+                    if (code == null) {
+                        return null;
+                    }
+                    return new VerificationRecord(code, ts);
+                }
+        );
+        if (records.isEmpty() || records.get(0) == null) {
+            return Optional.empty();
+        }
+        return Optional.of(records.get(0));
+    }
+
+    @Override
+    public void markEmailVerified(final long userId) {
+        jdbcTemplate.update(
+                "UPDATE users SET email_verified = TRUE, verification_code = NULL, verification_code_expires_at = NULL WHERE id = ?",
                 userId
         );
     }

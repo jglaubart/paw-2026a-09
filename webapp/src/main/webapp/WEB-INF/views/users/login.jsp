@@ -24,6 +24,7 @@
 <spring:message code="auth.login.registered" var="registeredMessage" />
 <spring:message code="auth.login.error" var="errorMessage" />
 <spring:message code="auth.login.loggedOut" var="loggedOutMessage" />
+<spring:message code="auth.login.unverified" var="unverifiedMessage" />
 
 <paw:navbar />
 
@@ -42,6 +43,9 @@
             </c:if>
             <c:if test="${loggedOut}">
                 <div class="auth-alert"><paw:alert variant="info" message="${loggedOutMessage}" showClose="false" /></div>
+            </c:if>
+            <c:if test="${unverified}">
+                <div class="auth-alert"><paw:alert variant="warning" message="${unverifiedMessage}" showClose="false" /></div>
             </c:if>
 
             <form action="${loginActionUrl}" method="post" class="auth-form">

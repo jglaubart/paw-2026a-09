@@ -19,16 +19,16 @@ ALTER TABLE play_petitions
 ALTER TABLE play_petitions
     ADD COLUMN IF NOT EXISTS source_production_id INT REFERENCES productions(id);
 
-UPDATE play_petitions
-SET status = 'CHANGES_REQUESTED'
-WHERE status = 'REJECTED';
-
 ALTER TABLE play_petitions
     DROP CONSTRAINT IF EXISTS play_petitions_status_check;
 
 ALTER TABLE play_petitions
     ADD CONSTRAINT play_petitions_status_check
     CHECK (status IN ('PENDING', 'CHANGES_REQUESTED', 'APPROVED', 'REJECTED'));
+
+UPDATE play_petitions
+SET status = 'CHANGES_REQUESTED'
+WHERE status = 'REJECTED';
 
 CREATE TABLE IF NOT EXISTS petition_field_feedback (
     petition_id INT NOT NULL REFERENCES play_petitions(id),

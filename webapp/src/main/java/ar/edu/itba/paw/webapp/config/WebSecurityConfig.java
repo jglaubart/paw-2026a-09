@@ -9,7 +9,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -40,7 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/css/**", "/js/**", "/images/**", "/favicon.png").permitAll()
                     .antMatchers(HttpMethod.GET, "/", "/cartelera", "/search/**", "/obras/**", "/productions", "/productions/**", "/productoras/**", "/images/**", "/petition-images/**").permitAll()
                     .antMatchers(HttpMethod.POST, "/obras/*/share").permitAll()
-                    .antMatchers("/login", "/register").permitAll()
+                    .antMatchers("/login", "/register", "/register/verify", "/register/verify/resend").permitAll()
                     .antMatchers("/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
                 .and()
@@ -49,7 +51,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .usernameParameter("email")
                         .passwordParameter("password")
                         .successHandler(authenticationSuccessHandler)
-                        .failureUrl("/login?error=1")
+                        .failureHandler((request, response, exception) -> {
+                            final String target = exception instanceof DisabledException
+                                    ? "/login?unverified=1"
+                                    : "/login?error=1";
+                            new SimpleUrlAuthenticationFailureHandler(target)
+                                    .onAuthenticationFailure(request, response, exception);
+                        })
                         .permitAll()
                 .and()
                     .logout()

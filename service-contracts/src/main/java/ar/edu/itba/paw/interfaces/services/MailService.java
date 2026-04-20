@@ -8,4 +8,5 @@ public interface MailService {
     void sendPetitionChangesRequested(PlayPetition petition);
     void sendSharedProduction(String recipientEmail, String senderName, String obraTitle,
                               String productionName, String synopsis, String detailUrl);
+    void sendVerificationCode(String recipientEmail, String username, String code);
 }

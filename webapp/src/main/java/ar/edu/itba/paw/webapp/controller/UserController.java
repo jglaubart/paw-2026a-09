@@ -9,10 +9,12 @@ import ar.edu.itba.paw.interfaces.services.exception.UserAlreadyExistsException;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.Review;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.auth.PawAuthUser;
 import ar.edu.itba.paw.webapp.form.RegisterForm;
 import ar.edu.itba.paw.webapp.form.UpdatePersonalDataForm;
 import ar.edu.itba.paw.webapp.form.UpdateUsernameForm;
+import ar.edu.itba.paw.webapp.form.VerifyEmailForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -32,12 +34,17 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @Controller
 public class UserController {
+
+    private static final String PENDING_USER_ID_ATTR = "pendingVerificationUserId";
+    private static final String PENDING_EMAIL_ATTR = "pendingVerificationEmail";
 
     private final UserService userService;
     private final ImageService imageService;
@@ -65,6 +72,7 @@ public class UserController {
     public ModelAndView login(@RequestParam(value = "error", required = false) final String error,
                               @RequestParam(value = "logout", required = false) final String logout,
                               @RequestParam(value = "registered", required = false) final String registered,
+                              @RequestParam(value = "unverified", required = false) final String unverified,
                               @AuthenticationPrincipal final PawAuthUser authUser) {
         if (authUser != null) {
             return new ModelAndView("redirect:/users/me");
@@ -74,6 +82,7 @@ public class UserController {
         mav.addObject("hasError", "1".equals(error));
         mav.addObject("loggedOut", "1".equals(logout));
         mav.addObject("registered", "1".equals(registered));
+        mav.addObject("unverified", "1".equals(unverified));
         return mav;
     }
 
@@ -90,7 +99,6 @@ public class UserController {
     public ModelAndView register(@Valid @ModelAttribute("registerForm") final RegisterForm form,
                                  final BindingResult errors,
                                  final HttpServletRequest request,
-                                 final HttpServletResponse response,
                                  @AuthenticationPrincipal final PawAuthUser authUser) {
         if (authUser != null) {
             return new ModelAndView("redirect:/users/me");
@@ -107,13 +115,84 @@ public class UserController {
         }
 
         try {
-            userService.create(form.getEmail(), form.getPassword(), form.getUsername());
-            authenticateUser(form.getEmail());
-            return new ModelAndView("redirect:" + resolvePostRegisterTarget(request, response));
+            final User created = userService.create(form.getEmail(), form.getPassword(), form.getUsername());
+            userService.issueVerificationCode(created.getId());
+            final HttpSession session = request.getSession(true);
+            session.setAttribute(PENDING_USER_ID_ATTR, created.getId());
+            session.setAttribute(PENDING_EMAIL_ATTR, created.getEmail());
+            return new ModelAndView("redirect:/register/verify");
         } catch (final UserAlreadyExistsException e) {
             errors.rejectValue("email", "auth.register.email.taken");
             return registerView(errors);
         }
+    }
+
+    @RequestMapping(value = "/register/verify", method = RequestMethod.GET)
+    public ModelAndView verifyForm(final HttpServletRequest request,
+                                   @AuthenticationPrincipal final PawAuthUser authUser) {
+        if (authUser != null) {
+            return new ModelAndView("redirect:/users/me");
+        }
+        final Long pendingId = pendingUserId(request);
+        if (pendingId == null) {
+            return new ModelAndView("redirect:/register");
+        }
+        return verifyView(new VerifyEmailForm(), request, null, null);
+    }
+
+    @RequestMapping(value = "/register/verify", method = RequestMethod.POST)
+    public ModelAndView verifySubmit(@Valid @ModelAttribute("verifyEmailForm") final VerifyEmailForm form,
+                                     final BindingResult errors,
+                                     final HttpServletRequest request,
+                                     final HttpServletResponse response,
+                                     @AuthenticationPrincipal final PawAuthUser authUser) {
+        if (authUser != null) {
+            return new ModelAndView("redirect:/users/me");
+        }
+        final Long pendingId = pendingUserId(request);
+        if (pendingId == null) {
+            return new ModelAndView("redirect:/register");
+        }
+
+        if (errors.hasErrors()) {
+            return verifyView(errors, request, null, null);
+        }
+
+        final UserService.VerificationResult result = userService.verifyEmailCode(pendingId, form.getCode());
+        switch (result) {
+            case VERIFIED:
+            case ALREADY_VERIFIED: {
+                final Optional<User> userOpt = userService.findById(pendingId);
+                clearPending(request);
+                if (userOpt.isPresent()) {
+                    authenticateUser(userOpt.get().getEmail());
+                    return new ModelAndView("redirect:" + resolvePostRegisterTarget(request, response));
+                }
+                return new ModelAndView("redirect:/login?registered=1");
+            }
+            case EXPIRED:
+                return verifyView(form, request, "expired", null);
+            case USER_NOT_FOUND:
+                clearPending(request);
+                return new ModelAndView("redirect:/register");
+            case INVALID_CODE:
+            default:
+                return verifyView(form, request, "invalid", null);
+        }
+    }
+
+    @RequestMapping(value = "/register/verify/resend", method = RequestMethod.POST)
+    public ModelAndView verifyResend(final HttpServletRequest request,
+                                     @AuthenticationPrincipal final PawAuthUser authUser) {
+        if (authUser != null) {
+            return new ModelAndView("redirect:/users/me");
+        }
+        final Long pendingId = pendingUserId(request);
+        if (pendingId == null) {
+            return new ModelAndView("redirect:/register");
+        }
+        userService.issueVerificationCode(pendingId);
+        return verifyView(new VerifyEmailForm(), request, null, "resent");
     }
 
     @RequestMapping(value = "/users/me", method = RequestMethod.GET)
@@ -205,6 +284,56 @@ public class UserController {
 
     private ModelAndView registerView(final BindingResult errors) {
         return new ModelAndView("users/register", errors.getModel());
+    }
+
+    private ModelAndView verifyView(final VerifyEmailForm form,
+                                    final HttpServletRequest request,
+                                    final String errorCode,
+                                    final String notice) {
+        final ModelAndView mav = new ModelAndView("users/verify");
+        mav.addObject("verifyEmailForm", form);
+        mav.addObject("pendingEmail", pendingEmail(request));
+        mav.addObject("verifyError", errorCode);
+        mav.addObject("verifyNotice", notice);
+        return mav;
+    }
+
+    private ModelAndView verifyView(final BindingResult errors,
+                                    final HttpServletRequest request,
+                                    final String errorCode,
+                                    final String notice) {
+        final ModelAndView mav = new ModelAndView("users/verify", errors.getModel());
+        mav.addObject("pendingEmail", pendingEmail(request));
+        mav.addObject("verifyError", errorCode);
+        mav.addObject("verifyNotice", notice);
+        return mav;
+    }
+
+    private Long pendingUserId(final HttpServletRequest request) {
+        final HttpSession session = request.getSession(false);
+        if (session == null) {
+            return null;
+        }
+        final Object value = session.getAttribute(PENDING_USER_ID_ATTR);
+        return value instanceof Long ? (Long) value : null;
+    }
+
+    private String pendingEmail(final HttpServletRequest request) {
+        final HttpSession session = request.getSession(false);
+        if (session == null) {
+            return null;
+        }
+        final Object value = session.getAttribute(PENDING_EMAIL_ATTR);
+        return value instanceof String ? (String) value : null;
+    }
+
+    private void clearPending(final HttpServletRequest request) {
+        final HttpSession session = request.getSession(false);
+        if (session == null) {
+            return;
+        }
+        session.removeAttribute(PENDING_USER_ID_ATTR);
+        session.removeAttribute(PENDING_EMAIL_ATTR);
     }
 
     private String normalizeEmail(final String email) {

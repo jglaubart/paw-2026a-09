@@ -90,6 +90,34 @@ public class MailServiceImpl implements MailService {
 
     @Async
     @Override
+    public void sendVerificationCode(final String recipientEmail, final String username, final String code) {
+        final Locale locale = resolveLocale();
+        final Context context = new Context(locale);
+        context.setVariable("username", username != null && !username.trim().isEmpty() ? username : recipientEmail);
+        context.setVariable("code", code);
+        context.setVariable("codeDigits", splitDigits(code));
+        context.setVariable("publicBaseUrl", publicBaseUrl);
+        sendHtmlMail(
+                recipientEmail,
+                messageSource.getMessage("mail.verification.subject", null, locale),
+                "email-verification",
+                context
+        );
+    }
+
+    private java.util.List<String> splitDigits(final String code) {
+        final java.util.List<String> digits = new java.util.ArrayList<>();
+        if (code == null) {
+            return digits;
+        }
+        for (int i = 0; i < code.length(); i++) {
+            digits.add(String.valueOf(code.charAt(i)));
+        }
+        return digits;
+    }
+
+    @Async
+    @Override
     public void sendSharedProduction(final String recipientEmail, final String senderName,
                                      final String obraTitle, final String productionName,
                                      final String synopsis, final String detailUrl) {
