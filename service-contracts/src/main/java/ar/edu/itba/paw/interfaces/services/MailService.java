@@ -9,4 +9,5 @@ public interface MailService {
     void sendSharedProduction(String recipientEmail, String senderName, String obraTitle,
                               String productionName, String synopsis, String detailUrl);
     void sendVerificationCode(String recipientEmail, String username, String code);
+    void sendPasswordResetLink(String recipientEmail, String username, String resetUrl);
 }

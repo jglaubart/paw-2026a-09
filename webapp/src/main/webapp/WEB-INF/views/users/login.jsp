@@ -21,10 +21,12 @@
 <body>
 <c:url var="loginActionUrl" value="/login" />
 <c:url var="registerUrl" value="/register" />
+<c:url var="forgotUrl" value="/forgot-password" />
 <spring:message code="auth.login.registered" var="registeredMessage" />
 <spring:message code="auth.login.error" var="errorMessage" />
 <spring:message code="auth.login.loggedOut" var="loggedOutMessage" />
 <spring:message code="auth.login.unverified" var="unverifiedMessage" />
+<spring:message code="auth.login.passwordReset" var="passwordResetMessage" />
 
 <paw:navbar />
 
@@ -47,6 +49,9 @@
             <c:if test="${unverified}">
                 <div class="auth-alert"><paw:alert variant="warning" message="${unverifiedMessage}" showClose="false" /></div>
             </c:if>
+            <c:if test="${passwordReset}">
+                <div class="auth-alert"><paw:alert variant="success" message="${passwordResetMessage}" showClose="false" /></div>
+            </c:if>
 
             <form action="${loginActionUrl}" method="post" class="auth-form">
                 <input type="hidden" name="${_csrf.parameterName}" value="${fn:escapeXml(_csrf.token)}" />
@@ -59,6 +64,10 @@
                 <div class="auth-field">
                     <label class="auth-label" for="password"><spring:message code="auth.field.password" /></label>
                     <input id="password" name="password" type="password" class="auth-input" minlength="8" maxlength="72" required autocomplete="current-password" />
+                </div>
+
+                <div class="auth-form-options">
+                    <a href="${forgotUrl}" class="auth-forgot-link"><spring:message code="auth.login.forgotPassword" /></a>
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-md auth-submit"><spring:message code="auth.login.submit" /></button>

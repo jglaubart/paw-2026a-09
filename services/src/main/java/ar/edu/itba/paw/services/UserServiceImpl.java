@@ -18,12 +18,14 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
     private static final int CODE_TTL_MINUTES = 15;
+    private static final int RESET_TTL_MINUTES = 30;
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private final UserDao userDao;
@@ -145,6 +147,67 @@ public class UserServiceImpl implements UserService {
 
         userDao.markEmailVerified(userId);
         return VerificationResult.VERIFIED;
+    }
+
+    @Override
+    public void requestPasswordReset(final String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return;
+        }
+        final String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);
+        final Optional<User> userOpt = userDao.findByEmail(normalizedEmail);
+        if (!userOpt.isPresent()) {
+            LOGGER.info("Password reset requested for unknown email (silently ignored)");
+            return;
+        }
+        final User user = userOpt.get();
+        final String token = generateResetToken();
+        final Timestamp expiresAt = Timestamp.from(Instant.now().plus(RESET_TTL_MINUTES, ChronoUnit.MINUTES));
+        userDao.setPasswordResetToken(user.getId(), token, expiresAt);
+        try {
+            mailService.sendPasswordResetLink(user.getEmail(), user.getUsername(), token);
+            LOGGER.info("Password reset link issued for user {}", user.getId());
+        } catch (final RuntimeException e) {
+            LOGGER.error("Failed to send password reset email for user {}: {}", user.getId(), e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean isPasswordResetTokenValid(final String token) {
+        if (token == null || token.trim().isEmpty()) {
+            return false;
+        }
+        final Optional<UserDao.PasswordResetRecord> recordOpt = userDao.findByPasswordResetToken(token.trim());
+        if (!recordOpt.isPresent()) {
+            return false;
+        }
+        final Timestamp expiresAt = recordOpt.get().getExpiresAt();
+        return expiresAt == null || !expiresAt.toInstant().isBefore(Instant.now());
+    }
+
+    @Override
+    public ResetPasswordResult resetPassword(final String token, final String newPassword) {
+        if (token == null || token.trim().isEmpty()) {
+            return ResetPasswordResult.INVALID_TOKEN;
+        }
+        final Optional<UserDao.PasswordResetRecord> recordOpt = userDao.findByPasswordResetToken(token.trim());
+        if (!recordOpt.isPresent()) {
+            return ResetPasswordResult.INVALID_TOKEN;
+        }
+        final UserDao.PasswordResetRecord record = recordOpt.get();
+        if (record.getExpiresAt() != null && record.getExpiresAt().toInstant().isBefore(Instant.now())) {
+            return ResetPasswordResult.EXPIRED;
+        }
+        final String encoded = passwordEncoder.encode(newPassword);
+        userDao.updatePassword(record.getUserId(), encoded);
+        userDao.clearPasswordResetToken(record.getUserId());
+        LOGGER.info("Password reset completed for user {}", record.getUserId());
+        return ResetPasswordResult.RESET;
+    }
+
+    private String generateResetToken() {
+        return UUID.randomUUID().toString().replace("-", "")
+                + UUID.randomUUID().toString().replace("-", "");
     }
 
     private String generateFourDigitCode() {

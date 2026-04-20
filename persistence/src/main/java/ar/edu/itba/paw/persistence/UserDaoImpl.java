@@ -165,4 +165,34 @@ public class UserDaoImpl implements UserDao {
                 userId
         );
     }
+
+    @Override
+    public void setPasswordResetToken(final long userId, final String token, final Timestamp expiresAt) {
+        jdbcTemplate.update(
+                "UPDATE users SET password_reset_token = ?, password_reset_expires_at = ? WHERE id = ?",
+                token, expiresAt, userId
+        );
+    }
+
+    @Override
+    public Optional<PasswordResetRecord> findByPasswordResetToken(final String token) {
+        final List<PasswordResetRecord> records = jdbcTemplate.query(
+                "SELECT id, email, password_reset_expires_at FROM users WHERE password_reset_token = ?",
+                new Object[]{ token },
+                (rs, rowNum) -> new PasswordResetRecord(
+                        rs.getLong("id"),
+                        rs.getString("email"),
+                        rs.getTimestamp("password_reset_expires_at")
+                )
+        );
+        return records.isEmpty() ? Optional.empty() : Optional.of(records.get(0));
+    }
+
+    @Override
+    public void clearPasswordResetToken(final long userId) {
+        jdbcTemplate.update(
+                "UPDATE users SET password_reset_token = NULL, password_reset_expires_at = NULL WHERE id = ?",
+                userId
+        );
+    }
 }

@@ -13,6 +13,12 @@ public interface UserService {
         USER_NOT_FOUND
     }
 
+    enum ResetPasswordResult {
+        RESET,
+        INVALID_TOKEN,
+        EXPIRED
+    }
+
     Optional<User> findById(long id);
     Optional<User> findByEmail(String email);
     Optional<User> findByUsername(String username);
@@ -33,4 +39,22 @@ public interface UserService {
      * not expired, marks the user as verified.
      */
     VerificationResult verifyEmailCode(long userId, String code);
+
+    /**
+     * If a user exists for the given email, issues a password reset token
+     * (single-use, short-lived) and sends a reset link via email. Silent
+     * no-op when no account matches, to prevent enumeration.
+     */
+    void requestPasswordReset(String email);
+
+    /**
+     * Returns true when the given token exists and has not expired.
+     */
+    boolean isPasswordResetTokenValid(String token);
+
+    /**
+     * Validates the token and, if valid, sets the new password and clears
+     * the token. Returns the outcome for the controller to react to.
+     */
+    ResetPasswordResult resetPassword(String token, String newPassword);
 }

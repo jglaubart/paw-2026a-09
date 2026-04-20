@@ -105,6 +105,24 @@ public class MailServiceImpl implements MailService {
         );
     }
 
+    @Async
+    @Override
+    public void sendPasswordResetLink(final String recipientEmail, final String username, final String token) {
+        final Locale locale = resolveLocale();
+        final Context context = new Context(locale);
+        context.setVariable("username", username != null && !username.trim().isEmpty() ? username : recipientEmail);
+        final String resetUrl = publicBaseUrl + "/reset-password?token=" + token;
+        context.setVariable("resetUrl", resetUrl);
+        context.setVariable("ctaLabel", messageSource.getMessage("mail.reset.cta", null, locale));
+        context.setVariable("publicBaseUrl", publicBaseUrl);
+        sendHtmlMail(
+                recipientEmail,
+                messageSource.getMessage("mail.reset.subject", null, locale),
+                "password-reset",
+                context
+        );
+    }
+
     private java.util.List<String> splitDigits(final String code) {
         final java.util.List<String> digits = new java.util.ArrayList<>();
         if (code == null) {

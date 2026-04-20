@@ -18,6 +18,10 @@ public interface UserDao {
     Optional<VerificationRecord> findVerification(long userId);
     void markEmailVerified(long userId);
 
+    void setPasswordResetToken(long userId, String token, Timestamp expiresAt);
+    Optional<PasswordResetRecord> findByPasswordResetToken(String token);
+    void clearPasswordResetToken(long userId);
+
     final class VerificationRecord {
         private final String code;
         private final Timestamp expiresAt;
@@ -28,6 +32,22 @@ public interface UserDao {
         }
 
         public String getCode() { return code; }
+        public Timestamp getExpiresAt() { return expiresAt; }
+    }
+
+    final class PasswordResetRecord {
+        private final long userId;
+        private final String email;
+        private final Timestamp expiresAt;
+
+        public PasswordResetRecord(final long userId, final String email, final Timestamp expiresAt) {
+            this.userId = userId;
+            this.email = email;
+            this.expiresAt = expiresAt;
+        }
+
+        public long getUserId() { return userId; }
+        public String getEmail() { return email; }
         public Timestamp getExpiresAt() { return expiresAt; }
     }
 }

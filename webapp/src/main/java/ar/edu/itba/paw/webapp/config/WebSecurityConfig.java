@@ -42,7 +42,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/css/**", "/js/**", "/images/**", "/favicon.png").permitAll()
                     .antMatchers(HttpMethod.GET, "/", "/cartelera", "/search/**", "/obras/**", "/productions", "/productions/**", "/productoras/**", "/images/**", "/petition-images/**").permitAll()
                     .antMatchers(HttpMethod.POST, "/obras/*/share").permitAll()
-                    .antMatchers("/login", "/register", "/register/verify", "/register/verify/resend").permitAll()
+                    .antMatchers("/login", "/register", "/register/verify", "/register/verify/resend",
+                            "/forgot-password", "/reset-password").permitAll()
                     .antMatchers("/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
                 .and()

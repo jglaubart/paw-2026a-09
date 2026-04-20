@@ -12,7 +12,9 @@ import ar.edu.itba.paw.models.Production;
 import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.auth.PawAuthUser;
+import ar.edu.itba.paw.webapp.form.ForgotPasswordForm;
 import ar.edu.itba.paw.webapp.form.RegisterForm;
+import ar.edu.itba.paw.webapp.form.ResetPasswordForm;
 import ar.edu.itba.paw.webapp.form.UpdatePersonalDataForm;
 import ar.edu.itba.paw.webapp.form.UpdateUsernameForm;
 import ar.edu.itba.paw.webapp.form.VerifyEmailForm;
@@ -74,6 +76,7 @@ public class UserController {
                               @RequestParam(value = "logout", required = false) final String logout,
                               @RequestParam(value = "registered", required = false) final String registered,
                               @RequestParam(value = "unverified", required = false) final String unverified,
+                              @RequestParam(value = "passwordReset", required = false) final String passwordReset,
                               @AuthenticationPrincipal final PawAuthUser authUser) {
         if (authUser != null) {
             return new ModelAndView("redirect:/users/me");
@@ -84,6 +87,98 @@ public class UserController {
         mav.addObject("loggedOut", "1".equals(logout));
         mav.addObject("registered", "1".equals(registered));
         mav.addObject("unverified", "1".equals(unverified));
+        mav.addObject("passwordReset", "1".equals(passwordReset));
+        return mav;
+    }
+
+    @RequestMapping(value = "/forgot-password", method = RequestMethod.GET)
+    public ModelAndView forgotPasswordForm(@AuthenticationPrincipal final PawAuthUser authUser) {
+        if (authUser != null) {
+            return new ModelAndView("redirect:/users/me");
+        }
+        return forgotView(new ForgotPasswordForm(), false);
+    }
+
+    @RequestMapping(value = "/forgot-password", method = RequestMethod.POST)
+    public ModelAndView forgotPasswordSubmit(@Valid @ModelAttribute("forgotPasswordForm") final ForgotPasswordForm form,
+                                             final BindingResult errors,
+                                             @AuthenticationPrincipal final PawAuthUser authUser) {
+        if (authUser != null) {
+            return new ModelAndView("redirect:/users/me");
+        }
+        if (errors.hasErrors()) {
+            return forgotView(errors, false);
+        }
+        userService.requestPasswordReset(form.getEmail());
+        return forgotView(form, true);
+    }
+
+    @RequestMapping(value = "/reset-password", method = RequestMethod.GET)
+    public ModelAndView resetPasswordForm(@RequestParam(value = "token", required = false) final String token,
+                                          @AuthenticationPrincipal final PawAuthUser authUser) {
+        if (authUser != null) {
+            return new ModelAndView("redirect:/users/me");
+        }
+        if (token == null || !userService.isPasswordResetTokenValid(token)) {
+            return new ModelAndView("users/resetPasswordInvalid");
+        }
+        final ResetPasswordForm form = new ResetPasswordForm();
+        form.setToken(token);
+        return resetView(form, null);
+    }
+
+    @RequestMapping(value = "/reset-password", method = RequestMethod.POST)
+    public ModelAndView resetPasswordSubmit(@Valid @ModelAttribute("resetPasswordForm") final ResetPasswordForm form,
+                                            final BindingResult errors,
+                                            @AuthenticationPrincipal final PawAuthUser authUser) {
+        if (authUser != null) {
+            return new ModelAndView("redirect:/users/me");
+        }
+        if (form.getToken() == null || form.getToken().trim().isEmpty()) {
+            return new ModelAndView("users/resetPasswordInvalid");
+        }
+        if (!form.passwordsMatch()) {
+            errors.rejectValue("repeatPassword", "auth.reset.repeatPassword.mismatch");
+        }
+        if (errors.hasErrors()) {
+            return resetViewFromErrors(errors);
+        }
+        final UserService.ResetPasswordResult result = userService.resetPassword(form.getToken(), form.getPassword());
+        switch (result) {
+            case RESET:
+                return new ModelAndView("redirect:/login?passwordReset=1");
+            case EXPIRED:
+                return resetView(form, "expired");
+            case INVALID_TOKEN:
+            default:
+                return new ModelAndView("users/resetPasswordInvalid");
+        }
+    }
+
+    private ModelAndView forgotView(final ForgotPasswordForm form, final boolean sent) {
+        final ModelAndView mav = new ModelAndView("users/forgotPassword");
+        mav.addObject("forgotPasswordForm", form);
+        mav.addObject("sent", sent);
+        mav.addObject("sentEmail", sent ? form.getEmail() : null);
+        return mav;
+    }
+
+    private ModelAndView forgotView(final BindingResult errors, final boolean sent) {
+        final ModelAndView mav = new ModelAndView("users/forgotPassword", errors.getModel());
+        mav.addObject("sent", sent);
+        return mav;
+    }
+
+    private ModelAndView resetView(final ResetPasswordForm form, final String errorCode) {
+        final ModelAndView mav = new ModelAndView("users/resetPassword");
+        mav.addObject("resetPasswordForm", form);
+        mav.addObject("resetError", errorCode);
+        return mav;
+    }
+
+    private ModelAndView resetViewFromErrors(final BindingResult errors) {
+        final ModelAndView mav = new ModelAndView("users/resetPassword", errors.getModel());
+        mav.addObject("resetError", null);
         return mav;
     }
 
