@@ -27,7 +27,7 @@
 
     <main class="user-list-page">
 
-        <section class="user-list-hero">
+        <section class="user-list-hero ${seenCount == 0 ? 'user-list-hero-empty' : ''}">
             <div class="user-list-hero-lead">
                 <span class="user-list-kicker">Tu historial</span>
                 <h1 class="user-list-hero-title">Todo lo que <em>ya viste</em></h1>

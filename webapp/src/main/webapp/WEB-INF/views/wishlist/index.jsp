@@ -61,7 +61,7 @@
 
     <main class="user-list-page">
 
-        <header class="user-list-hero">
+        <header class="user-list-hero ${wishlistCount == 0 ? 'user-list-hero-empty' : ''}">
             <div class="user-list-hero-main">
                 <span class="user-list-kicker">Tu watchlist</span>
                 <h1 class="user-list-title">Producciones que <em>querés ver</em></h1>
