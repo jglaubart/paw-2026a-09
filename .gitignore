@@ -36,3 +36,5 @@ Thumbs.dbm
 
 # Ad-hoc screenshots at repo root
 /*.png
+
+.local-postgres/
