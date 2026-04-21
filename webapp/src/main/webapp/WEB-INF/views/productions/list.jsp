@@ -23,10 +23,8 @@
 
     <paw:navbar activeSection="cartelera" />
 
-    <c:url var="productionListScriptUrl" value="/js/components/production-list-navigation.js" />
-
     <main class="production-list-page">
-        <section class="section-row production-list-row" data-production-rail>
+        <section class="section-row production-list-row">
             <div class="section-row-header">
                 <div class="section-row-header-text">
                     <h2 class="section-row-title"><c:out value="${available ? 'Cartelera' : (genre != null ? genre : 'Catálogo')}" /></h2>
@@ -34,27 +32,17 @@
                 </div>
             </div>
 
-            <div class="production-list-row-shell">
-                <button type="button" class="production-list-rail-btn production-list-rail-btn-prev" data-rail-prev aria-label="Mostrar funciones anteriores">
-                    <span aria-hidden="true">←</span>
-                </button>
-
-                <div class="section-row-cards production-list-row-cards">
-                    <c:forEach var="card" items="${productionCards}">
-                        <c:set var="detailUrl" value="/obras/${card.obraId}?produccionId=${card.representativeProductionId}" />
-                        <paw:productionCard
-                            title="${fn:escapeXml(card.title)}"
-                            imageUrl="${not empty card.imageUrl ? card.imageUrl : '/images/Portadas/hamlet.jpg'}"
-                            venue="${fn:escapeXml(card.theaterSummary)}"
-                            rating="${productionRatings[card.representativeProductionId]}"
-                            detailUrl="${detailUrl}"
-                        />
-                    </c:forEach>
-                </div>
-
-                <button type="button" class="production-list-rail-btn production-list-rail-btn-next" data-rail-next aria-label="Mostrar más funciones">
-                    <span aria-hidden="true">→</span>
-                </button>
+            <div class="section-row-cards production-list-row-cards">
+                <c:forEach var="card" items="${productionCards}">
+                    <c:set var="detailUrl" value="/obras/${card.obraId}?produccionId=${card.representativeProductionId}" />
+                    <paw:productionCard
+                        title="${fn:escapeXml(card.title)}"
+                        imageUrl="${not empty card.imageUrl ? card.imageUrl : '/images/Portadas/hamlet.jpg'}"
+                        venue="${fn:escapeXml(card.theaterSummary)}"
+                        rating="${productionRatings[card.representativeProductionId]}"
+                        detailUrl="${detailUrl}"
+                    />
+                </c:forEach>
             </div>
         </section>
 
@@ -65,7 +53,5 @@
         </c:if>
 
     </main>
-
-    <script src="${productionListScriptUrl}" defer></script>
 </body>
 </html>
