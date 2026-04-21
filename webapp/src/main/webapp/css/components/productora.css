@@ -861,6 +861,126 @@
     color: var(--platea-text-primary, #f7f2ff);
 }
 
+/* Empty state */
+.prod-dash-empty {
+    padding: 2.5rem 2rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px dashed rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.prod-dash-empty p {
+    margin: 0;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+    max-width: 48ch;
+}
+
+.prod-dash-cta-row {
+    margin-top: 1rem;
+}
+
+/* Obras list */
+.prod-dash-obras-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.prod-dash-obras-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem 1.1rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 12px;
+}
+
+.prod-dash-obras-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+.prod-dash-obras-title {
+    font-weight: 700;
+    color: var(--platea-text-primary, #f7f2ff);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.prod-dash-obras-title:hover {
+    color: var(--platea-primary, #ba9eff);
+}
+
+.prod-dash-obras-meta {
+    font-size: 0.78rem;
+    color: var(--platea-text-soft, rgba(247, 242, 255, 0.44));
+}
+
+/* Reviews list */
+.prod-dash-reviews-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.prod-dash-review-row {
+    padding: 1rem 1.2rem;
+    background: var(--platea-surface-container-low, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--platea-ghost-border, rgba(255, 255, 255, 0.09));
+    border-radius: 12px;
+}
+
+.prod-dash-review-head {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.45rem;
+    font-size: 0.85rem;
+}
+
+.prod-dash-review-user {
+    font-weight: 700;
+    color: var(--platea-text-primary, #f7f2ff);
+}
+
+.prod-dash-review-obra {
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.68));
+}
+
+.prod-dash-review-score {
+    padding: 0.2rem 0.55rem;
+    background: rgba(248, 160, 16, 0.12);
+    border: 1px solid rgba(248, 160, 16, 0.32);
+    color: var(--platea-secondary, #f8a010);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-left: auto;
+}
+
+.prod-dash-review-body {
+    margin: 0;
+    color: var(--platea-text-muted, rgba(247, 242, 255, 0.78));
+    font-size: 0.92rem;
+    line-height: 1.5;
+}
+
 /* ─────────── LEGACY (landing, admin) — still used ─────────── */
 
 .productora-lede,

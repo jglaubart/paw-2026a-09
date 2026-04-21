@@ -185,14 +185,10 @@
 
 
 .navbar .search-form-navbar {
-    width: auto;
+    width: min(100%, 20.5rem);
     max-width: 100%;
     min-width: 0;
     justify-self: end;
-}
-
-.navbar .search-form-navbar.search-form-inline-open {
-    width: min(100%, 30rem);
 }
 
 .btn.navbar-submit-button {
@@ -339,11 +335,7 @@
     }
 
     .navbar .search-form-navbar {
-        width: auto;
-    }
-
-    .navbar .search-form-navbar.search-form-inline-open {
-        width: min(100%, 34rem);
+        width: min(100%, 24rem);
     }
 }
 
@@ -386,7 +378,7 @@
         justify-content: stretch;
     }
 
-    .navbar .search-form-navbar.search-form-inline-open,
+    .navbar .search-form-navbar,
     .navbar-submit-button {
         width: 100%;
     }

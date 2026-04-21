@@ -121,6 +121,35 @@ public class ProductoraDaoImpl implements ProductoraDao {
         return count != null && count > 0;
     }
 
+    @Override
+    public DashboardStats findDashboardStats(final long productoraId) {
+        final String sql =
+                "WITH prods AS (SELECT id, obra_id FROM productions WHERE productora_id = ?) " +
+                "SELECT " +
+                "  (SELECT COUNT(DISTINCT obra_id) FROM prods) AS obra_count, " +
+                "  (SELECT COUNT(*) FROM prods) AS production_count, " +
+                "  (SELECT COUNT(*) FROM watchlist w WHERE w.production_id IN (SELECT id FROM prods)) AS watchlist_count, " +
+                "  (SELECT COUNT(*) FROM seen_obras s WHERE s.obra_id IN (SELECT DISTINCT obra_id FROM prods)) AS seen_count, " +
+                "  (SELECT COUNT(*) FROM production_reviews r WHERE r.production_id IN (SELECT id FROM prods)) AS review_count, " +
+                "  (SELECT COUNT(*) FROM play_ratings pr WHERE pr.obra_id IN (SELECT DISTINCT obra_id FROM prods)) AS rating_count, " +
+                "  (SELECT AVG(pr.score) FROM play_ratings pr WHERE pr.obra_id IN (SELECT DISTINCT obra_id FROM prods)) AS rating_avg";
+
+        final List<DashboardStats> result = jdbcTemplate.query(sql, new Object[]{ productoraId }, (rs, rowNum) -> {
+            final double avg = rs.getDouble("rating_avg");
+            final boolean avgNull = rs.wasNull();
+            return new DashboardStats(
+                    rs.getInt("obra_count"),
+                    rs.getInt("production_count"),
+                    rs.getInt("watchlist_count"),
+                    rs.getInt("seen_count"),
+                    rs.getInt("review_count"),
+                    rs.getInt("rating_count"),
+                    avgNull ? null : avg
+            );
+        });
+        return result.isEmpty() ? new DashboardStats(0, 0, 0, 0, 0, 0, null) : result.get(0);
+    }
+
     private static String resolveImageUrl(final long imageId, final boolean imageIdNull) {
         return imageIdNull ? null : "/images/" + imageId;
     }

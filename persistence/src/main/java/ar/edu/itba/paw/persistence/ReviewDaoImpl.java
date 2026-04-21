@@ -108,6 +108,15 @@ public class ReviewDaoImpl implements ReviewDao {
     }
 
     @Override
+    public List<Review> findRecentByProductora(final long productoraId, final int limit) {
+        return jdbcTemplate.query(
+                SELECT_WITH_JOIN + "WHERE p.productora_id = ? ORDER BY r.created_at DESC LIMIT ?",
+                new Object[]{ productoraId, limit },
+                REVIEW_MAPPER
+        );
+    }
+
+    @Override
     public Review create(final long userId, final long productionId, final String body) {
         final Map<String, Object> params = new HashMap<>();
         params.put("user_id", userId);
