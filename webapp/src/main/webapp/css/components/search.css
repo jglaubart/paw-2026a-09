@@ -212,7 +212,7 @@
 
 .search-form-query,
 .search-form-filter-toggle,
-.search-form .search-form-submit-navbar {
+.search-form-inline-submit {
     position: relative;
     z-index: 12;
 }
@@ -262,6 +262,7 @@
 
 .search-form-query-navbar {
     min-width: 0;
+    justify-content: space-between;
 }
 
 .search-form-filter-toggle {
@@ -347,32 +348,29 @@
     border: none;
 }
 
-.search-form .search-form-submit-navbar {
-    min-height: var(--navbar-search-height);
-    min-width: 0;
-    width: 0;
+.search-form-inline-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    min-width: 2rem;
+    height: 2rem;
     padding: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    border-width: 0;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transform: translateX(0.2rem);
-    transition: width 0.18s ease, min-width 0.18s ease, padding 0.18s ease, opacity 0.18s ease, visibility 0s linear 0.18s, transform 0.18s ease;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(247, 242, 255, 0.7);
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
 }
 
-.search-form-submit-visible .search-form-submit-navbar,
-.search-form-shell:focus-within .search-form-submit-navbar {
-    min-width: 5.9rem;
-    width: auto;
-    padding: 0 0.95rem;
-    border-width: 1px;
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: translateX(0);
-    transition: width 0.18s ease, min-width 0.18s ease, padding 0.18s ease, opacity 0.18s ease, transform 0.18s ease;
+.search-form-inline-submit:hover,
+.search-form-inline-submit:focus {
+    color: var(--platea-text-primary);
+    border-color: rgba(186, 158, 255, 0.16);
+    background: rgba(186, 158, 255, 0.08);
+    transform: translateY(-1px);
+    outline: none;
 }
 
 .search-form-navbar:not(.search-form-has-active-filters) .search-form-filter-toggle {
@@ -786,7 +784,7 @@ body.navbar-search-lock-scroll {
     .search-form-filter-toggle,
     .search-form-panel,
     .search-form-backdrop,
-    .search-form-submit-navbar,
+    .search-form-inline-submit,
     .search-form-panel-close,
     .search-form-input,
     .search-form-select,

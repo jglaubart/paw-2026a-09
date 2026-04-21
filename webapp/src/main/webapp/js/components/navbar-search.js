@@ -18,24 +18,6 @@
         return form.querySelector("[data-search-trigger]");
     }
 
-    function getInlineInput(form) {
-        return form.querySelector("[data-search-inline-input]");
-    }
-
-    function hasInlineValue(form) {
-        var input = getInlineInput(form);
-
-        return !!(input && input.value.replace(/^\s+|\s+$/g, ""));
-    }
-
-    function updateInlineState(form) {
-        if (hasInlineValue(form) || form.contains(document.activeElement)) {
-            form.classList.add("search-form-submit-visible");
-        } else {
-            form.classList.remove("search-form-submit-visible");
-        }
-    }
-
     function isPopoverOpen(form) {
         var details = getDetails(form);
         return !!(details && details.classList.contains("search-form-details-open"));
@@ -470,14 +452,11 @@
                 return !!field;
             });
         var trigger = getTrigger(form);
-        var inlineInput = getInlineInput(form);
         var closeNodes = form.querySelectorAll("[data-search-close]");
         var clearButton = form.querySelector("[data-search-clear-filters]");
 
         updatePanelOffset(form);
         renderChips(form);
-
-        updateInlineState(form);
 
         if (trigger) {
             trigger.addEventListener("click", function (event) {
@@ -507,38 +486,12 @@
             }
         });
 
-        if (inlineInput) {
-            inlineInput.addEventListener("focus", function () {
-                updateInlineState(form);
-            });
-
-            inlineInput.addEventListener("input", function () {
-                updateInlineState(form);
-            });
-
-            inlineInput.addEventListener("blur", function () {
-                window.setTimeout(function () {
-                    updateInlineState(form);
-                }, 0);
-            });
-        }
-
         if (clearButton) {
             clearButton.addEventListener("click", function (event) {
                 event.preventDefault();
                 clearFilters(form);
             });
         }
-
-        form.addEventListener("focusin", function () {
-            updateInlineState(form);
-        });
-
-        form.addEventListener("focusout", function () {
-            window.setTimeout(function () {
-                updateInlineState(form);
-            }, 0);
-        });
 
         attachFilterComboboxes(form);
     }
@@ -551,8 +504,6 @@
                 if (isPopoverOpen(form)) {
                     closePopover(form, false);
                 }
-
-                updateInlineState(form);
             }
         });
     });
@@ -564,7 +515,6 @@
 
         toArray(forms).forEach(function (form) {
             closePopover(form, true);
-            updateInlineState(form);
         });
     });
 

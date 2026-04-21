@@ -191,11 +191,6 @@
     justify-self: end;
 }
 
-.navbar .search-form-navbar.search-form-submit-visible,
-.navbar .search-form-navbar:focus-within {
-    width: min(100%, 30rem);
-}
-
 .btn.navbar-submit-button {
     margin-left: auto;
 }
@@ -341,11 +336,6 @@
 
     .navbar .search-form-navbar {
         width: min(100%, 24rem);
-    }
-
-    .navbar .search-form-navbar.search-form-submit-visible,
-    .navbar .search-form-navbar:focus-within {
-        width: min(100%, 34rem);
     }
 }
 
