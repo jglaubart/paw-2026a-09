@@ -8,4 +8,5 @@ public interface SeenService {
     boolean hasSeen(long userId, long obraId);
     void markSeen(long userId, long obraId);
     void unmarkSeen(long userId, long obraId);
+    int countByUser(long userId);
 }

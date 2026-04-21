@@ -16,6 +16,7 @@ public interface ReviewService {
     List<Review> findByProduction(long productionId);
     List<Review> findByObra(long obraId);
     List<Review> findByUser(long userId);
+    List<Review> findRecentByUser(long userId, int limit);
     void deleteByUserAndObra(long userId, long obraId);
     void deleteByEmailAndObra(String email, long obraId);
 }

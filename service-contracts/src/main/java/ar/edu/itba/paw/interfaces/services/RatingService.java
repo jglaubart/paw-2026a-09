@@ -18,4 +18,6 @@ public interface RatingService {
     Map<Long, String> getProductionRatingLabels(Collection<Long> productionIds);
     Map<Long, String> getUserObraRatingLabels(long userId, Collection<Long> obraIds);
     Map<Long, Integer> getUserObraScores(long userId, Collection<Long> obraIds);
+    int[] getUserScoreDistribution(long userId);
+    Optional<Double> getUserAverageRating(long userId);
 }

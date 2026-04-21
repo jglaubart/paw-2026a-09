@@ -102,6 +102,28 @@ public class PlayRatingDaoImpl implements PlayRatingDao {
     }
 
     @Override
+    public Map<Integer, Long> findScoreDistributionByUser(final long userId) {
+        final Map<Integer, Long> result = new HashMap<>();
+        jdbcTemplate.query(
+                "SELECT score, COUNT(*) AS cnt FROM play_ratings WHERE user_id = ? GROUP BY score",
+                new Object[]{ userId },
+                (org.springframework.jdbc.core.RowCallbackHandler) rs ->
+                        result.put(rs.getInt("score"), rs.getLong("cnt"))
+        );
+        return result;
+    }
+
+    @Override
+    public Optional<Double> findAverageByUser(final long userId) {
+        final Double avg = jdbcTemplate.queryForObject(
+                "SELECT AVG(score) FROM play_ratings WHERE user_id = ?",
+                new Object[]{ userId },
+                Double.class
+        );
+        return Optional.ofNullable(avg);
+    }
+
+    @Override
     public PlayRating create(final long userId, final long obraId, final int score) {
         final Map<String, Object> params = new HashMap<>();
         params.put("user_id", userId);
