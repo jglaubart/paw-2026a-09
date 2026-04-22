@@ -428,9 +428,11 @@
 .search-form-panel {
     position: absolute;
     top: calc(100% + 0.7rem);
-    left: 0;
+    right: 0;
+    left: auto;
     z-index: 14;
-    width: min(31rem, calc(100vw - 2.5rem));
+    width: min(31rem, calc(100vw - 2rem));
+    max-width: calc(100vw - 2rem);
     padding: 1.2rem;
     border-radius: 1.55rem;
     opacity: 0;
@@ -714,6 +716,7 @@ body.navbar-search-lock-scroll {
 @media (max-width: 1120px) {
     .search-form-panel {
         width: min(30rem, calc(100vw - 2rem));
+        max-width: calc(100vw - 2rem);
     }
 }
 
@@ -722,7 +725,9 @@ body.navbar-search-lock-scroll {
         position: fixed;
         top: var(--navbar-search-panel-top);
         left: 1rem;
+        right: 1rem;
         width: auto;
+        max-width: calc(100vw - 2rem);
         max-height: calc(100vh - var(--navbar-search-panel-top) - 1rem);
         overflow-y: auto;
     }
