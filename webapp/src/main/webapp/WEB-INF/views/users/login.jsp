@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/button.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/alert.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/auth.css" />
+    <script src="${pageContext.request.contextPath}/js/components/auth-password-toggle.js" defer></script>
 </head>
 <body>
 <c:url var="loginActionUrl" value="/login" />
@@ -27,6 +28,8 @@
 <spring:message code="auth.login.loggedOut" var="loggedOutMessage" />
 <spring:message code="auth.login.unverified" var="unverifiedMessage" />
 <spring:message code="auth.login.passwordReset" var="passwordResetMessage" />
+<spring:message code="auth.password.toggle.show" var="showPasswordAriaLabel" />
+<spring:message code="auth.password.toggle.hide" var="hidePasswordAriaLabel" />
 
 <paw:navbar />
 
@@ -63,7 +66,23 @@
 
                 <div class="auth-field">
                     <label class="auth-label" for="password"><spring:message code="auth.field.password" /></label>
-                    <input id="password" name="password" type="password" class="auth-input" minlength="8" maxlength="72" required autocomplete="current-password" />
+                    <div class="auth-password-control">
+                        <input id="password" name="password" type="password" class="auth-input" minlength="8" maxlength="72" required autocomplete="current-password" data-password-input="true" />
+                        <button type="button" class="auth-password-toggle" data-password-toggle="true" aria-controls="password" aria-label="${fn:escapeXml(showPasswordAriaLabel)}" data-aria-show="${fn:escapeXml(showPasswordAriaLabel)}" data-aria-hide="${fn:escapeXml(hidePasswordAriaLabel)}">
+                            <span class="auth-password-toggle-icon auth-password-toggle-icon-show" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false">
+                                    <path d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12Z" />
+                                    <circle cx="12" cy="12" r="3.25" />
+                                </svg>
+                            </span>
+                            <span class="auth-password-toggle-icon auth-password-toggle-icon-hide" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false">
+                                    <path d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12Z" />
+                                    <path d="M4.5 4.5 19.5 19.5" />
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="auth-form-options">

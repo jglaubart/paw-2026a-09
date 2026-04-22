@@ -18,12 +18,15 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/button.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/alert.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/auth.css" />
+    <script src="${pageContext.request.contextPath}/js/components/auth-password-toggle.js" defer></script>
 </head>
 <body>
 <c:url var="resetActionUrl" value="/reset-password" />
 <c:url var="loginUrl" value="/login" />
 <c:url var="forgotUrl" value="/forgot-password" />
 <spring:message code="auth.reset.expired" var="expiredMessage" />
+<spring:message code="auth.password.toggle.show" var="showPasswordAriaLabel" />
+<spring:message code="auth.password.toggle.hide" var="hidePasswordAriaLabel" />
 
 <paw:navbar />
 
@@ -50,13 +53,45 @@
 
                     <div class="auth-field">
                         <label class="auth-label" for="password"><spring:message code="auth.reset.password" /></label>
-                        <form:password id="password" path="password" class="auth-input" minlength="8" maxlength="72" autocomplete="new-password" autofocus="autofocus" />
+                        <div class="auth-password-control">
+                            <form:password id="password" path="password" class="auth-input" minlength="8" maxlength="72" autocomplete="new-password" autofocus="autofocus" data-password-input="true" />
+                            <button type="button" class="auth-password-toggle" data-password-toggle="true" aria-controls="password" aria-label="${fn:escapeXml(showPasswordAriaLabel)}" data-aria-show="${fn:escapeXml(showPasswordAriaLabel)}" data-aria-hide="${fn:escapeXml(hidePasswordAriaLabel)}">
+                                <span class="auth-password-toggle-icon auth-password-toggle-icon-show" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" focusable="false">
+                                        <path d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12Z" />
+                                        <circle cx="12" cy="12" r="3.25" />
+                                    </svg>
+                                </span>
+                                <span class="auth-password-toggle-icon auth-password-toggle-icon-hide" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" focusable="false">
+                                        <path d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12Z" />
+                                        <path d="M4.5 4.5 19.5 19.5" />
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
                         <form:errors path="password" element="span" cssClass="auth-field-error" />
                     </div>
 
                     <div class="auth-field">
                         <label class="auth-label" for="repeatPassword"><spring:message code="auth.reset.repeatPassword" /></label>
-                        <form:password id="repeatPassword" path="repeatPassword" class="auth-input" minlength="8" maxlength="72" autocomplete="new-password" />
+                        <div class="auth-password-control">
+                            <form:password id="repeatPassword" path="repeatPassword" class="auth-input" minlength="8" maxlength="72" autocomplete="new-password" data-password-input="true" />
+                            <button type="button" class="auth-password-toggle" data-password-toggle="true" aria-controls="repeatPassword" aria-label="${fn:escapeXml(showPasswordAriaLabel)}" data-aria-show="${fn:escapeXml(showPasswordAriaLabel)}" data-aria-hide="${fn:escapeXml(hidePasswordAriaLabel)}">
+                                <span class="auth-password-toggle-icon auth-password-toggle-icon-show" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" focusable="false">
+                                        <path d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12Z" />
+                                        <circle cx="12" cy="12" r="3.25" />
+                                    </svg>
+                                </span>
+                                <span class="auth-password-toggle-icon auth-password-toggle-icon-hide" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" focusable="false">
+                                        <path d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12Z" />
+                                        <path d="M4.5 4.5 19.5 19.5" />
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
                         <form:errors path="repeatPassword" element="span" cssClass="auth-field-error" />
                     </div>
 
