@@ -32,8 +32,8 @@
         <c:when test="${featuredProduction != null}">
             <c:set var="heroImageUrl" value="${not empty featuredProduction.imageUrl ? featuredProduction.imageUrl : '/images/Portadas/hamlet.jpg'}" />
             <paw:hero
-                title="${fn:escapeXml(featuredProduction.name)}"
-                description="${fn:escapeXml(featuredProduction.synopsis)}"
+                title="${featuredProduction.name}"
+                description="${featuredProduction.synopsis}"
                 imageUrl="${heroImageUrl}"
                 badge="DESTACADO"
             />
@@ -52,11 +52,13 @@
         <c:if test="${not empty todayProductions}">
             <paw:sectionRow title="Para Hoy" subtitle="Obras con función hoy" cssClass="home-section-row" railNavigation="true">
                 <c:forEach var="p" items="${todayProductions}">
-                    <c:set var="detailUrl" value="/obras/${p.obraId}?produccionId=${p.id}" />
+                    <c:url var="detailUrl" value="/obras/${p.obraId}">
+                        <c:param name="produccionId" value="${p.id}" />
+                    </c:url>
                     <paw:productionCard
-                        title="${fn:escapeXml(p.name)}"
+                        title="${p.name}"
                         imageUrl="${not empty p.imageUrl ? p.imageUrl : '/images/Portadas/hamlet.jpg'}"
-                        venue="${fn:escapeXml(p.theater)}"
+                        venue="${p.theater}"
                         rating="${productionRatings[p.id]}"
                         badge="HOY"
                         detailUrl="${detailUrl}"
@@ -68,11 +70,13 @@
         <c:if test="${not empty availableCards}">
             <paw:sectionRow title="En Cartelera" subtitle="Obras activas dentro de su periodo" cssClass="home-section-row" railNavigation="true">
                 <c:forEach var="card" items="${availableCards}">
-                    <c:set var="detailUrl" value="/obras/${card.obraId}?produccionId=${card.representativeProductionId}" />
+                    <c:url var="detailUrl" value="/obras/${card.obraId}">
+                        <c:param name="produccionId" value="${card.representativeProductionId}" />
+                    </c:url>
                     <paw:productionCard
-                        title="${fn:escapeXml(card.title)}"
+                        title="${card.title}"
                         imageUrl="${not empty card.imageUrl ? card.imageUrl : '/images/Portadas/hamlet.jpg'}"
-                        venue="${fn:escapeXml(card.theaterSummary)}"
+                        venue="${card.theaterSummary}"
                         rating="${productionRatings[card.representativeProductionId]}"
                         detailUrl="${detailUrl}"
                     />
@@ -83,11 +87,13 @@
         <c:if test="${not empty allCards}">
             <paw:sectionRow title="Catálogo" subtitle="Todas las obras cargadas, activas o no" cssClass="home-section-row" railNavigation="true">
                 <c:forEach var="card" items="${allCards}">
-                    <c:set var="detailUrl" value="/obras/${card.obraId}?produccionId=${card.representativeProductionId}" />
+                    <c:url var="detailUrl" value="/obras/${card.obraId}">
+                        <c:param name="produccionId" value="${card.representativeProductionId}" />
+                    </c:url>
                     <paw:productionCard
-                        title="${fn:escapeXml(card.title)}"
+                        title="${card.title}"
                         imageUrl="${not empty card.imageUrl ? card.imageUrl : '/images/Portadas/principito.jpg'}"
-                        venue="${fn:escapeXml(card.theaterSummary)}"
+                        venue="${card.theaterSummary}"
                         rating="${productionRatings[card.representativeProductionId]}"
                         detailUrl="${detailUrl}"
                     />

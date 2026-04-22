@@ -127,8 +127,17 @@
             button.type = 'button';
             button.className = 'petition-form-autocomplete-item';
             button.setAttribute('data-obra-id', item.obraId);
-            button.innerHTML = '<strong>' + item.title + '</strong>' +
-                (item.theater ? '<span>' + item.theater + '</span>' : '');
+
+            var title = document.createElement('strong');
+            title.textContent = item.title || '';
+            button.appendChild(title);
+
+            if (item.theater) {
+                var theater = document.createElement('span');
+                theater.textContent = item.theater;
+                button.appendChild(theater);
+            }
+
             button.addEventListener('click', function () {
                 fetchPrefill(item.obraId);
             });
