@@ -3,6 +3,8 @@ package ar.edu.itba.paw.webapp.auth;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
@@ -15,13 +17,27 @@ public class RoleBasedAuthenticationSuccessHandler extends SavedRequestAwareAuth
 
     private static final String ADMIN_ROLE = "ROLE_ADMIN";
     private static final String ADMIN_LANDING = "/admin";
+    private static final String DEFAULT_LANDING = "/users/me";
+
+    private final HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+
+    public RoleBasedAuthenticationSuccessHandler() {
+        setDefaultTargetUrl(DEFAULT_LANDING);
+    }
 
     @Override
     public void onAuthenticationSuccess(final HttpServletRequest request,
                                         final HttpServletResponse response,
                                         final Authentication authentication) throws IOException, ServletException {
         if (hasAdminAuthority(authentication)) {
-            getRedirectStrategy().sendRedirect(request, response, ADMIN_LANDING);
+            requestCache.removeRequest(request, response);
+            getRedirectStrategy().sendRedirect(request, response, request.getContextPath() + ADMIN_LANDING);
+            return;
+        }
+        final SavedRequest saved = requestCache.getRequest(request, response);
+        if (saved != null && !"GET".equalsIgnoreCase(saved.getMethod())) {
+            requestCache.removeRequest(request, response);
+            getRedirectStrategy().sendRedirect(request, response, request.getContextPath() + DEFAULT_LANDING);
             return;
         }
         super.onAuthenticationSuccess(request, response, authentication);
