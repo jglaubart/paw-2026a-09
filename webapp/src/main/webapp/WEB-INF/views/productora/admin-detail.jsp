@@ -31,12 +31,12 @@
 
 <main class="prod-dash">
 
-    <header class="prod-dash-header">
+    <header class="prod-dash-header adm-shell-header">
         <span class="prod-dash-logo" aria-hidden="true">A</span>
         <div class="prod-dash-header-text">
             <h1 class="prod-dash-title">Backoffice</h1>
             <div class="prod-dash-meta">
-                <span class="prod-dash-meta-pill prod-dash-meta-owner">● Administración</span>
+                <span class="prod-dash-meta-pill prod-dash-meta-owner">Administración</span>
             </div>
         </div>
     </header>

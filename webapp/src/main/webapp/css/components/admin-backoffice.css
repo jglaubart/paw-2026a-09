@@ -188,6 +188,53 @@
   gap: 1.5rem;
 }
 
+/* ─── Admin shell header (minimal override) ────────────────────────── */
+
+.adm-shell-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.9rem;
+  padding: 0.25rem 0;
+  margin-bottom: 1.25rem;
+  border: none;
+  background: transparent;
+}
+
+.adm-shell-header .prod-dash-logo {
+  width: 2.65rem;
+  height: 2.65rem;
+  border-radius: 11px;
+  font-size: 1.15rem;
+  box-shadow: 0 8px 24px rgba(132,85,239,0.3);
+}
+
+.adm-shell-header .prod-dash-header-text {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.adm-shell-header .prod-dash-title {
+  font-size: clamp(1.45rem, 2.2vw, 1.9rem);
+  letter-spacing: -0.015em;
+  line-height: 1;
+}
+
+.adm-shell-header .prod-dash-meta {
+  margin-top: 0;
+  justify-content: flex-end;
+}
+
+.adm-shell-header .prod-dash-meta-pill {
+  font-size: 0.62rem;
+  letter-spacing: 0.17em;
+  color: rgba(186,158,255,0.9);
+}
+
 /* ─── Page header ───────────────────────────────────────────────────── */
 
 .adm-page-head {
@@ -756,6 +803,21 @@ table.adm-data tbody tr:last-child td { border-bottom: none; }
 
 .adm-field:hover { background: rgba(255,255,255,0.03); }
 
+.adm-field-form-row-toggle .adm-field-toggleable {
+  cursor: pointer;
+}
+
+.adm-field-form-row-toggle .adm-field-toggleable:focus-visible {
+  outline: none;
+  border-color: rgba(186,158,255,0.45);
+  box-shadow: 0 0 0 3px rgba(186,158,255,0.14);
+}
+
+.adm-field-form-row-toggle .adm-field-toggleable .adm-flag-btn {
+  pointer-events: none;
+  cursor: default;
+}
+
 .adm-field.is-flagged {
   background: rgba(248,160,16,0.06);
   border-color: rgba(248,160,16,0.35);
@@ -1112,6 +1174,20 @@ table.adm-data tbody tr:last-child td { border-bottom: none; }
   .adm-row > :nth-child(3),
   .adm-row > :nth-child(4),
   .adm-row > :nth-child(5) { display: none; }
+
+  .adm-shell-header {
+    align-items: flex-start;
+  }
+
+  .adm-shell-header .prod-dash-header-text {
+    flex-direction: column;
+    gap: 0.35rem;
+    align-items: flex-start;
+  }
+
+  .adm-shell-header .prod-dash-meta {
+    justify-content: flex-start;
+  }
 }
 
 @media (max-width: 768px) {

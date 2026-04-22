@@ -29,12 +29,12 @@
 
 <main class="prod-dash">
 
-    <header class="prod-dash-header">
+    <header class="prod-dash-header adm-shell-header">
         <span class="prod-dash-logo" aria-hidden="true">A</span>
         <div class="prod-dash-header-text">
             <h1 class="prod-dash-title">Backoffice</h1>
             <div class="prod-dash-meta">
-                <span class="prod-dash-meta-pill prod-dash-meta-owner">● Administración</span>
+                <span class="prod-dash-meta-pill prod-dash-meta-owner">Administración</span>
             </div>
         </div>
     </header>
@@ -84,7 +84,7 @@
             <c:choose>
                 <c:when test="${petition.status eq 'PENDING'}">
                     <c:url var="decisionUrl" value="/admin/${petition.id}/decision" />
-                    <form action="${decisionUrl}" method="post" class="adm-field-form">
+                    <form action="${decisionUrl}" method="post" class="adm-field-form adm-field-form-row-toggle">
                         <input type="hidden" name="${_csrf.parameterName}" value="${fn:escapeXml(_csrf.token)}" />
 
                         <div class="adm-detail-grid">
@@ -92,7 +92,7 @@
                             <div class="adm-panel">
                                 <div class="adm-panel-head-row">
                                     <h3>Revisión por campo</h3>
-                                    <span class="adm-panel-hint">Flag los campos con problemas y dejá un comentario. El resto queda aprobado implícito.</span>
+                                    <span class="adm-panel-hint">Hacé click en la fila para marcar un campo con problemas y dejar comentario. El resto queda aprobado implícito.</span>
                                 </div>
 
                                 <div class="adm-field-list">
