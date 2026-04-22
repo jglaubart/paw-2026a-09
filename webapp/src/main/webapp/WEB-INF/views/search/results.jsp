@@ -60,7 +60,14 @@
 
                     <div class="search-results-nearby-list">
                         <c:forEach var="dateOption" items="${nearbyDates}">
-                            <c:set var="nearbyDateUrl" value="/search?q=${query}&genre=${genre}&theater=${theater}&location=${location}&available=true&date=${dateOption.date}" />
+                            <c:url var="nearbyDateUrl" value="/search">
+                                <c:param name="q" value="${query}" />
+                                <c:param name="genre" value="${genre}" />
+                                <c:param name="theater" value="${theater}" />
+                                <c:param name="location" value="${location}" />
+                                <c:param name="available" value="true" />
+                                <c:param name="date" value="${dateOption.date}" />
+                            </c:url>
 
                             <a href="${nearbyDateUrl}" class="search-results-nearby-option search-results-nearby-option-link">
                                 <span class="search-results-nearby-date"><c:out value="${dateOption.date}" /></span>
@@ -84,11 +91,13 @@
 
                     <div class="section-row-cards production-list-row-cards">
                         <c:forEach var="card" items="${resultCards}">
-                            <c:set var="detailUrl" value="/obras/${card.obraId}?produccionId=${card.representativeProductionId}" />
+                            <c:url var="detailUrl" value="/obras/${card.obraId}">
+                                <c:param name="produccionId" value="${card.representativeProductionId}" />
+                            </c:url>
                             <paw:productionCard
-                                title="${fn:escapeXml(card.title)}"
+                                title="${card.title}"
                                 imageUrl="${not empty card.imageUrl ? card.imageUrl : '/images/Portadas/hamlet.jpg'}"
-                                venue="${fn:escapeXml(card.theaterSummary)}"
+                                venue="${card.theaterSummary}"
                                 rating="${productionRatings[card.representativeProductionId]}"
                                 detailUrl="${detailUrl}"
                             />

@@ -37,4 +37,9 @@ public class SeenServiceImpl implements SeenService {
     public void unmarkSeen(final long userId, final long obraId) {
         seenDao.unmarkSeen(userId, obraId);
     }
+
+    @Override
+    public int countByUser(final long userId) {
+        return seenDao.findByUser(userId).size();
+    }
 }

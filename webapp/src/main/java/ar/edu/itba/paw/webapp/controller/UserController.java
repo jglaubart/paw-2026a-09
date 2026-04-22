@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.ImageService;
 import ar.edu.itba.paw.interfaces.services.RatingService;
 import ar.edu.itba.paw.interfaces.services.ReviewService;
+import ar.edu.itba.paw.interfaces.services.SeenService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.interfaces.services.WatchlistService;
 import ar.edu.itba.paw.interfaces.services.exception.UserAlreadyExistsException;
@@ -39,6 +40,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -48,12 +52,15 @@ public class UserController {
 
     private static final String PENDING_USER_ID_ATTR = "pendingVerificationUserId";
     private static final String PENDING_EMAIL_ATTR = "pendingVerificationEmail";
+    private static final String USERNAME_LAST_CHANGED_ATTR = "usernameLastChanged";
+    private static final long USERNAME_COOLDOWN_MILLIS = 60_000L;
 
     private final UserService userService;
     private final ImageService imageService;
     private final ReviewService reviewService;
     private final WatchlistService watchlistService;
     private final RatingService ratingService;
+    private final SeenService seenService;
     private final UserDetailsService userDetailsService;
 
     @Autowired
@@ -62,12 +69,14 @@ public class UserController {
                           final ReviewService reviewService,
                           final WatchlistService watchlistService,
                           final RatingService ratingService,
+                          final SeenService seenService,
                           final UserDetailsService userDetailsService) {
         this.userService = userService;
         this.imageService = imageService;
         this.reviewService = reviewService;
         this.watchlistService = watchlistService;
         this.ratingService = ratingService;
+        this.seenService = seenService;
         this.userDetailsService = userDetailsService;
     }
 
@@ -295,19 +304,27 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/me", method = RequestMethod.GET)
-    public ModelAndView profile(@AuthenticationPrincipal final PawAuthUser authUser) {
-        final ModelAndView mav = buildProfileMav(authUser);
-        mav.addObject("updatePersonalDataForm", new UpdatePersonalDataForm());
+    public ModelAndView profile(@AuthenticationPrincipal final PawAuthUser authUser,
+                                final HttpServletRequest request) {
+        final ModelAndView mav = buildProfileMav(authUser, request.getSession(false));
+        final UpdatePersonalDataForm form = new UpdatePersonalDataForm();
+        form.setUsername(authUser.getUser().getUsername());
+        form.setBio(authUser.getUser().getBio());
+        mav.addObject("updatePersonalDataForm", form);
         return mav;
     }
 
     @RequestMapping(value = "/users/me/username", method = RequestMethod.POST)
     public ModelAndView updateUsername(@AuthenticationPrincipal final PawAuthUser authUser,
                                        @Valid @ModelAttribute("updateUsernameForm") final UpdateUsernameForm form,
-                                       final BindingResult errors) {
+                                       final BindingResult errors,
+                                       final HttpServletRequest request) {
         if (errors.hasErrors()) {
-            final ModelAndView mav = buildProfileMav(authUser);
-            mav.addObject("updatePersonalDataForm", new UpdatePersonalDataForm());
+            final ModelAndView mav = buildProfileMav(authUser, request.getSession(false));
+            final UpdatePersonalDataForm personalForm = new UpdatePersonalDataForm();
+            personalForm.setUsername(authUser.getUser().getUsername());
+            personalForm.setBio(authUser.getUser().getBio());
+            mav.addObject("updatePersonalDataForm", personalForm);
             return mav;
         }
         userService.updateUsername(authUser.getUser().getId(), form.getUsername());
@@ -335,16 +352,36 @@ public class UserController {
     @RequestMapping(value = "/users/me/personal", method = RequestMethod.POST)
     public ModelAndView updatePersonalData(@AuthenticationPrincipal final PawAuthUser authUser,
                                            @Valid @ModelAttribute("updatePersonalDataForm") final UpdatePersonalDataForm form,
-                                           final BindingResult errors) {
+                                           final BindingResult errors,
+                                           final HttpServletRequest request) {
+        final HttpSession session = request.getSession(true);
         if (errors.hasErrors()) {
-            final ModelAndView mav = buildProfileMav(authUser);
+            final ModelAndView mav = buildProfileMav(authUser, session);
             mav.addObject("updatePersonalDataForm", form);
             mav.addObject("activeTab", "account");
             return mav;
         }
-        if (form.getUsername() != null && !form.getUsername().trim().isEmpty()) {
-            userService.updateUsername(authUser.getUser().getId(), form.getUsername());
+
+        final String newUsername = form.getUsername() != null ? form.getUsername().trim() : "";
+        final boolean wantsUsernameChange = !newUsername.isEmpty()
+                && !newUsername.equals(authUser.getUser().getUsername());
+
+        if (wantsUsernameChange) {
+            final Long lastChanged = (Long) session.getAttribute(USERNAME_LAST_CHANGED_ATTR);
+            if (lastChanged != null && System.currentTimeMillis() - lastChanged < USERNAME_COOLDOWN_MILLIS) {
+                final long remainingSecs = (long) Math.ceil(
+                        (USERNAME_COOLDOWN_MILLIS - (System.currentTimeMillis() - lastChanged)) / 1000.0);
+                errors.rejectValue("username", "profile.username.cooldown",
+                        new Object[]{ remainingSecs }, null);
+                final ModelAndView mav = buildProfileMav(authUser, session);
+                mav.addObject("updatePersonalDataForm", form);
+                mav.addObject("activeTab", "account");
+                return mav;
+            }
+            userService.updateUsername(authUser.getUser().getId(), newUsername);
+            session.setAttribute(USERNAME_LAST_CHANGED_ATTR, System.currentTimeMillis());
         }
+
         if (form.getBio() != null) {
             userService.updateBio(authUser.getUser().getId(), form.getBio());
         }
@@ -352,19 +389,47 @@ public class UserController {
         return new ModelAndView("redirect:/users/me");
     }
 
-    private ModelAndView buildProfileMav(final PawAuthUser authUser) {
+    private ModelAndView buildProfileMav(final PawAuthUser authUser, final HttpSession session) {
         final long userId = authUser.getUser().getId();
         final ModelAndView mav = new ModelAndView("users/profile");
         mav.addObject("currentUserEmail", authUser.getUser().getEmail());
         mav.addObject("currentUsername", authUser.getUser().getUsername());
         mav.addObject("currentUserImageId", authUser.getUser().getImageId());
         mav.addObject("currentUserBio", authUser.getUser().getBio());
-        mav.addObject("reviews", reviewService.findByUser(userId));
-        mav.addObject("updateUsernameForm", new UpdateUsernameForm());
         final List<Production> watchlist = watchlistService.findByUser(userId);
         mav.addObject("watchlist", watchlist);
+        mav.addObject("watchlistCount", watchlist.size());
+        final List<Review> reviews = reviewService.findByUser(userId);
+        mav.addObject("reviews", reviews);
+        mav.addObject("reviewsCount", reviews.size());
+        mav.addObject("recentReviews", reviewService.findRecentByUser(userId, 3));
+        mav.addObject("historialCount", seenService.countByUser(userId));
+        final Double avgRating = ratingService.getUserAverageRating(userId).orElse(null);
+        mav.addObject("averageRating", avgRating);
+        mav.addObject("avgFormatted", avgRating != null ? formatAverage(avgRating) : null);
+        mav.addObject("ratingDistribution", ratingService.getUserScoreDistribution(userId));
+        mav.addObject("today", LocalDate.now());
+        mav.addObject("updateUsernameForm", new UpdateUsernameForm());
         mav.addObject("productionRatings", ratingService.getProductionRatingLabels(collectProductionIds(watchlist)));
+        // Username edit cooldown
+        if (session != null) {
+            final Long lastChanged = (Long) session.getAttribute(USERNAME_LAST_CHANGED_ATTR);
+            if (lastChanged != null) {
+                final long elapsed = System.currentTimeMillis() - lastChanged;
+                if (elapsed < USERNAME_COOLDOWN_MILLIS) {
+                    mav.addObject("usernameEditLocked", true);
+                    mav.addObject("usernameEditSecondsLeft",
+                            (int) Math.ceil((USERNAME_COOLDOWN_MILLIS - elapsed) / 1000.0));
+                }
+            }
+        }
         return mav;
+    }
+
+    private String formatAverage(final double avg) {
+        final DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ROOT);
+        symbols.setDecimalSeparator(',');
+        return new DecimalFormat("0.0", symbols).format(avg);
     }
 
     private List<Long> collectProductionIds(final List<Production> productions) {

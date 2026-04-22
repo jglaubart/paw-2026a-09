@@ -11,7 +11,7 @@
 <c:set var="searchFeedback" value="${error}" />
 <c:set var="hasSearchQuery" value="${not empty param.q}" />
 
-<form action="${searchUrl}" method="get" class="search-form search-form-${variant} ${hasActiveFilters ? 'search-form-has-active-filters' : ''} ${hasSearchQuery ? 'search-form-inline-open' : ''}" data-navbar-search>
+<form action="${searchUrl}" method="get" class="search-form search-form-${variant} ${hasActiveFilters ? 'search-form-has-active-filters' : ''}" data-navbar-search>
     <c:choose>
         <c:when test="${variant == 'navbar'}">
             <div class="search-form-bar">
@@ -21,7 +21,8 @@
                                 class="search-form-filter-toggle"
                                 data-search-trigger
                                 aria-controls="navbar-search-panel"
-                                aria-expanded="false">
+                                aria-expanded="false"
+                                aria-label="Abrir filtros de búsqueda">
                             <span class="search-form-filter-icon" aria-hidden="true">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
                                      stroke="currentColor" stroke-width="1.9"
@@ -31,10 +32,11 @@
                                     <line x1="10" y1="18" x2="14" y2="18" />
                                 </svg>
                             </span>
-                            <span class="search-form-filter-label">Filtros</span>
-                            <span class="search-form-filter-count ${activeFilterCount == 0 ? 'is-empty' : ''}" data-search-filter-count>
-                                <c:out value="${activeFilterCount}" />
-                            </span>
+                            <c:if test="${activeFilterCount > 0}">
+                                <span class="search-form-filter-count" data-search-filter-count>
+                                    <c:out value="${activeFilterCount}" />
+                                </span>
+                            </c:if>
                         </button>
 
                         <div class="search-form-backdrop" data-search-close aria-hidden="true"></div>
@@ -248,47 +250,27 @@
                         </section>
                     </div>
 
-                    <button type="button"
-                            class="search-form-expand-toggle"
-                            data-search-expand-trigger
-                            aria-controls="navbar-search-inline"
-                            aria-expanded="${hasSearchQuery ? 'true' : 'false'}"
-                            aria-label="Abrir búsqueda">
-                        <span class="search-form-icon" aria-hidden="true">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" stroke-width="2.05"
-                                 stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="11" cy="11" r="7"/>
-                                <line x1="16.5" y1="16.5" x2="21" y2="21"/>
-                            </svg>
-                        </span>
-                    </button>
-
                     <div id="navbar-search-inline" class="search-form-inline-search">
-                        <label class="search-form-query search-form-query-navbar" for="navbar-search-q">
-                            <span class="search-form-icon" aria-hidden="true">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-                                     stroke="currentColor" stroke-width="2.05"
-                                     stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="11" cy="11" r="7"/>
-                                    <line x1="16.5" y1="16.5" x2="21" y2="21"/>
-                                </svg>
-                            </span>
+                        <div class="search-form-query search-form-query-navbar">
                             <input id="navbar-search-q"
-                                   type="text"
-                                   name="q"
+                                    type="text"
+                                    name="q"
                                    value="${fn:escapeXml(param.q)}"
-                                   placeholder="Buscar obra, sala o productora"
-                                   maxlength="100"
-                                   class="search-form-input search-form-input-query"
-                                   data-search-inline-input />
-                        </label>
-
-                        <paw:button text="Buscar"
-                                    type="submit"
-                                    size="sm"
-                                    variant="cta"
-                                    cssClass="search-form-submit search-form-submit-navbar" />
+                                    placeholder="Buscar obra, sala o productora"
+                                    maxlength="100"
+                                    class="search-form-input search-form-input-query"
+                                    data-search-inline-input />
+                            <button type="submit" class="search-form-inline-submit" aria-label="Buscar">
+                                <span class="search-form-icon" aria-hidden="true">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2.05"
+                                         stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="7"/>
+                                        <line x1="16.5" y1="16.5" x2="21" y2="21"/>
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

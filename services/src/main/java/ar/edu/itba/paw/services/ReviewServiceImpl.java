@@ -91,6 +91,12 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    public List<Review> findRecentByUser(final long userId, final int limit) {
+        final List<Review> all = reviewDao.findByUser(userId);
+        return all.subList(0, Math.min(limit, all.size()));
+    }
+
+    @Override
     public void deleteByUserAndObra(final long userId, final long obraId) {
         reviewDao.deleteByUserAndObra(userId, obraId);
     }

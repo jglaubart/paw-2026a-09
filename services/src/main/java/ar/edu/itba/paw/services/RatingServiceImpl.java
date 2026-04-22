@@ -120,6 +120,24 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
+    public int[] getUserScoreDistribution(final long userId) {
+        final int[] dist = new int[11];
+        final Map<Integer, Long> raw = playRatingDao.findScoreDistributionByUser(userId);
+        for (final Map.Entry<Integer, Long> e : raw.entrySet()) {
+            final int score = e.getKey();
+            if (score >= 1 && score <= 10) {
+                dist[score] = e.getValue().intValue();
+            }
+        }
+        return dist;
+    }
+
+    @Override
+    public Optional<Double> getUserAverageRating(final long userId) {
+        return playRatingDao.findAverageByUser(userId);
+    }
+
+    @Override
     public Map<Long, String> getUserObraRatingLabels(final long userId, final Collection<Long> obraIds) {
         final Map<Long, String> labels = new HashMap<>();
         if (obraIds == null || obraIds.isEmpty()) {

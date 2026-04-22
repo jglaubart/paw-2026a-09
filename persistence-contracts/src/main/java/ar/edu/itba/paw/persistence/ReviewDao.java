@@ -10,6 +10,7 @@ public interface ReviewDao {
     List<Review> findByProduction(long productionId);
     List<Review> findByObra(long obraId);
     List<Review> findByUser(long userId);
+    List<Review> findRecentByProductora(long productoraId, int limit);
     Review create(long userId, long productionId, String body);
     Review createForObra(long userId, long obraId, long productionId, String body);
     Review update(long userId, long productionId, String body);

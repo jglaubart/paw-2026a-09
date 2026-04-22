@@ -5,8 +5,8 @@ import javax.validation.constraints.Size;
 
 public class UpdatePersonalDataForm {
 
-    @Size(min = 1, max = 30, message = "{profile.username.size}")
-    @Pattern(regexp = "^[a-zA-Z0-9_.-]+$", message = "{auth.register.username.pattern}")
+    @Size(max = 30, message = "{profile.username.size}")
+    @Pattern(regexp = "^[a-zA-Z0-9_.-]*$", message = "{auth.register.username.pattern}")
     private String username;
 
     @Size(max = 300, message = "{profile.bio.size}")

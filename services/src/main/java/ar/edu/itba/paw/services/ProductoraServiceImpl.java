@@ -1,13 +1,17 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.interfaces.persistence.ProductionDao;
 import ar.edu.itba.paw.interfaces.persistence.ProductoraDao;
 import ar.edu.itba.paw.interfaces.persistence.ProductoraMemberDao;
+import ar.edu.itba.paw.interfaces.persistence.ReviewDao;
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.services.ProductoraService;
 import ar.edu.itba.paw.interfaces.services.exception.ProductoraAccessDeniedException;
 import ar.edu.itba.paw.models.Productora;
 import ar.edu.itba.paw.models.ProductoraMember;
 import ar.edu.itba.paw.models.ProductoraMemberRole;
+import ar.edu.itba.paw.models.Production;
+import ar.edu.itba.paw.models.Review;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,14 +26,20 @@ public class ProductoraServiceImpl implements ProductoraService {
     private final ProductoraDao productoraDao;
     private final ProductoraMemberDao memberDao;
     private final UserDao userDao;
+    private final ProductionDao productionDao;
+    private final ReviewDao reviewDao;
 
     @Autowired
     public ProductoraServiceImpl(final ProductoraDao productoraDao,
                                  final ProductoraMemberDao memberDao,
-                                 final UserDao userDao) {
+                                 final UserDao userDao,
+                                 final ProductionDao productionDao,
+                                 final ReviewDao reviewDao) {
         this.productoraDao = productoraDao;
         this.memberDao = memberDao;
         this.userDao = userDao;
+        this.productionDao = productionDao;
+        this.reviewDao = reviewDao;
     }
 
     @Override
@@ -91,6 +101,27 @@ public class ProductoraServiceImpl implements ProductoraService {
             throw new IllegalArgumentException("Owner cannot remove themselves");
         }
         memberDao.remove(memberUserId, productoraId);
+    }
+
+    @Override
+    public List<Production> findProductionsByProductora(final long productoraId) {
+        return productionDao.findByProductoraId(productoraId);
+    }
+
+    @Override
+    public ProductoraDashboardStats getDashboardStats(final long productoraId) {
+        final ProductoraDao.DashboardStats s = productoraDao.findDashboardStats(productoraId);
+        return new ProductoraDashboardStats(
+                s.getObraCount(), s.getProductionCount(),
+                s.getWatchlistCount(), s.getSeenCount(),
+                s.getReviewCount(), s.getRatingCount(),
+                s.getRatingAverage()
+        );
+    }
+
+    @Override
+    public List<Review> findRecentReviewsByProductora(final long productoraId, final int limit) {
+        return reviewDao.findRecentByProductora(productoraId, limit);
     }
 
     private void requireOwner(final long actingUserId, final long productoraId) {
