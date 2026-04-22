@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="paw" tagdir="/WEB-INF/tags" %>
 
 <!DOCTYPE html>
@@ -8,313 +8,405 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Petición #${petition.id}</title>
+    <title>Petición #<c:out value="${petition.id}" /> — Backoffice</title>
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/favicon.png" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/main.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/navbar.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/search.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/button.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/alert.css" />
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/play-petitions-admin.css" />
-    <script src="${pageContext.request.contextPath}/js/components/play-petitions-admin-detail.js" defer></script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/productora.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/admin-backoffice.css" />
+    <script src="${pageContext.request.contextPath}/js/components/admin-field-flags.js" defer></script>
 </head>
 <body>
+
+<c:url var="petitionsUrl"   value="/admin/obras" />
+<c:url var="productorasUrl" value="/admin/productoras" />
+<c:url var="decisionUrl"    value="/admin/${petition.id}/decision" />
+
 <paw:navbar />
 
-<main class="petition-admin-page petition-admin-page-detail">
-    <section class="petition-admin-shell petition-admin-detail-shell">
-        <div class="petition-admin-detail-header petition-admin-panel petition-admin-panel-hero">
-            <c:url var="adminListUrl" value="/admin" />
-            <a href="${adminListUrl}" class="petition-admin-back">← Volver al listado</a>
-            <div class="petition-admin-card-head">
-                <span class="petition-admin-status petition-admin-status-${fn:toLowerCase(petition.status)}"><c:out value="${petition.status}" /></span>
-                <p class="petition-admin-card-id">Solicitud #<c:out value="${petition.id}" /></p>
+<main class="prod-dash">
+
+    <header class="prod-dash-header">
+        <span class="prod-dash-logo" aria-hidden="true">A</span>
+        <div class="prod-dash-header-text">
+            <h1 class="prod-dash-title">Backoffice</h1>
+            <div class="prod-dash-meta">
+                <span class="prod-dash-meta-pill prod-dash-meta-owner">● Administración</span>
             </div>
-            <h1><c:out value="${petition.title}" /></h1>
-            <p class="petition-admin-card-meta"><c:out value="${petition.petitionerEmail}" /> · <c:out value="${petition.theater}" /></p>
         </div>
+    </header>
 
-        <c:if test="${updated eq 'approved'}"><div class="petition-admin-alert"><paw:alert variant="success" message="La petición fue aprobada y se notificó al solicitante." showClose="false" /></div></c:if>
-        <c:if test="${updated eq 'changes_requested'}"><div class="petition-admin-alert"><paw:alert variant="warning" message="Se solicitaron cambios y el draft ya quedó disponible para el solicitante." showClose="false" /></div></c:if>
-        <c:if test="${error eq 'already_resolved'}"><div class="petition-admin-alert"><paw:alert variant="error" message="La petición ya estaba resuelta." showClose="false" /></div></c:if>
-        <c:if test="${error eq 'invalid_action'}"><div class="petition-admin-alert"><paw:alert variant="error" message="La acción solicitada no es válida." showClose="false" /></div></c:if>
-        <c:if test="${error eq 'invalid_review'}"><div class="petition-admin-alert"><paw:alert variant="error" message="Marcá al menos un campo observado y explicá qué corregir antes de pedir cambios." showClose="false" /></div></c:if>
+    <div class="prod-dash-layout">
 
-        <div class="petition-admin-detail-grid">
-            <section class="petition-admin-panel petition-admin-panel-story">
-                <c:if test="${petition.coverImageId != null}">
-                    <c:url var="coverUrl" value="/petition-images/${petition.coverImageId}" />
-                    <img class="petition-admin-cover" src="${coverUrl}" alt="${fn:escapeXml(petition.title)}" />
-                </c:if>
+        <aside class="prod-dash-sidebar" aria-label="Secciones del backoffice">
+            <h4 class="prod-dash-sidebar-section">Revisión</h4>
+            <a class="prod-dash-sidebar-item is-active" href="${petitionsUrl}">
+                Peticiones de obra
+            </a>
+            <a class="prod-dash-sidebar-item" href="${productorasUrl}">
+                Postulaciones productora
+            </a>
+        </aside>
 
-                <dl class="petition-admin-definition-list">
-                    <dt>Sinopsis</dt>
-                    <dd><c:out value="${petition.synopsis}" /></dd>
-                    <dt>Géneros</dt>
-                    <dd>
-                        <c:forEach var="genre" items="${petition.genres}" varStatus="status">
-                            <c:out value="${genre.name}" /><c:if test="${not status.last}">, </c:if>
-                        </c:forEach>
-                    </dd>
-                    <dt>Duración</dt>
-                    <dd><c:out value="${petition.durationMinutes}" /> minutos</dd>
-                    <dt>Idioma</dt>
-                    <dd><c:out value="${petition.language}" /></dd>
-                    <dt>Dirección</dt>
-                    <dd><c:out value="${petition.director}" /></dd>
-                    <dt>Teatro / sala</dt>
-                    <dd><c:out value="${petition.theater}" /></dd>
-                    <dt>Dirección de la sala</dt>
-                    <dd><c:out value="${petition.theaterAddress}" /></dd>
-                    <dt>Inicio de temporada</dt>
-                    <dd><c:out value="${petition.startDate}" /></dd>
-                    <dt>Fin de temporada</dt>
-                    <dd><c:out value="${petition.endDate}" /></dd>
-                    <c:if test="${not empty petition.additionalShowDates}">
-                        <dt>Fechas adicionales</dt>
-                        <dd>
-                            <c:forEach var="showDate" items="${petition.additionalShowDates}" varStatus="status">
-                                <c:out value="${showDate}" /><c:if test="${not status.last}">, </c:if>
-                            </c:forEach>
-                        </dd>
-                    </c:if>
-                    <c:if test="${not empty petition.schedule}">
-                        <dt>Horarios</dt>
-                        <dd><c:out value="${petition.schedule}" /></dd>
-                    </c:if>
-                    <c:if test="${not empty petition.ticketUrl}">
-                        <dt>Entradas</dt>
-                        <dd><a class="petition-admin-inline-link" href="${fn:escapeXml(petition.ticketUrl)}" target="_blank" rel="noreferrer">Ver link</a></dd>
-                    </c:if>
-                    <c:if test="${petition.sourceObraId != null}">
-                        <dt>Obra reutilizada</dt>
-                        <dd>Esta petición está vinculada a una obra existente. Al aprobar, se crea solo una nueva producción.</dd>
-                    </c:if>
-                </dl>
-            </section>
+        <section class="prod-dash-content">
 
-            <section class="petition-admin-panel petition-admin-panel-actions">
-                <h2>Decisión editorial</h2>
-                <p class="petition-admin-panel-copy">Marcá únicamente los campos con problemas y dejá un comentario concreto para que el submitter vea qué corregir dentro del draft.</p>
+            <c:if test="${updated eq 'approved'}"><div class="adm-alert"><paw:alert variant="success" message="La petición fue aprobada y se notificó al solicitante." showClose="false" /></div></c:if>
+            <c:if test="${updated eq 'changes_requested'}"><div class="adm-alert"><paw:alert variant="warning" message="Se solicitaron cambios y el draft ya quedó disponible para el solicitante." showClose="false" /></div></c:if>
+            <c:if test="${error eq 'already_resolved'}"><div class="adm-alert"><paw:alert variant="error" message="La petición ya estaba resuelta." showClose="false" /></div></c:if>
+            <c:if test="${error eq 'invalid_action'}"><div class="adm-alert"><paw:alert variant="error" message="La acción solicitada no es válida." showClose="false" /></div></c:if>
+            <c:if test="${error eq 'invalid_review'}"><div class="adm-alert"><paw:alert variant="error" message="Marcá al menos un campo observado y explicá qué corregir antes de pedir cambios." showClose="false" /></div></c:if>
 
-                <c:if test="${petition.status eq 'PENDING'}">
+            <div class="adm-detail-head">
+                <a href="${petitionsUrl}" class="adm-detail-back">← Volver a la cola</a>
+                <div class="adm-detail-head-row">
+                    <div>
+                        <h2 class="prod-dash-content-title"><c:out value="${petition.title}" /></h2>
+                        <div class="adm-detail-meta">
+                            <span class="adm-status adm-status-${fn:toLowerCase(petition.status)}">
+                                <c:choose>
+                                    <c:when test="${petition.status eq 'CHANGES_REQUESTED'}">Con cambios</c:when>
+                                    <c:when test="${petition.status eq 'PENDING'}">Pendiente</c:when>
+                                    <c:when test="${petition.status eq 'APPROVED'}">Aprobada</c:when>
+                                    <c:otherwise><c:out value="${petition.status}" /></c:otherwise>
+                                </c:choose>
+                            </span>
+                            <span class="adm-type-pill petition"><span class="adm-type-pill-swatch"></span>Petición de obra</span>
+                            <span class="adm-detail-id">#<c:out value="${petition.id}" /></span>
+                            <span class="prod-dash-subtle"><c:out value="${petition.petitionerEmail}" /></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <c:choose>
+                <c:when test="${petition.status eq 'PENDING'}">
                     <c:url var="decisionUrl" value="/admin/${petition.id}/decision" />
-                    <form action="${decisionUrl}" method="post" class="petition-admin-decision-form">
+                    <form action="${decisionUrl}" method="post" class="adm-field-form">
                         <input type="hidden" name="${_csrf.parameterName}" value="${fn:escapeXml(_csrf.token)}" />
 
-                        <label for="adminNotes">Resumen general para el solicitante</label>
-                        <textarea id="adminNotes" name="adminNotes" rows="4" class="petition-admin-notes"><c:out value="${reviewForm.adminNotes}" /></textarea>
+                        <div class="adm-detail-grid">
 
-                        <div class="petition-admin-review-grid">
-                            <c:set var="titleToken" value=",title," />
-                            <c:set var="titleSelected" value="${fn:contains(selectedIssueFieldsCsv, titleToken)}" />
-                            <div class="petition-admin-review-item">
-                                <label class="petition-admin-review-checkbox"><input type="checkbox" name="issueFields" value="title" data-review-issue-toggle="true" data-comment-key="title" <c:if test="${titleSelected}">checked="checked"</c:if> />Título</label>
-                                <p class="petition-admin-review-value"><c:out value="${petition.title}" /></p>
-                                <div class="petition-admin-review-comment ${titleSelected ? '' : 'petition-admin-review-comment-hidden'}" data-review-comment="title">
-                                    <label for="field-comment-title" class="petition-admin-review-comment-label">Motivo</label>
-                                    <textarea id="field-comment-title" name="fieldComments[title]" rows="2" placeholder="Explicá por qué el título no es correcto" data-review-comment-input="title" <c:if test="${not titleSelected}">disabled="disabled"</c:if>><c:out value="${reviewForm.fieldComments['title']}" /></textarea>
+                            <div class="adm-panel">
+                                <div class="adm-panel-head-row">
+                                    <h3>Revisión por campo</h3>
+                                    <span class="adm-panel-hint">Flag los campos con problemas y dejá un comentario. El resto queda aprobado implícito.</span>
                                 </div>
-                            </div>
 
-                            <c:set var="synopsisToken" value=",synopsis," />
-                            <c:set var="synopsisSelected" value="${fn:contains(selectedIssueFieldsCsv, synopsisToken)}" />
-                            <div class="petition-admin-review-item">
-                                <label class="petition-admin-review-checkbox"><input type="checkbox" name="issueFields" value="synopsis" data-review-issue-toggle="true" data-comment-key="synopsis" <c:if test="${synopsisSelected}">checked="checked"</c:if> />Sinopsis</label>
-                                <p class="petition-admin-review-value"><c:out value="${petition.synopsis}" /></p>
-                                <div class="petition-admin-review-comment ${synopsisSelected ? '' : 'petition-admin-review-comment-hidden'}" data-review-comment="synopsis">
-                                    <label for="field-comment-synopsis" class="petition-admin-review-comment-label">Motivo</label>
-                                    <textarea id="field-comment-synopsis" name="fieldComments[synopsis]" rows="2" placeholder="Explicá por qué la sinopsis no es correcta" data-review-comment-input="synopsis" <c:if test="${not synopsisSelected}">disabled="disabled"</c:if>><c:out value="${reviewForm.fieldComments['synopsis']}" /></textarea>
-                                </div>
-                            </div>
+                                <div class="adm-field-list">
 
-                            <c:set var="genreToken" value=",genreIds," />
-                            <c:set var="genreSelected" value="${fn:contains(selectedIssueFieldsCsv, genreToken)}" />
-                            <div class="petition-admin-review-item">
-                                <label class="petition-admin-review-checkbox"><input type="checkbox" name="issueFields" value="genreIds" data-review-issue-toggle="true" data-comment-key="genreIds" <c:if test="${genreSelected}">checked="checked"</c:if> />Géneros</label>
-                                <p class="petition-admin-review-value">
-                                    <c:forEach var="genre" items="${petition.genres}" varStatus="status">
-                                        <c:out value="${genre.name}" /><c:if test="${not status.last}">, </c:if>
-                                    </c:forEach>
-                                </p>
-                                <div class="petition-admin-review-comment ${genreSelected ? '' : 'petition-admin-review-comment-hidden'}" data-review-comment="genreIds">
-                                    <label for="field-comment-genreIds" class="petition-admin-review-comment-label">Motivo</label>
-                                    <textarea id="field-comment-genreIds" name="fieldComments[genreIds]" rows="2" placeholder="Explicá por qué los géneros no son correctos" data-review-comment-input="genreIds" <c:if test="${not genreSelected}">disabled="disabled"</c:if>><c:out value="${reviewForm.fieldComments['genreIds']}" /></textarea>
-                                </div>
-                            </div>
+                                    <c:set var="isFlagged" value="${fn:contains(selectedIssueFieldsCsv, ',title,')}" />
+                                    <div class="adm-field ${isFlagged ? 'is-flagged' : ''}" data-field-key="title">
+                                        <span class="adm-field-label">Título</span>
+                                        <div class="adm-field-value"><c:out value="${petition.title}" /></div>
+                                        <input type="checkbox" class="adm-hidden-check" name="issueFields" value="title" <c:if test="${isFlagged}">checked</c:if> />
+                                        <button type="button" class="adm-flag-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Flag</button>
+                                        <div class="adm-field-comment ${isFlagged ? '' : 'adm-field-comment-hidden'}" data-flag-comment="title">
+                                            <span class="adm-field-comment-label">Motivo para Título</span>
+                                            <textarea name="fieldComments[title]" placeholder='Explicá qué corregir en "Título"…' <c:if test="${not isFlagged}">disabled</c:if>><c:out value="${reviewForm.fieldComments['title']}" /></textarea>
+                                        </div>
+                                    </div>
 
-                            <c:set var="durationToken" value=",durationMinutes," />
-                            <c:set var="durationSelected" value="${fn:contains(selectedIssueFieldsCsv, durationToken)}" />
-                            <div class="petition-admin-review-item">
-                                <label class="petition-admin-review-checkbox"><input type="checkbox" name="issueFields" value="durationMinutes" data-review-issue-toggle="true" data-comment-key="durationMinutes" <c:if test="${durationSelected}">checked="checked"</c:if> />Duración</label>
-                                <p class="petition-admin-review-value"><c:out value="${petition.durationMinutes}" /> minutos</p>
-                                <div class="petition-admin-review-comment ${durationSelected ? '' : 'petition-admin-review-comment-hidden'}" data-review-comment="durationMinutes">
-                                    <label for="field-comment-durationMinutes" class="petition-admin-review-comment-label">Motivo</label>
-                                    <textarea id="field-comment-durationMinutes" name="fieldComments[durationMinutes]" rows="2" placeholder="Explicá por qué la duración no es correcta" data-review-comment-input="durationMinutes" <c:if test="${not durationSelected}">disabled="disabled"</c:if>><c:out value="${reviewForm.fieldComments['durationMinutes']}" /></textarea>
-                                </div>
-                            </div>
+                                    <c:set var="isFlagged" value="${fn:contains(selectedIssueFieldsCsv, ',synopsis,')}" />
+                                    <div class="adm-field ${isFlagged ? 'is-flagged' : ''}" data-field-key="synopsis">
+                                        <span class="adm-field-label">Sinopsis</span>
+                                        <div class="adm-field-value"><c:out value="${petition.synopsis}" /></div>
+                                        <input type="checkbox" class="adm-hidden-check" name="issueFields" value="synopsis" <c:if test="${isFlagged}">checked</c:if> />
+                                        <button type="button" class="adm-flag-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Flag</button>
+                                        <div class="adm-field-comment ${isFlagged ? '' : 'adm-field-comment-hidden'}" data-flag-comment="synopsis">
+                                            <span class="adm-field-comment-label">Motivo para Sinopsis</span>
+                                            <textarea name="fieldComments[synopsis]" placeholder='Explicá qué corregir en "Sinopsis"…' <c:if test="${not isFlagged}">disabled</c:if>><c:out value="${reviewForm.fieldComments['synopsis']}" /></textarea>
+                                        </div>
+                                    </div>
 
-                            <c:set var="languageToken" value=",language," />
-                            <c:set var="languageSelected" value="${fn:contains(selectedIssueFieldsCsv, languageToken)}" />
-                            <div class="petition-admin-review-item">
-                                <label class="petition-admin-review-checkbox"><input type="checkbox" name="issueFields" value="language" data-review-issue-toggle="true" data-comment-key="language" <c:if test="${languageSelected}">checked="checked"</c:if> />Idioma</label>
-                                <p class="petition-admin-review-value"><c:out value="${petition.language}" /></p>
-                                <div class="petition-admin-review-comment ${languageSelected ? '' : 'petition-admin-review-comment-hidden'}" data-review-comment="language">
-                                    <label for="field-comment-language" class="petition-admin-review-comment-label">Motivo</label>
-                                    <textarea id="field-comment-language" name="fieldComments[language]" rows="2" placeholder="Explicá por qué el idioma no es correcto" data-review-comment-input="language" <c:if test="${not languageSelected}">disabled="disabled"</c:if>><c:out value="${reviewForm.fieldComments['language']}" /></textarea>
-                                </div>
-                            </div>
-
-                            <c:set var="theaterToken" value=",theater," />
-                            <c:set var="theaterSelected" value="${fn:contains(selectedIssueFieldsCsv, theaterToken)}" />
-                            <div class="petition-admin-review-item">
-                                <label class="petition-admin-review-checkbox"><input type="checkbox" name="issueFields" value="theater" data-review-issue-toggle="true" data-comment-key="theater" <c:if test="${theaterSelected}">checked="checked"</c:if> />Teatro / sala</label>
-                                <p class="petition-admin-review-value"><c:out value="${petition.theater}" /></p>
-                                <div class="petition-admin-review-comment ${theaterSelected ? '' : 'petition-admin-review-comment-hidden'}" data-review-comment="theater">
-                                    <label for="field-comment-theater" class="petition-admin-review-comment-label">Motivo</label>
-                                    <textarea id="field-comment-theater" name="fieldComments[theater]" rows="2" placeholder="Explicá por qué la sala no es correcta" data-review-comment-input="theater" <c:if test="${not theaterSelected}">disabled="disabled"</c:if>><c:out value="${reviewForm.fieldComments['theater']}" /></textarea>
-                                </div>
-                            </div>
-
-                            <c:set var="theaterAddressToken" value=",theaterAddress," />
-                            <c:set var="theaterAddressSelected" value="${fn:contains(selectedIssueFieldsCsv, theaterAddressToken)}" />
-                            <div class="petition-admin-review-item">
-                                <label class="petition-admin-review-checkbox"><input type="checkbox" name="issueFields" value="theaterAddress" data-review-issue-toggle="true" data-comment-key="theaterAddress" <c:if test="${theaterAddressSelected}">checked="checked"</c:if> />Dirección de la sala</label>
-                                <p class="petition-admin-review-value"><c:out value="${petition.theaterAddress}" /></p>
-                                <div class="petition-admin-review-comment ${theaterAddressSelected ? '' : 'petition-admin-review-comment-hidden'}" data-review-comment="theaterAddress">
-                                    <label for="field-comment-theaterAddress" class="petition-admin-review-comment-label">Motivo</label>
-                                    <textarea id="field-comment-theaterAddress" name="fieldComments[theaterAddress]" rows="2" placeholder="Explicá por qué la dirección no es correcta" data-review-comment-input="theaterAddress" <c:if test="${not theaterAddressSelected}">disabled="disabled"</c:if>><c:out value="${reviewForm.fieldComments['theaterAddress']}" /></textarea>
-                                </div>
-                            </div>
-
-                            <c:set var="startDateToken" value=",startDate," />
-                            <c:set var="startDateSelected" value="${fn:contains(selectedIssueFieldsCsv, startDateToken)}" />
-                            <div class="petition-admin-review-item">
-                                <label class="petition-admin-review-checkbox"><input type="checkbox" name="issueFields" value="startDate" data-review-issue-toggle="true" data-comment-key="startDate" <c:if test="${startDateSelected}">checked="checked"</c:if> />Inicio</label>
-                                <p class="petition-admin-review-value"><c:out value="${petition.startDate}" /></p>
-                                <div class="petition-admin-review-comment ${startDateSelected ? '' : 'petition-admin-review-comment-hidden'}" data-review-comment="startDate">
-                                    <label for="field-comment-startDate" class="petition-admin-review-comment-label">Motivo</label>
-                                    <textarea id="field-comment-startDate" name="fieldComments[startDate]" rows="2" placeholder="Explicá por qué la fecha de inicio no es correcta" data-review-comment-input="startDate" <c:if test="${not startDateSelected}">disabled="disabled"</c:if>><c:out value="${reviewForm.fieldComments['startDate']}" /></textarea>
-                                </div>
-                            </div>
-
-                            <c:set var="endDateToken" value=",endDate," />
-                            <c:set var="endDateSelected" value="${fn:contains(selectedIssueFieldsCsv, endDateToken)}" />
-                            <div class="petition-admin-review-item">
-                                <label class="petition-admin-review-checkbox"><input type="checkbox" name="issueFields" value="endDate" data-review-issue-toggle="true" data-comment-key="endDate" <c:if test="${endDateSelected}">checked="checked"</c:if> />Fin</label>
-                                <p class="petition-admin-review-value"><c:out value="${petition.endDate}" /></p>
-                                <div class="petition-admin-review-comment ${endDateSelected ? '' : 'petition-admin-review-comment-hidden'}" data-review-comment="endDate">
-                                    <label for="field-comment-endDate" class="petition-admin-review-comment-label">Motivo</label>
-                                    <textarea id="field-comment-endDate" name="fieldComments[endDate]" rows="2" placeholder="Explicá por qué la fecha de fin no es correcta" data-review-comment-input="endDate" <c:if test="${not endDateSelected}">disabled="disabled"</c:if>><c:out value="${reviewForm.fieldComments['endDate']}" /></textarea>
-                                </div>
-                            </div>
-
-                            <c:set var="additionalDatesToken" value=",additionalShowDates," />
-                            <c:set var="additionalDatesSelected" value="${fn:contains(selectedIssueFieldsCsv, additionalDatesToken)}" />
-                            <div class="petition-admin-review-item">
-                                <label class="petition-admin-review-checkbox"><input type="checkbox" name="issueFields" value="additionalShowDates" data-review-issue-toggle="true" data-comment-key="additionalShowDates" <c:if test="${additionalDatesSelected}">checked="checked"</c:if> />Fechas adicionales</label>
-                                <p class="petition-admin-review-value">
-                                    <c:choose>
-                                        <c:when test="${empty petition.additionalShowDates}">Sin fechas adicionales.</c:when>
-                                        <c:otherwise>
-                                            <c:forEach var="showDate" items="${petition.additionalShowDates}" varStatus="status">
-                                                <c:out value="${showDate}" /><c:if test="${not status.last}">, </c:if>
+                                    <c:set var="isFlagged" value="${fn:contains(selectedIssueFieldsCsv, ',genreIds,')}" />
+                                    <div class="adm-field ${isFlagged ? 'is-flagged' : ''}" data-field-key="genreIds">
+                                        <span class="adm-field-label">Géneros</span>
+                                        <div class="adm-field-value">
+                                            <c:forEach var="genre" items="${petition.genres}" varStatus="st">
+                                                <c:out value="${genre.name}" /><c:if test="${not st.last}">, </c:if>
                                             </c:forEach>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </p>
-                                <div class="petition-admin-review-comment ${additionalDatesSelected ? '' : 'petition-admin-review-comment-hidden'}" data-review-comment="additionalShowDates">
-                                    <label for="field-comment-additionalShowDates" class="petition-admin-review-comment-label">Motivo</label>
-                                    <textarea id="field-comment-additionalShowDates" name="fieldComments[additionalShowDates]" rows="2" placeholder="Explicá por qué estas fechas no son correctas" data-review-comment-input="additionalShowDates" <c:if test="${not additionalDatesSelected}">disabled="disabled"</c:if>><c:out value="${reviewForm.fieldComments['additionalShowDates']}" /></textarea>
+                                        </div>
+                                        <input type="checkbox" class="adm-hidden-check" name="issueFields" value="genreIds" <c:if test="${isFlagged}">checked</c:if> />
+                                        <button type="button" class="adm-flag-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Flag</button>
+                                        <div class="adm-field-comment ${isFlagged ? '' : 'adm-field-comment-hidden'}" data-flag-comment="genreIds">
+                                            <span class="adm-field-comment-label">Motivo para Géneros</span>
+                                            <textarea name="fieldComments[genreIds]" placeholder='Explicá qué corregir en "Géneros"…' <c:if test="${not isFlagged}">disabled</c:if>><c:out value="${reviewForm.fieldComments['genreIds']}" /></textarea>
+                                        </div>
+                                    </div>
+
+                                    <c:set var="isFlagged" value="${fn:contains(selectedIssueFieldsCsv, ',durationMinutes,')}" />
+                                    <div class="adm-field ${isFlagged ? 'is-flagged' : ''}" data-field-key="durationMinutes">
+                                        <span class="adm-field-label">Duración</span>
+                                        <div class="adm-field-value"><c:out value="${petition.durationMinutes}" /> minutos</div>
+                                        <input type="checkbox" class="adm-hidden-check" name="issueFields" value="durationMinutes" <c:if test="${isFlagged}">checked</c:if> />
+                                        <button type="button" class="adm-flag-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Flag</button>
+                                        <div class="adm-field-comment ${isFlagged ? '' : 'adm-field-comment-hidden'}" data-flag-comment="durationMinutes">
+                                            <span class="adm-field-comment-label">Motivo para Duración</span>
+                                            <textarea name="fieldComments[durationMinutes]" placeholder='Explicá qué corregir en "Duración"…' <c:if test="${not isFlagged}">disabled</c:if>><c:out value="${reviewForm.fieldComments['durationMinutes']}" /></textarea>
+                                        </div>
+                                    </div>
+
+                                    <c:set var="isFlagged" value="${fn:contains(selectedIssueFieldsCsv, ',language,')}" />
+                                    <div class="adm-field ${isFlagged ? 'is-flagged' : ''}" data-field-key="language">
+                                        <span class="adm-field-label">Idioma</span>
+                                        <div class="adm-field-value"><c:out value="${petition.language}" /></div>
+                                        <input type="checkbox" class="adm-hidden-check" name="issueFields" value="language" <c:if test="${isFlagged}">checked</c:if> />
+                                        <button type="button" class="adm-flag-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Flag</button>
+                                        <div class="adm-field-comment ${isFlagged ? '' : 'adm-field-comment-hidden'}" data-flag-comment="language">
+                                            <span class="adm-field-comment-label">Motivo para Idioma</span>
+                                            <textarea name="fieldComments[language]" placeholder='Explicá qué corregir en "Idioma"…' <c:if test="${not isFlagged}">disabled</c:if>><c:out value="${reviewForm.fieldComments['language']}" /></textarea>
+                                        </div>
+                                    </div>
+
+                                    <c:set var="isFlagged" value="${fn:contains(selectedIssueFieldsCsv, ',director,')}" />
+                                    <div class="adm-field ${isFlagged ? 'is-flagged' : ''}" data-field-key="director">
+                                        <span class="adm-field-label">Dirección</span>
+                                        <div class="adm-field-value"><c:out value="${petition.director}" /></div>
+                                        <input type="checkbox" class="adm-hidden-check" name="issueFields" value="director" <c:if test="${isFlagged}">checked</c:if> />
+                                        <button type="button" class="adm-flag-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Flag</button>
+                                        <div class="adm-field-comment ${isFlagged ? '' : 'adm-field-comment-hidden'}" data-flag-comment="director">
+                                            <span class="adm-field-comment-label">Motivo para Dirección</span>
+                                            <textarea name="fieldComments[director]" placeholder='Explicá qué corregir en "Dirección"…' <c:if test="${not isFlagged}">disabled</c:if>><c:out value="${reviewForm.fieldComments['director']}" /></textarea>
+                                        </div>
+                                    </div>
+
+                                    <c:set var="isFlagged" value="${fn:contains(selectedIssueFieldsCsv, ',theater,')}" />
+                                    <div class="adm-field ${isFlagged ? 'is-flagged' : ''}" data-field-key="theater">
+                                        <span class="adm-field-label">Teatro / sala</span>
+                                        <div class="adm-field-value"><c:out value="${petition.theater}" /></div>
+                                        <input type="checkbox" class="adm-hidden-check" name="issueFields" value="theater" <c:if test="${isFlagged}">checked</c:if> />
+                                        <button type="button" class="adm-flag-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Flag</button>
+                                        <div class="adm-field-comment ${isFlagged ? '' : 'adm-field-comment-hidden'}" data-flag-comment="theater">
+                                            <span class="adm-field-comment-label">Motivo para Teatro / sala</span>
+                                            <textarea name="fieldComments[theater]" placeholder='Explicá qué corregir en "Teatro"…' <c:if test="${not isFlagged}">disabled</c:if>><c:out value="${reviewForm.fieldComments['theater']}" /></textarea>
+                                        </div>
+                                    </div>
+
+                                    <c:set var="isFlagged" value="${fn:contains(selectedIssueFieldsCsv, ',theaterAddress,')}" />
+                                    <div class="adm-field ${isFlagged ? 'is-flagged' : ''}" data-field-key="theaterAddress">
+                                        <span class="adm-field-label">Dirección sala</span>
+                                        <div class="adm-field-value"><c:out value="${petition.theaterAddress}" /></div>
+                                        <input type="checkbox" class="adm-hidden-check" name="issueFields" value="theaterAddress" <c:if test="${isFlagged}">checked</c:if> />
+                                        <button type="button" class="adm-flag-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Flag</button>
+                                        <div class="adm-field-comment ${isFlagged ? '' : 'adm-field-comment-hidden'}" data-flag-comment="theaterAddress">
+                                            <span class="adm-field-comment-label">Motivo para Dirección sala</span>
+                                            <textarea name="fieldComments[theaterAddress]" placeholder='Explicá qué corregir en "Dirección sala"…' <c:if test="${not isFlagged}">disabled</c:if>><c:out value="${reviewForm.fieldComments['theaterAddress']}" /></textarea>
+                                        </div>
+                                    </div>
+
+                                    <c:set var="isFlagged" value="${fn:contains(selectedIssueFieldsCsv, ',startDate,')}" />
+                                    <div class="adm-field ${isFlagged ? 'is-flagged' : ''}" data-field-key="startDate">
+                                        <span class="adm-field-label">Inicio de temporada</span>
+                                        <div class="adm-field-value"><c:out value="${petition.startDate}" /></div>
+                                        <input type="checkbox" class="adm-hidden-check" name="issueFields" value="startDate" <c:if test="${isFlagged}">checked</c:if> />
+                                        <button type="button" class="adm-flag-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Flag</button>
+                                        <div class="adm-field-comment ${isFlagged ? '' : 'adm-field-comment-hidden'}" data-flag-comment="startDate">
+                                            <span class="adm-field-comment-label">Motivo para Inicio de temporada</span>
+                                            <textarea name="fieldComments[startDate]" placeholder='Explicá qué corregir en "Inicio"…' <c:if test="${not isFlagged}">disabled</c:if>><c:out value="${reviewForm.fieldComments['startDate']}" /></textarea>
+                                        </div>
+                                    </div>
+
+                                    <c:set var="isFlagged" value="${fn:contains(selectedIssueFieldsCsv, ',endDate,')}" />
+                                    <div class="adm-field ${isFlagged ? 'is-flagged' : ''}" data-field-key="endDate">
+                                        <span class="adm-field-label">Fin de temporada</span>
+                                        <div class="adm-field-value"><c:out value="${petition.endDate}" /></div>
+                                        <input type="checkbox" class="adm-hidden-check" name="issueFields" value="endDate" <c:if test="${isFlagged}">checked</c:if> />
+                                        <button type="button" class="adm-flag-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Flag</button>
+                                        <div class="adm-field-comment ${isFlagged ? '' : 'adm-field-comment-hidden'}" data-flag-comment="endDate">
+                                            <span class="adm-field-comment-label">Motivo para Fin de temporada</span>
+                                            <textarea name="fieldComments[endDate]" placeholder='Explicá qué corregir en "Fin"…' <c:if test="${not isFlagged}">disabled</c:if>><c:out value="${reviewForm.fieldComments['endDate']}" /></textarea>
+                                        </div>
+                                    </div>
+
+                                    <c:set var="isFlagged" value="${fn:contains(selectedIssueFieldsCsv, ',additionalShowDates,')}" />
+                                    <div class="adm-field ${isFlagged ? 'is-flagged' : ''}" data-field-key="additionalShowDates">
+                                        <span class="adm-field-label">Fechas adicionales</span>
+                                        <div class="adm-field-value ${empty petition.additionalShowDates ? 'dim' : ''}">
+                                            <c:choose>
+                                                <c:when test="${empty petition.additionalShowDates}">Sin fechas adicionales.</c:when>
+                                                <c:otherwise><c:forEach var="d" items="${petition.additionalShowDates}" varStatus="st"><c:out value="${d}" /><c:if test="${not st.last}">, </c:if></c:forEach></c:otherwise>
+                                            </c:choose>
+                                        </div>
+                                        <input type="checkbox" class="adm-hidden-check" name="issueFields" value="additionalShowDates" <c:if test="${isFlagged}">checked</c:if> />
+                                        <button type="button" class="adm-flag-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Flag</button>
+                                        <div class="adm-field-comment ${isFlagged ? '' : 'adm-field-comment-hidden'}" data-flag-comment="additionalShowDates">
+                                            <span class="adm-field-comment-label">Motivo para Fechas adicionales</span>
+                                            <textarea name="fieldComments[additionalShowDates]" placeholder='Explicá qué corregir en "Fechas adicionales"…' <c:if test="${not isFlagged}">disabled</c:if>><c:out value="${reviewForm.fieldComments['additionalShowDates']}" /></textarea>
+                                        </div>
+                                    </div>
+
+                                    <c:set var="isFlagged" value="${fn:contains(selectedIssueFieldsCsv, ',schedule,')}" />
+                                    <div class="adm-field ${isFlagged ? 'is-flagged' : ''}" data-field-key="schedule">
+                                        <span class="adm-field-label">Horarios</span>
+                                        <div class="adm-field-value ${empty petition.schedule ? 'dim' : ''}">
+                                            <c:out value="${empty petition.schedule ? 'Sin horarios informados.' : petition.schedule}" />
+                                        </div>
+                                        <input type="checkbox" class="adm-hidden-check" name="issueFields" value="schedule" <c:if test="${isFlagged}">checked</c:if> />
+                                        <button type="button" class="adm-flag-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Flag</button>
+                                        <div class="adm-field-comment ${isFlagged ? '' : 'adm-field-comment-hidden'}" data-flag-comment="schedule">
+                                            <span class="adm-field-comment-label">Motivo para Horarios</span>
+                                            <textarea name="fieldComments[schedule]" placeholder='Explicá qué corregir en "Horarios"…' <c:if test="${not isFlagged}">disabled</c:if>><c:out value="${reviewForm.fieldComments['schedule']}" /></textarea>
+                                        </div>
+                                    </div>
+
+                                    <c:set var="isFlagged" value="${fn:contains(selectedIssueFieldsCsv, ',ticketUrl,')}" />
+                                    <div class="adm-field ${isFlagged ? 'is-flagged' : ''}" data-field-key="ticketUrl">
+                                        <span class="adm-field-label">Link de entradas</span>
+                                        <div class="adm-field-value ${empty petition.ticketUrl ? 'dim' : ''}">
+                                            <c:choose>
+                                                <c:when test="${not empty petition.ticketUrl}"><a class="adm-inline-link" href="${fn:escapeXml(petition.ticketUrl)}" target="_blank" rel="noreferrer"><c:out value="${petition.ticketUrl}" /></a></c:when>
+                                                <c:otherwise>Sin link informado.</c:otherwise>
+                                            </c:choose>
+                                        </div>
+                                        <input type="checkbox" class="adm-hidden-check" name="issueFields" value="ticketUrl" <c:if test="${isFlagged}">checked</c:if> />
+                                        <button type="button" class="adm-flag-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Flag</button>
+                                        <div class="adm-field-comment ${isFlagged ? '' : 'adm-field-comment-hidden'}" data-flag-comment="ticketUrl">
+                                            <span class="adm-field-comment-label">Motivo para Link de entradas</span>
+                                            <textarea name="fieldComments[ticketUrl]" placeholder='Explicá qué corregir en "Link de entradas"…' <c:if test="${not isFlagged}">disabled</c:if>><c:out value="${reviewForm.fieldComments['ticketUrl']}" /></textarea>
+                                        </div>
+                                    </div>
+
+                                    <c:set var="isFlagged" value="${fn:contains(selectedIssueFieldsCsv, ',coverImage,')}" />
+                                    <div class="adm-field ${isFlagged ? 'is-flagged' : ''}" data-field-key="coverImage">
+                                        <span class="adm-field-label">Portada</span>
+                                        <div class="adm-field-value ${petition.coverImageId == null ? 'dim' : ''}">
+                                            ${petition.coverImageId != null ? 'Portada cargada correctamente.' : 'Sin portada.'}
+                                        </div>
+                                        <input type="checkbox" class="adm-hidden-check" name="issueFields" value="coverImage" <c:if test="${isFlagged}">checked</c:if> />
+                                        <button type="button" class="adm-flag-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Flag</button>
+                                        <div class="adm-field-comment ${isFlagged ? '' : 'adm-field-comment-hidden'}" data-flag-comment="coverImage">
+                                            <span class="adm-field-comment-label">Motivo para Portada</span>
+                                            <textarea name="fieldComments[coverImage]" placeholder='Explicá qué corregir en "Portada"…' <c:if test="${not isFlagged}">disabled</c:if>><c:out value="${reviewForm.fieldComments['coverImage']}" /></textarea>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
 
-                            <c:set var="directorToken" value=",director," />
-                            <c:set var="directorSelected" value="${fn:contains(selectedIssueFieldsCsv, directorToken)}" />
-                            <div class="petition-admin-review-item">
-                                <label class="petition-admin-review-checkbox"><input type="checkbox" name="issueFields" value="director" data-review-issue-toggle="true" data-comment-key="director" <c:if test="${directorSelected}">checked="checked"</c:if> />Dirección</label>
-                                <p class="petition-admin-review-value"><c:out value="${petition.director}" /></p>
-                                <div class="petition-admin-review-comment ${directorSelected ? '' : 'petition-admin-review-comment-hidden'}" data-review-comment="director">
-                                    <label for="field-comment-director" class="petition-admin-review-comment-label">Motivo</label>
-                                    <textarea id="field-comment-director" name="fieldComments[director]" rows="2" placeholder="Explicá por qué la dirección no es correcta" data-review-comment-input="director" <c:if test="${not directorSelected}">disabled="disabled"</c:if>><c:out value="${reviewForm.fieldComments['director']}" /></textarea>
-                                </div>
-                            </div>
+                            <div class="adm-panel-side">
 
-                            <c:set var="coverImageToken" value=",coverImage," />
-                            <c:set var="coverImageSelected" value="${fn:contains(selectedIssueFieldsCsv, coverImageToken)}" />
-                            <div class="petition-admin-review-item">
-                                <label class="petition-admin-review-checkbox"><input type="checkbox" name="issueFields" value="coverImage" data-review-issue-toggle="true" data-comment-key="coverImage" <c:if test="${coverImageSelected}">checked="checked"</c:if> />Portada</label>
-                                <p class="petition-admin-review-value">Imagen cargada ${petition.coverImageId != null ? 'correctamente' : 'sin portada'}.</p>
-                                <div class="petition-admin-review-comment ${coverImageSelected ? '' : 'petition-admin-review-comment-hidden'}" data-review-comment="coverImage">
-                                    <label for="field-comment-coverImage" class="petition-admin-review-comment-label">Motivo</label>
-                                    <textarea id="field-comment-coverImage" name="fieldComments[coverImage]" rows="2" placeholder="Explicá por qué la portada no es correcta" data-review-comment-input="coverImage" <c:if test="${not coverImageSelected}">disabled="disabled"</c:if>><c:out value="${reviewForm.fieldComments['coverImage']}" /></textarea>
+                                <div class="adm-panel">
+                                    <h3>Decisión</h3>
+                                    <div class="adm-decision">
+                                        <div class="adm-admin-notes-wrap">
+                                            <span class="adm-summary-label">Resumen para el solicitante</span>
+                                            <textarea id="adminNotes" name="adminNotes" class="adm-admin-notes-textarea" placeholder="Mensaje breve que abre el email. Opcional si los comentarios por campo alcanzan."><c:out value="${reviewForm.adminNotes}" /></textarea>
+                                        </div>
+                                        <div class="adm-decision-cta">
+                                            <button type="submit" name="action" value="approve" class="adm-btn primary">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                                Aprobar y publicar
+                                            </button>
+                                            <button type="submit" name="action" value="request_changes" class="adm-btn warn">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                                                Solicitar cambios
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <c:set var="scheduleToken" value=",schedule," />
-                            <c:set var="scheduleSelected" value="${fn:contains(selectedIssueFieldsCsv, scheduleToken)}" />
-                            <div class="petition-admin-review-item">
-                                <label class="petition-admin-review-checkbox"><input type="checkbox" name="issueFields" value="schedule" data-review-issue-toggle="true" data-comment-key="schedule" <c:if test="${scheduleSelected}">checked="checked"</c:if> />Horarios</label>
-                                <p class="petition-admin-review-value"><c:out value="${empty petition.schedule ? 'Sin horarios informados.' : petition.schedule}" /></p>
-                                <div class="petition-admin-review-comment ${scheduleSelected ? '' : 'petition-admin-review-comment-hidden'}" data-review-comment="schedule">
-                                    <label for="field-comment-schedule" class="petition-admin-review-comment-label">Motivo</label>
-                                    <textarea id="field-comment-schedule" name="fieldComments[schedule]" rows="2" placeholder="Explicá por qué los horarios no son correctos" data-review-comment-input="schedule" <c:if test="${not scheduleSelected}">disabled="disabled"</c:if>><c:out value="${reviewForm.fieldComments['schedule']}" /></textarea>
+                                <c:if test="${petition.coverImageId != null}">
+                                    <div class="adm-panel">
+                                        <h3>Portada propuesta</h3>
+                                        <c:url var="coverUrl" value="/petition-images/${petition.coverImageId}" />
+                                        <div class="adm-cover-tile" style="background-image:url('${coverUrl}')"></div>
+                                        <div class="adm-cover-meta"><c:out value="${petition.petitionerEmail}" /></div>
+                                    </div>
+                                </c:if>
+
+                                <div class="adm-panel">
+                                    <h3>Actividad</h3>
+                                    <div class="adm-timeline">
+                                        <div class="adm-tl pending">
+                                            <b>Petición enviada</b>
+                                            <span class="adm-tl-when"><c:out value="${petition.petitionerEmail}" /></span>
+                                            <div class="adm-tl-what">Estado: <c:out value="${petition.status}" /></div>
+                                        </div>
+                                        <c:if test="${not empty petition.adminNotes}">
+                                            <div class="adm-tl changes">
+                                                <b>Notas del admin</b>
+                                                <div class="adm-tl-what"><c:out value="${petition.adminNotes}" /></div>
+                                            </div>
+                                        </c:if>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <c:set var="ticketUrlToken" value=",ticketUrl," />
-                            <c:set var="ticketUrlSelected" value="${fn:contains(selectedIssueFieldsCsv, ticketUrlToken)}" />
-                            <div class="petition-admin-review-item">
-                                <label class="petition-admin-review-checkbox"><input type="checkbox" name="issueFields" value="ticketUrl" data-review-issue-toggle="true" data-comment-key="ticketUrl" <c:if test="${ticketUrlSelected}">checked="checked"</c:if> />Link de entradas</label>
-                                <p class="petition-admin-review-value"><c:out value="${empty petition.ticketUrl ? 'Sin link informado.' : petition.ticketUrl}" /></p>
-                                <div class="petition-admin-review-comment ${ticketUrlSelected ? '' : 'petition-admin-review-comment-hidden'}" data-review-comment="ticketUrl">
-                                    <label for="field-comment-ticketUrl" class="petition-admin-review-comment-label">Motivo</label>
-                                    <textarea id="field-comment-ticketUrl" name="fieldComments[ticketUrl]" rows="2" placeholder="Explicá por qué el link de entradas no es correcto" data-review-comment-input="ticketUrl" <c:if test="${not ticketUrlSelected}">disabled="disabled"</c:if>><c:out value="${reviewForm.fieldComments['ticketUrl']}" /></textarea>
-                                </div>
                             </div>
-                        </div>
-
-                        <div class="petition-admin-actions">
-                            <button type="submit" name="action" value="approve" class="btn btn-md petition-admin-approve">Aprobar</button>
-                            <button type="submit" name="action" value="request_changes" class="btn btn-md petition-admin-request-changes">Solicitar cambios</button>
                         </div>
                     </form>
-                </c:if>
+                </c:when>
 
-                <c:if test="${petition.status ne 'PENDING'}">
-                    <div class="petition-admin-resolution">
-                        <c:choose>
-                            <c:when test="${petition.status eq 'CHANGES_REQUESTED'}">
-                                <p class="petition-admin-resolution-title">La petición está esperando correcciones del submitter.</p>
-                            </c:when>
-                            <c:otherwise>
-                                <p class="petition-admin-resolution-title">Esta petición ya fue aprobada.</p>
-                            </c:otherwise>
-                        </c:choose>
+                <c:otherwise>
+                    <div class="adm-detail-grid">
 
-                        <c:if test="${not empty petition.adminNotes}">
-                            <p><strong>Notas:</strong> <c:out value="${petition.adminNotes}" /></p>
-                        </c:if>
-
-                        <c:if test="${not empty fieldFeedback}">
-                            <div class="petition-admin-feedback-list">
-                                <c:forEach var="entry" items="${fieldFeedback}">
-                                    <div class="petition-admin-feedback-item">
-                                        <strong><c:out value="${entry.key}" /></strong>
-                                        <p><c:out value="${entry.value}" /></p>
+                        <div class="adm-panel">
+                            <h3>Resolución</h3>
+                            <div class="adm-resolution">
+                                <c:choose>
+                                    <c:when test="${petition.status eq 'CHANGES_REQUESTED'}">
+                                        <p class="adm-resolution-title">La petición está esperando correcciones del submitter.</p>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <p class="adm-resolution-title">Esta petición ya fue aprobada.</p>
+                                    </c:otherwise>
+                                </c:choose>
+                                <c:if test="${not empty petition.adminNotes}">
+                                    <div class="adm-admin-notes-wrap">
+                                        <span class="adm-summary-label">Notas del admin</span>
+                                        <p style="margin:0;font-size:.87rem;color:var(--adm-text)"><c:out value="${petition.adminNotes}" /></p>
                                     </div>
-                                </c:forEach>
+                                </c:if>
+                                <c:if test="${not empty fieldFeedback}">
+                                    <div class="adm-feedback-list">
+                                        <c:forEach var="entry" items="${fieldFeedback}">
+                                            <div class="adm-feedback-item">
+                                                <strong><c:out value="${entry.key}" /></strong>
+                                                <p><c:out value="${entry.value}" /></p>
+                                            </div>
+                                        </c:forEach>
+                                    </div>
+                                </c:if>
+                                <c:if test="${petition.createdObraId != null and petition.createdProductionId != null}">
+                                    <a class="adm-btn primary" href="${pageContext.request.contextPath}/obras/${petition.createdObraId}?produccionId=${petition.createdProductionId}">Ver publicación creada →</a>
+                                </c:if>
                             </div>
-                        </c:if>
+                        </div>
 
-                        <c:if test="${petition.createdObraId != null and petition.createdProductionId != null}">
-                            <a class="btn btn-md petition-admin-card-link" href="${pageContext.request.contextPath}/obras/${petition.createdObraId}?produccionId=${petition.createdProductionId}">Ver publicación creada</a>
-                        </c:if>
+                        <div class="adm-panel-side">
+                            <c:if test="${petition.coverImageId != null}">
+                                <div class="adm-panel">
+                                    <h3>Portada</h3>
+                                    <c:url var="coverUrl" value="/petition-images/${petition.coverImageId}" />
+                                    <div class="adm-cover-tile" style="background-image:url('${coverUrl}')"></div>
+                                </div>
+                            </c:if>
+                            <div class="adm-panel">
+                                <h3>Actividad</h3>
+                                <div class="adm-timeline">
+                                    <div class="adm-tl pending">
+                                        <b>Petición enviada</b>
+                                        <span class="adm-tl-when"><c:out value="${petition.petitionerEmail}" /></span>
+                                    </div>
+                                    <c:if test="${petition.status eq 'CHANGES_REQUESTED'}">
+                                        <div class="adm-tl changes"><b>Cambios solicitados</b></div>
+                                    </c:if>
+                                    <c:if test="${petition.status eq 'APPROVED'}">
+                                        <div class="adm-tl"><b>Aprobada</b><div class="adm-tl-what">Obra y producción publicadas.</div></div>
+                                    </c:if>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
-                </c:if>
-            </section>
-        </div>
-    </section>
+                </c:otherwise>
+            </c:choose>
+
+        </section>
+    </div>
 </main>
+
 </body>
 </html>

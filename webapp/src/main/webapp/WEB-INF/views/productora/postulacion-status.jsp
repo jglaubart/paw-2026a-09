@@ -21,28 +21,28 @@
 
     <c:url var="carteleraUrl" value="/cartelera" />
     <c:url var="editUrl"      value="/productoras/postular/${request.id}/editar" />
-    <c:url var="simulateUrl"  value="/productoras/postular/simular-aprobacion" />
     <c:url var="dashboardUrl" value="/productoras/mia" />
     <c:url var="newUrl"       value="/productoras/postular" />
 
     <main class="prod-status">
 
         <c:choose>
-            <c:when test="${request != null and (request.status == 'PENDING' or request.status == 'CHANGES_REQUESTED')}">
+            <c:when test="${request != null and request.status == 'PENDING'}">
                 <div class="prod-status-card">
                     <span class="prod-status-icon prod-status-icon-pending" aria-hidden="true">✓</span>
-                    <h1 class="prod-status-card-title">
-                        <c:choose>
-                            <c:when test="${request.status == 'PENDING'}">Solicitud enviada</c:when>
-                            <c:otherwise>El admin pidió cambios</c:otherwise>
-                        </c:choose>
-                    </h1>
-                    <p class="prod-status-card-lede">
-                        <c:choose>
-                            <c:when test="${request.status == 'PENDING'}">Recibimos tu postulación. Vamos a revisar la documentación y te avisamos por mail en 2-5 días hábiles.</c:when>
-                            <c:otherwise>Revisá las notas del admin y actualizá los campos marcados. Después podés reenviar tu postulación.</c:otherwise>
-                        </c:choose>
-                    </p>
+                    <h1 class="prod-status-card-title">Solicitud enviada</h1>
+                    <p class="prod-status-card-lede">Recibimos tu postulación. Vamos a revisar la documentación y te avisamos por mail en 2-5 días hábiles.</p>
+                    <div class="prod-status-card-actions">
+                        <a href="${carteleraUrl}" class="navbar-auth-link">Volver a cartelera</a>
+                    </div>
+                </div>
+            </c:when>
+
+            <c:when test="${request != null and request.status == 'CHANGES_REQUESTED'}">
+                <div class="prod-status-card">
+                    <span class="prod-status-icon prod-status-icon-changes" aria-hidden="true">!</span>
+                    <h1 class="prod-status-card-title">Revisá tu postulación</h1>
+                    <p class="prod-status-card-lede">El equipo de Platea revisó tu solicitud y encontró campos que necesitan corrección. Actualizalos y reenviá tu postulación.</p>
 
                     <c:if test="${not empty request.adminNotes}">
                         <div class="prod-status-notes">
@@ -51,22 +51,33 @@
                         </div>
                     </c:if>
 
+                    <c:if test="${not empty request.fieldFeedback}">
+                        <div class="prod-status-flags">
+                            <p class="prod-status-flags-label">Campos a corregir</p>
+                            <c:forEach var="entry" items="${request.fieldFeedback}">
+                                <div class="prod-status-flag-item">
+                                    <span class="prod-status-flag-key">
+                                        <c:choose>
+                                            <c:when test="${entry.key eq 'name'}">Nombre</c:when>
+                                            <c:when test="${entry.key eq 'cuit'}">CUIT</c:when>
+                                            <c:when test="${entry.key eq 'contactEmail'}">Email de contacto</c:when>
+                                            <c:when test="${entry.key eq 'bio'}">Descripción</c:when>
+                                            <c:when test="${entry.key eq 'instagram'}">Instagram</c:when>
+                                            <c:when test="${entry.key eq 'website'}">Sitio web</c:when>
+                                            <c:when test="${entry.key eq 'teamDescription'}">Equipo</c:when>
+                                            <c:when test="${entry.key eq 'previousWorks'}">Antecedentes</c:when>
+                                            <c:otherwise><c:out value="${entry.key}" /></c:otherwise>
+                                        </c:choose>
+                                    </span>
+                                    <p class="prod-status-flag-comment"><c:out value="${entry.value}" /></p>
+                                </div>
+                            </c:forEach>
+                        </div>
+                    </c:if>
+
                     <div class="prod-status-card-actions">
-                        <c:choose>
-                            <c:when test="${request.status == 'CHANGES_REQUESTED'}">
-                                <a href="${carteleraUrl}" class="btn btn-ghost btn-md">Volver a cartelera</a>
-                                <a href="${editUrl}" class="btn btn-primary btn-md">Editar y reenviar</a>
-                            </c:when>
-                            <c:otherwise>
-                                <a href="${carteleraUrl}" class="btn btn-ghost btn-md">Volver a cartelera</a>
-                                <form action="${simulateUrl}" method="post" class="prod-status-simulate-form">
-                                    <input type="hidden" name="${_csrf.parameterName}" value="${fn:escapeXml(_csrf.token)}" />
-                                    <button type="submit" class="btn btn-primary btn-md prod-status-simulate-btn">
-                                        <span aria-hidden="true">⚡</span> Simular aprobación (demo)
-                                    </button>
-                                </form>
-                            </c:otherwise>
-                        </c:choose>
+                        <a href="${carteleraUrl}" class="navbar-auth-link">Volver a cartelera</a>
+                        <a href="${editUrl}" class="btn btn-md btn-cta">Editar y reenviar</a>
                     </div>
                 </div>
             </c:when>
@@ -77,7 +88,7 @@
                     <h1 class="prod-status-card-title">¡Bienvenida a Platea!</h1>
                     <p class="prod-status-card-lede"><strong><c:out value="${request.name}" /></strong> ya está activa. Podés empezar a cargar obras desde tu dashboard.</p>
                     <div class="prod-status-card-actions">
-                        <a href="${dashboardUrl}" class="btn btn-primary btn-md">Ir al dashboard</a>
+                        <a href="${dashboardUrl}" class="btn btn-md btn-cta">Ir al dashboard</a>
                     </div>
                 </div>
             </c:when>
@@ -94,7 +105,7 @@
                         </div>
                     </c:if>
                     <div class="prod-status-card-actions">
-                        <a href="${carteleraUrl}" class="btn btn-ghost btn-md">Volver a cartelera</a>
+                        <a href="${carteleraUrl}" class="navbar-auth-link">Volver a cartelera</a>
                     </div>
                 </div>
             </c:when>
@@ -105,7 +116,7 @@
                     <h1 class="prod-status-card-title">No tenés una postulación activa</h1>
                     <p class="prod-status-card-lede">Podés iniciar una nueva postulación cuando quieras.</p>
                     <div class="prod-status-card-actions">
-                        <a href="${newUrl}" class="btn btn-primary btn-md">Nueva postulación</a>
+                        <a href="${newUrl}" class="btn btn-md btn-cta">Nueva postulación</a>
                     </div>
                 </div>
             </c:otherwise>

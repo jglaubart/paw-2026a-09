@@ -8,72 +8,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Postulaciones de productora — Admin Platea</title>
+    <title>Backoffice — Postulaciones de productora</title>
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/favicon.png" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/main.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/navbar.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/search.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/button.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/alert.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/productora.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/components/admin-backoffice.css" />
 </head>
 <body>
-    <paw:navbar />
 
-    <c:url var="baseUrl" value="/admin/productoras/postulaciones" />
+<c:url var="petitionsUrl"   value="/admin/obras" />
+<c:url var="productorasUrl" value="/admin/productoras" />
+<c:url var="baseUrl"        value="/admin/productoras" />
 
-    <main class="productora-admin">
-        <header class="productora-admin-header">
-            <span class="productora-kicker">Panel admin</span>
-            <h1 class="productora-admin-title">Postulaciones de productora</h1>
-            <p class="productora-admin-lede">Revisá las solicitudes pendientes y decidí si aceptar, rechazar o pedir cambios.</p>
-        </header>
+<paw:navbar />
 
-        <nav class="productora-admin-tabs" aria-label="Filtrar por estado">
-            <a class="productora-admin-tab ${selectedStatus == 'ALL' ? 'is-active' : ''}" href="${baseUrl}">
-                Todas
-            </a>
-            <a class="productora-admin-tab ${selectedStatus == 'PENDING' ? 'is-active' : ''}" href="${baseUrl}?status=PENDING">
-                Pendientes <span class="productora-admin-tab-count"><c:out value="${counts['PENDING']}" /></span>
-            </a>
-            <a class="productora-admin-tab ${selectedStatus == 'CHANGES_REQUESTED' ? 'is-active' : ''}" href="${baseUrl}?status=CHANGES_REQUESTED">
-                Con cambios <span class="productora-admin-tab-count"><c:out value="${counts['CHANGES_REQUESTED']}" /></span>
-            </a>
-            <a class="productora-admin-tab ${selectedStatus == 'APPROVED' ? 'is-active' : ''}" href="${baseUrl}?status=APPROVED">
-                Aprobadas <span class="productora-admin-tab-count"><c:out value="${counts['APPROVED']}" /></span>
-            </a>
-            <a class="productora-admin-tab ${selectedStatus == 'REJECTED' ? 'is-active' : ''}" href="${baseUrl}?status=REJECTED">
-                Rechazadas <span class="productora-admin-tab-count"><c:out value="${counts['REJECTED']}" /></span>
-            </a>
-        </nav>
+<main class="prod-dash">
 
-        <c:choose>
-            <c:when test="${empty requests}">
-                <div class="productora-admin-empty">
-                    <p>No hay postulaciones en este estado.</p>
+    <header class="prod-dash-header">
+        <span class="prod-dash-logo" aria-hidden="true">A</span>
+        <div class="prod-dash-header-text">
+            <h1 class="prod-dash-title">Backoffice</h1>
+            <div class="prod-dash-meta">
+                <span class="prod-dash-meta-pill prod-dash-meta-owner">● Administración</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="prod-dash-layout">
+
+        <aside class="prod-dash-sidebar" aria-label="Secciones del backoffice">
+            <h4 class="prod-dash-sidebar-section">Revisión</h4>
+            <a class="prod-dash-sidebar-item" href="${petitionsUrl}">
+                Peticiones de obra
+            </a>
+            <a class="prod-dash-sidebar-item is-active" href="${productorasUrl}">
+                Postulaciones productora
+                <span class="prod-dash-sidebar-count"><c:out value="${pendingCount}" /></span>
+            </a>
+        </aside>
+
+        <section class="prod-dash-content">
+
+            <h2 class="prod-dash-content-title">Cola de revisión · Postulaciones de productora</h2>
+            <p class="prod-dash-subtle">Aceptá, rechazá o pedí cambios en las postulaciones para operar como productora en Platea.</p>
+
+            <div class="prod-dash-stats">
+                <div class="prod-dash-stat prod-dash-stat-violet">
+                    <span class="prod-dash-stat-label">Total en cola</span>
+                    <span class="prod-dash-stat-value"><c:out value="${totalCount}" /></span>
                 </div>
-            </c:when>
-            <c:otherwise>
-                <ul class="productora-admin-list">
-                    <c:forEach var="r" items="${requests}">
-                        <c:url var="detailUrl" value="/admin/productoras/postulaciones/${r.id}" />
-                        <li>
-                            <a href="${detailUrl}" class="productora-admin-row">
-                                <div class="productora-admin-row-main">
-                                    <span class="productora-admin-row-name"><c:out value="${r.name}" /></span>
-                                    <span class="productora-admin-row-meta">
-                                        CUIT <c:out value="${r.cuit}" /> · Contacto <c:out value="${r.contactEmail}" />
-                                    </span>
-                                </div>
-                                <span class="productora-admin-row-status productora-history-status-${fn:toLowerCase(r.status)}">
-                                    <c:out value="${r.status}" />
-                                </span>
-                                <span class="productora-admin-row-arrow">→</span>
-                            </a>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </c:otherwise>
-        </c:choose>
-    </main>
+                <div class="prod-dash-stat prod-dash-stat-amber">
+                    <span class="prod-dash-stat-label">Pendientes</span>
+                    <span class="prod-dash-stat-value"><c:out value="${pendingCount}" /></span>
+                </div>
+                <div class="prod-dash-stat prod-dash-stat-violet">
+                    <span class="prod-dash-stat-label">Con cambios</span>
+                    <span class="prod-dash-stat-value"><c:out value="${changesRequestedCount}" /></span>
+                </div>
+                <div class="prod-dash-stat prod-dash-stat-amber">
+                    <span class="prod-dash-stat-label">Aprobadas</span>
+                    <span class="prod-dash-stat-value"><c:out value="${approvedCount}" /></span>
+                </div>
+            </div>
+
+            <div class="adm-toolbar">
+                <div class="adm-tabs">
+                    <a class="adm-tab ${selectedStatus == 'ALL' ? 'is-active' : ''}" href="${baseUrl}">
+                        Todas
+                    </a>
+                    <a class="adm-tab ${selectedStatus == 'PENDING' ? 'is-active' : ''}" href="${baseUrl}?status=PENDING">
+                        Pendientes <span class="adm-tab-pill"><c:out value="${pendingCount}" /></span>
+                    </a>
+                    <a class="adm-tab ${selectedStatus == 'APPROVED' ? 'is-active' : ''}" href="${baseUrl}?status=APPROVED">
+                        Aprobadas <span class="adm-tab-pill"><c:out value="${approvedCount}" /></span>
+                    </a>
+                    <a class="adm-tab ${selectedStatus == 'REJECTED' ? 'is-active' : ''}" href="${baseUrl}?status=REJECTED">
+                        Rechazadas <span class="adm-tab-pill"><c:out value="${rejectedCount}" /></span>
+                    </a>
+                </div>
+            </div>
+
+            <c:choose>
+                <c:when test="${empty requests}">
+                    <div class="adm-empty">
+                        <h3>No hay postulaciones en este estado.</h3>
+                        <p>Cuando lleguen nuevas solicitudes aparecerán acá.</p>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="adm-table-wrap">
+                        <table class="adm-data">
+                            <thead>
+                                <tr>
+                                    <th>Productora</th>
+                                    <th>CUIT</th>
+                                    <th>Contacto</th>
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach var="r" items="${requests}">
+                                    <c:url var="detailUrl" value="/admin/productoras/postulaciones/${r.id}" />
+                                    <tr onclick="location.href='${detailUrl}'">
+                                        <td>
+                                            <div class="adm-cell-title"><c:out value="${r.name}" /></div>
+                                        </td>
+                                        <td class="adm-cell-meta"><c:out value="${r.cuit}" /></td>
+                                        <td class="adm-cell-meta"><c:out value="${r.contactEmail}" /></td>
+                                        <td>
+                                            <span class="adm-status adm-status-${fn:toLowerCase(r.status)}">
+                                                <c:choose>
+                                                    <c:when test="${r.status eq 'CHANGES_REQUESTED'}">Con cambios</c:when>
+                                                    <c:when test="${r.status eq 'PENDING'}">Pendiente</c:when>
+                                                    <c:when test="${r.status eq 'APPROVED'}">Aprobada</c:when>
+                                                    <c:when test="${r.status eq 'REJECTED'}">Rechazada</c:when>
+                                                    <c:otherwise><c:out value="${r.status}" /></c:otherwise>
+                                                </c:choose>
+                                            </span>
+                                        </td>
+                                        <td><a href="${detailUrl}" class="adm-table-action">Revisar →</a></td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                </c:otherwise>
+            </c:choose>
+
+        </section>
+    </div>
+</main>
+
 </body>
 </html>

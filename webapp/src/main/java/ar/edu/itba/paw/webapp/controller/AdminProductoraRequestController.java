@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Controller
@@ -25,13 +27,20 @@ public class AdminProductoraRequestController {
         this.requestService = requestService;
     }
 
-    @RequestMapping(value = "/postulaciones", method = RequestMethod.GET)
+    @RequestMapping(value = {"/postulaciones", ""}, method = RequestMethod.GET)
     public ModelAndView list(@RequestParam(value = "status", required = false) final String statusRaw) {
         final ProductoraRequestStatus filter = parseFilter(statusRaw);
+        final Map<ProductoraRequestStatus, Integer> rawCounts = requestService.countByStatus();
+        int total = 0;
+        for (final int v : rawCounts.values()) total += v;
         final ModelAndView mav = new ModelAndView("productora/admin-list");
         mav.addObject("requests", requestService.findForAdmin(filter));
         mav.addObject("selectedStatus", filter != null ? filter.name() : "ALL");
-        mav.addObject("counts", requestService.countByStatus());
+        mav.addObject("pendingCount", rawCounts.getOrDefault(ProductoraRequestStatus.PENDING, 0));
+        mav.addObject("changesRequestedCount", rawCounts.getOrDefault(ProductoraRequestStatus.CHANGES_REQUESTED, 0));
+        mav.addObject("approvedCount", rawCounts.getOrDefault(ProductoraRequestStatus.APPROVED, 0));
+        mav.addObject("rejectedCount", rawCounts.getOrDefault(ProductoraRequestStatus.REJECTED, 0));
+        mav.addObject("totalCount", total);
         return mav;
     }
 
@@ -61,12 +70,15 @@ public class AdminProductoraRequestController {
     @RequestMapping(value = "/postulaciones/{id:\\d+}/cambios", method = RequestMethod.POST)
     public ModelAndView requestChanges(@PathVariable("id") final long id,
                                        @RequestParam(value = "adminNotes", required = false) final String adminNotes,
-                                       @RequestParam(value = "feedback", required = false) final Map<String, String> feedbackMap) {
-        final Map<String, String> clean = new HashMap<>();
-        if (feedbackMap != null) {
-            for (final Map.Entry<String, String> e : feedbackMap.entrySet()) {
-                if (e.getValue() != null && !e.getValue().trim().isEmpty()) {
-                    clean.put(e.getKey(), e.getValue().trim());
+                                       final HttpServletRequest httpRequest) {
+        final Map<String, String> clean = new LinkedHashMap<>();
+        for (final Map.Entry<String, String[]> entry : httpRequest.getParameterMap().entrySet()) {
+            final String paramName = entry.getKey();
+            if (paramName.startsWith("feedback[") && paramName.endsWith("]")) {
+                final String fieldKey = paramName.substring("feedback[".length(), paramName.length() - 1);
+                final String[] values = entry.getValue();
+                if (values != null && values.length > 0 && values[0] != null && !values[0].trim().isEmpty()) {
+                    clean.put(fieldKey, values[0].trim());
                 }
             }
         }

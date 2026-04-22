@@ -229,6 +229,7 @@ public class MailServiceImpl implements MailService {
         context.setVariable("productoraName", request.getName());
         context.setVariable("requestId", request.getId());
         context.setVariable("adminNotes", request.getAdminNotes());
+        context.setVariable("fieldFeedback", request.getFieldFeedback());
         context.setVariable("publicBaseUrl", publicBaseUrl);
         return context;
     }

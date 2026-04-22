@@ -79,15 +79,6 @@ public class ProductoraPostulacionController {
         return new ModelAndView("redirect:/productoras/postular/estado?sent=1");
     }
 
-    @RequestMapping(value = "/simular-aprobacion", method = RequestMethod.POST)
-    public ModelAndView simulateApproval(@AuthenticationPrincipal final PawAuthUser authUser) {
-        final long userId = authUser.getUser().getId();
-        final Optional<ProductoraRequest> active = requestService.findActiveForUser(userId);
-        if (active.isPresent()) {
-            requestService.approve(active.get().getId(), "Aprobación simulada (demo)");
-        }
-        return new ModelAndView("redirect:/productoras/mia");
-    }
 
     @RequestMapping(value = "/estado", method = RequestMethod.GET)
     public ModelAndView status(@AuthenticationPrincipal final PawAuthUser authUser) {

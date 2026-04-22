@@ -34,7 +34,7 @@ public class AdminPlayPetitionController {
         this.playPetitionService = playPetitionService;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = {"/obras", ""}, method = RequestMethod.GET)
     public ModelAndView list(@RequestParam(value = "status", required = false) final String status,
                              @RequestParam(value = "page", defaultValue = "0") final int page,
                              @RequestParam(value = "updated", required = false) final String updated,

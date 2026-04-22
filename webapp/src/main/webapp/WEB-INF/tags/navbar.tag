@@ -58,8 +58,6 @@
     <nav class="navbar-nav" aria-label="Navegación principal">
         <c:choose>
             <c:when test="${isAdmin}">
-                <a class="navbar-link ${resolvedActiveSection == 'admin-obras' ? 'navbar-link-active' : ''}" href="${adminUrl}"><c:out value="${adminObrasLabel}" /></a>
-                <a class="navbar-link ${resolvedActiveSection == 'admin-productoras' ? 'navbar-link-active' : ''}" href="${adminPostulacionesUrl}"><c:out value="${adminProductorasLabel}" /></a>
             </c:when>
             <c:otherwise>
                 <a class="navbar-link ${resolvedActiveSection == 'cartelera' ? 'navbar-link-active' : ''}" href="${carteleraUrl}"><c:out value="${carteleraLabel}" /></a>
