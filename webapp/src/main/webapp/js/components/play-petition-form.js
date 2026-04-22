@@ -22,6 +22,7 @@
     var coverPreviewImage = form.querySelector('[data-cover-preview-image]');
     var applyingPrefill = false;
     var autocompleteTimer = null;
+    var autocompleteFetchNonce = 0;
 
     function setFieldValue(selector, value) {
         var field = form.querySelector(selector);
@@ -128,6 +129,10 @@
             button.className = 'petition-form-autocomplete-item';
             button.setAttribute('data-obra-id', item.obraId);
 
+            function selectSuggestion() {
+                fetchPrefill(item.obraId);
+            }
+
             var title = document.createElement('strong');
             title.textContent = item.title || '';
             button.appendChild(title);
@@ -138,8 +143,18 @@
                 button.appendChild(theater);
             }
 
-            button.addEventListener('click', function () {
-                fetchPrefill(item.obraId);
+            button.addEventListener('pointerdown', function (event) {
+                event.preventDefault();
+                selectSuggestion();
+            });
+
+            button.addEventListener('keydown', function (event) {
+                if (event.key !== 'Enter' && event.key !== ' ') {
+                    return;
+                }
+
+                event.preventDefault();
+                selectSuggestion();
             });
             autocompleteResults.appendChild(button);
         });
@@ -149,9 +164,12 @@
 
     function fetchSuggestions(query) {
         if (!autocompleteUrl || query.length < 2) {
+            autocompleteFetchNonce += 1;
             hideAutocomplete();
             return;
         }
+
+        var currentFetchNonce = ++autocompleteFetchNonce;
 
         window.fetch(autocompleteUrl + '?q=' + encodeURIComponent(query), {
             headers: {
@@ -164,8 +182,20 @@
                 }
                 return response.json();
             })
-            .then(renderAutocomplete)
-            .catch(hideAutocomplete);
+            .then(function (items) {
+                if (currentFetchNonce !== autocompleteFetchNonce) {
+                    return;
+                }
+
+                renderAutocomplete(items);
+            })
+            .catch(function () {
+                if (currentFetchNonce !== autocompleteFetchNonce) {
+                    return;
+                }
+
+                hideAutocomplete();
+            });
     }
 
     function clearSourceSelection() {
@@ -182,6 +212,8 @@
         if (!prefillUrlBase) {
             return;
         }
+
+        autocompleteFetchNonce += 1;
 
         window.fetch(prefillUrlBase + encodeURIComponent(obraId), {
             headers: {
@@ -258,6 +290,23 @@
 
         titleInput.addEventListener('blur', function () {
             window.setTimeout(hideAutocomplete, 120);
+        });
+
+        document.addEventListener('pointerdown', function (event) {
+            var target = event.target;
+            if (!target) {
+                return;
+            }
+
+            if (target === titleInput) {
+                return;
+            }
+
+            if (autocompleteResults && autocompleteResults.contains(target)) {
+                return;
+            }
+
+            hideAutocomplete();
         });
     }
 
